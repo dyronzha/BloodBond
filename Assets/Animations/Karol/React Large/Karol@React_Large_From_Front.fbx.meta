@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: e3e9fb4387774d6459ec04bb735b02ba
+guid: 458db4ffb5cbbbb478f9cb3ec8a2835d
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: mixamo.com
+    second: Karol@React_Large_From_Front
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -35,22 +35,22 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: mixamo.com
+      name: Karol@React_Large_From_Front
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 153
+      lastFrame: 41
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
+      loopBlendPositionXZ: 0
       keepOriginalOrientation: 1
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 1
