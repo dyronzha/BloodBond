@@ -2,36 +2,52 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class ActorValue
 {
-    int hp;
-    public int HP{
-        get { return hp; }
-        set { hp = value; }
+    [SerializeField]
+    int _health;
+    public int Health{
+        get { return _health; }
+        set { _health = value; }
     }
 
-    int damage;
+    [SerializeField]
+    int _damage;
     public int Damage
     {
-        get { return damage; }
-        set { damage = value; }
+        get { return _damage; }
+        set { _damage = value; }
     }
 
-    int moveSpeed;
-    public int MoveSpeed {
-        get { return moveSpeed; }
-        set { moveSpeed = value; }
+    [SerializeField]
+    float _moveSpeed;
+    public float MoveSpeed {
+        get { return _moveSpeed; }
+        set { _moveSpeed = value; }
     }
 
+    public ActorValue(int hp, int damage, float moveSpeed) {
+        _health = hp;
+        _damage = damage;
+        _moveSpeed = moveSpeed;
+    }
 }
 
+[System.Serializable]
 public class PlayerValue : ActorValue 
-{ 
+{
+    public PlayerValue(int hp, int damage, float moveSpeed) : base(hp, damage, moveSpeed)
+    {
 
+    }
 }
 
 public class EnemyValue : ActorValue
 {
+    public EnemyValue(int hp, int damage, float moveSpeed) : base(hp, damage, moveSpeed)
+    {
 
+    }
 }
 

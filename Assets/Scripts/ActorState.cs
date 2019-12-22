@@ -10,14 +10,12 @@ namespace BloodBond {
         float time;
         float maxTime;
 
-        public void Update() { 
-        
+        public virtual void Update() {
+            Debug.Log("actor state");
         }
     }
 
-    public class PlayerState : ActorState { 
-    
-    }
+
 
     public class EnemyState : ActorState { 
         
