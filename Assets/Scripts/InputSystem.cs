@@ -20,6 +20,15 @@ namespace BloodBond {
         {
             return playerInput.GetAxis("MoveVertical");
         }
+
+        public bool GetDodgeInput() {
+            if (playerInput.GetAxis("Dodge") > 0.75f) return true;
+            else return false;
+        }
+
+        public bool GetNormalComboATK() {
+            return playerInput.GetButtonDown("NormalComboATK");
+        }
     }
 }
 

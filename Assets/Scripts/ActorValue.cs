@@ -27,17 +27,26 @@ public class ActorValue
         set { _moveSpeed = value; }
     }
 
-    public ActorValue(int hp, int damage, float moveSpeed) {
+    [SerializeField]
+    float _rotateSpeed;
+    public float RotateSpeed
+    {
+        get { return _rotateSpeed; }
+        set { _rotateSpeed = value; }
+    }
+
+    public ActorValue(int hp, int damage, float moveSpeed, float rotateSpeed) {
         _health = hp;
         _damage = damage;
         _moveSpeed = moveSpeed;
+        _rotateSpeed = rotateSpeed;
     }
 }
 
 [System.Serializable]
 public class PlayerValue : ActorValue 
 {
-    public PlayerValue(int hp, int damage, float moveSpeed) : base(hp, damage, moveSpeed)
+    public PlayerValue(int hp, int damage, float moveSpeed, float rotateSpeed) : base(hp, damage, moveSpeed, rotateSpeed)
     {
 
     }
@@ -45,7 +54,7 @@ public class PlayerValue : ActorValue
 
 public class EnemyValue : ActorValue
 {
-    public EnemyValue(int hp, int damage, float moveSpeed) : base(hp, damage, moveSpeed)
+    public EnemyValue(int hp, int damage, float moveSpeed, float rotateSpeed) : base(hp, damage, moveSpeed, rotateSpeed)
     {
 
     }
