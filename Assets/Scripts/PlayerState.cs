@@ -46,13 +46,13 @@ namespace BloodBond {
     {
         public DashState(Player p) : base(p)
         {
-
+            player.Dash();
         }
     }
 
-    public class AttackState : PlayerState
+    public class NormalComboATKState : PlayerState
     {
-        public AttackState(Player p) : base(p)
+        public NormalComboATKState(Player p) : base(p)
         {
 
         }

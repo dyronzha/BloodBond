@@ -17,7 +17,7 @@ namespace BloodBond {
         IdleState idleState;
         MoveState moveState;
         DashState dashState;
-        AttackState attackState;
+        NormalComboATKState normalComboAtkState;
         HurtState hurtState;
         InputSystem input;
 
@@ -30,7 +30,7 @@ namespace BloodBond {
             idleState = new IdleState(this);
             moveState = new MoveState(this);
             dashState = new DashState(this);
-            attackState = new AttackState(this);
+            normalComboAtkState = new NormalComboATKState(this);
             hurtState = new HurtState(this);
             curState = idleState;
         }
@@ -50,19 +50,25 @@ namespace BloodBond {
             
         }
 
+        void CheckState() { 
+            
+        }
+
         public void Movement()
         {
             Vector3 _dir = new Vector3(input.GetHMoveAxis(), .0f, input.GetVMoveAxis());
             Vector3 nextPos = selfTransform.position + infoValue.MoveSpeed * deltaTime * _dir;
             if (!Physics.Linecast(selfTransform.position, nextPos, 1 << LayerMask.NameToLayer("Obstacle")))
             {
-                transform.position = nextPos;
+                selfTransform.position = nextPos;
             }
         }
         public void Dash() { 
             
         }
-    
+        public void NormalComboAttack() { 
+        
+        }
     }
 }
 
