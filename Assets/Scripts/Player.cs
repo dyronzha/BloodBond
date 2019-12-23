@@ -81,8 +81,10 @@ namespace BloodBond {
                 moveForward = (new Vector3(_dir.x * baseRight.x, 0, _dir.x * baseRight.z)
                                   + new Vector3(_dir.z * baseFWD.x, 0, _dir.z * baseFWD.z)).normalized;
                 Vector3 nextPos = selfTransform.position + infoValue.MoveSpeed * deltaTime * moveForward;
-                if (!Physics.Linecast(selfTransform.position, nextPos, 1 << LayerMask.NameToLayer("Obstacle")))
-                {
+
+                float difAngle = Vector3.Angle(transform.forward, moveForward);
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveForward), deltaTime * infoValue.RotateSpeed);
+                if (difAngle < 45.0f && !Physics.Linecast(selfTransform.position, nextPos, 1 << LayerMask.NameToLayer("Obstacle"))) {
                     selfTransform.position = nextPos;
                 }
             }
@@ -109,6 +111,19 @@ namespace BloodBond {
                 }
             }
         }
+
+        public bool ChackNormalComboAttack()
+        {
+            if (input.GetNormalComboATK())
+            {
+                animator.SetBool("Run", false);
+                animator.SetBool("NormalComboATK", true);
+                ChangeState(normalComboAtkState);
+                return true;
+            }
+            else return false;
+        }
+
 
         public void Dash() { 
             
