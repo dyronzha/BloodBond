@@ -21,6 +21,13 @@ namespace BloodBond {
             return playerInput.GetAxis("MoveVertical");
         }
 
+        public bool GetMove() {
+            float x = playerInput.GetAxis("MoveHorizontal");
+            float z = playerInput.GetAxis("MoveVertical");
+            if ((x * x + z * z) > 0.1f) return true;
+            else return false;
+        }
+
         public bool GetDodgeInput() {
             if (playerInput.GetAxis("Dodge") > 0.75f) return true;
             else return false;

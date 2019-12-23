@@ -24,6 +24,7 @@ namespace BloodBond {
         }
         public override void Update()
         {
+            Debug.Log("idle");
             if (player.CheckHurt()) return;
             player.IdleCheckMove();
         }
@@ -38,7 +39,7 @@ namespace BloodBond {
         }
         public override void Update()
         {
-            Debug.Log("move state");
+            Debug.Log("run");
             if (player.MoveCheckDodge()) return;
             if (player.CheckHurt()) return;
             player.Movement();
@@ -49,13 +50,23 @@ namespace BloodBond {
     {
         public DodgeState(Player p) : base(p)
         {
+            
+        }
+        public override void Update()
+        {
+            Debug.Log("dodge");
             player.Dodge();
         }
+        
     }
 
     public class DashState : PlayerState
     {
         public DashState(Player p) : base(p)
+        {
+            
+        }
+        public override void Update()
         {
             player.Dash();
         }
@@ -66,6 +77,10 @@ namespace BloodBond {
         public NormalComboATKState(Player p) : base(p)
         {
 
+        }
+        public override void Update()
+        {
+            
         }
     }
 
