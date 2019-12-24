@@ -41,9 +41,9 @@ namespace BloodBond {
         public override void Update()
         {
             Debug.Log("run");
-            if (player.MoveCheckDodge()) return;
-            if (player.CheckHurt()) return;
-            if (player.CheckNormalComboAttack()) return;
+            if (player.MoveCheckDodge() || player.CheckHurt() || player.CheckNormalComboAttack()) {
+                player.SetAnimatorBool("Run", false);
+            } 
             player.Movement();
         }
     }
@@ -84,10 +84,12 @@ namespace BloodBond {
         }
         public override void Update()
         {
-            if (player.CheckHurt() || player.MoveCheckDodge()) {
+            if (player.CheckHurt() || player.AttackCheckDodge()) {
                 _curCombo = 0;
+                player.SetAnimatorBool("NormalComboATK", false);
+                return;
             }
-            if (player.CheckNextCombo() && player.NormalComboAttack(_curCombo)) _curCombo++;
+            player.NormalComboAttack(ref _curCombo);
 
         }
     }

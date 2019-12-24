@@ -111,7 +111,6 @@ namespace BloodBond {
             if (input.GetDodgeInput() && (x * x + z * z) > 0.1f && !inDodgeCD) {
                 lastDir = new Vector3(x, .0f, z);
                 animator.SetBool("Dodge", true);
-                animator.SetBool("Run", false);
                 ChangeState(dodgeState);
                 return true;
             }
@@ -180,11 +179,24 @@ namespace BloodBond {
             }
         }
 
+        public bool AttackCheckDodge()
+        {
+            AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
+            float x = input.GetHMoveAxis();
+            float z = input.GetVMoveAxis();
+            if (input.GetDodgeInput() && (x * x + z * z) > 0.1f && !inDodgeCD && aniInfo.IsTag("Attack") && aniInfo.normalizedTime > 0.3f)
+            {
+                lastDir = new Vector3(x, .0f, z);
+                animator.SetBool("Dodge", true);
+                ChangeState(dodgeState);
+                return true;
+            }
+            else return false;
+        }
         public bool CheckNormalComboAttack()
         {
             if (input.GetNormalComboATK())
             {
-                animator.SetBool("Run", false);
                 animator.SetBool("NormalComboATK", true);
                 ChangeState(normalComboAtkState);
                 return true;
@@ -195,7 +207,7 @@ namespace BloodBond {
             if (input.GetNormalComboATK()) return true;
             else return false;
         }
-        public bool NormalComboAttack(int comboCount) {
+        public void NormalComboAttack(ref int comboCount) {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateStep == 0) {
                 if (aniInfo.IsName("Combo" + comboCount.ToString())) {
@@ -203,13 +215,22 @@ namespace BloodBond {
                 }
             }
             else if (stateStep == 1) {
-                if (aniInfo.normalizedTime > 0.7f) {
-                    if(aniInfo.normalizedTime < 0.95f) return true;
-                    animator.SetBool("NormalComboATK", false);
-                    ChangeState(idleState);
+                if (aniInfo.normalizedTime > 0.3f) {
+                    if (aniInfo.normalizedTime < 0.5f) {
+                        if (comboCount < 2 && input.GetNormalComboATK()) {
+                            animator.SetTrigger("NextCombo");
+                            comboCount++;
+                            stateStep = 0;
+                        }
+                    }
+                    else
+                    {
+                        comboCount = 0;
+                        animator.SetBool("NormalComboATK", false);
+                        ChangeState(idleState);
+                    } 
                 }
             }
-            return false;
         }
 
 
