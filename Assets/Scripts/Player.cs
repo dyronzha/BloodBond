@@ -10,8 +10,10 @@ namespace BloodBond {
         float stateTime, deltaTime;
 
         float inputMoveX, inputMoveY;
-
         Vector3 moveForward = new Vector3(0, 0, 0), lastDir;
+
+        bool inDodgeCD = false;
+        float dodgeOffset, dodgeCD;
 
         Camera mainCamera;
         Transform selfTransform;
@@ -42,7 +44,7 @@ namespace BloodBond {
             moveState = new MoveState(this);
             dodgeState = new DodgeState(this);
             dashState = new DashState(this);
-            normalComboAtkState = new NormalComboATKState(this);
+            normalComboAtkState = new NormalComboATKState(this, 3);
             hurtState = new HurtState(this);
             curState = idleState;
         }
@@ -59,7 +61,7 @@ namespace BloodBond {
 
             deltaTime = Time.deltaTime;
             curState.Update();
-            
+            if (inDodgeCD) CountDodgeCD();
         }
 
         public void ChangeState(PlayerState nextState) {
@@ -68,9 +70,13 @@ namespace BloodBond {
             stateTime = .0f;
         }
 
+        public void SetAnimatorBool(string name, bool v) {
+            animator.SetBool(name, v);
+        }
+
         public void IdleCheckMove() {
             Vector3 _dir = new Vector3(input.GetHMoveAxis(), .0f, input.GetVMoveAxis());
-            if (_dir.sqrMagnitude > 0.1f) {
+            if (_dir.sqrMagnitude > 0.1f && animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
                 animator.SetBool("Run", true);
                 ChangeState(moveState);
             }
@@ -102,7 +108,7 @@ namespace BloodBond {
         public bool MoveCheckDodge() {
             float x = input.GetHMoveAxis();
             float z = input.GetVMoveAxis();
-            if (input.GetDodgeInput() && (x * x + z * z) > 0.1f) {
+            if (input.GetDodgeInput() && (x * x + z * z) > 0.1f && !inDodgeCD) {
                 lastDir = new Vector3(x, .0f, z);
                 animator.SetBool("Dodge", true);
                 animator.SetBool("Run", false);
@@ -121,43 +127,60 @@ namespace BloodBond {
                 baseRight = mainCamera.transform.right;
                 moveForward = (new Vector3(lastDir.x * baseRight.x, 0, lastDir.x * baseRight.z)
                                   + new Vector3(lastDir.z * baseFWD.x, 0, lastDir.z * baseFWD.z)).normalized;
-                
+
                 transform.rotation = Quaternion.LookRotation(moveForward);
 
             }
-            else {
+            else if (stateStep == 1)
+            {
 
                 AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
                 if ((aniInfo.IsName("Dodge")))
                 {
-                    Debug.Log(aniInfo.normalizedTime);
-                    if (aniInfo.normalizedTime < 0.9f) {
-                        Vector3 nextPos = selfTransform.position + infoValue.MoveSpeed * 1.2f * deltaTime * moveForward;
-                        if (!Physics.Linecast(selfTransform.position, nextPos, 1 << LayerMask.NameToLayer("Obstacle")))
-                        {
-                            selfTransform.position = nextPos;
-                        }
-                    }
-                    else if (aniInfo.normalizedTime > 0.92f)
+                    stateStep++;
+                    dodgeOffset = 1.0f;
+                }
+            }
+            else {
+                stateTime += deltaTime;
+                if (stateTime < 0.3f)
+                {
+                    float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
+                    dodgeOffset = Mathf.Clamp(dodgeOffset - deltaTime * 5.0f, .0f, 1.0f);
+                    Debug.Log("dodge offset  " + dodgeOffset);
+                    Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * moveForward;
+                    if (!Physics.Linecast(selfTransform.position, nextPos, 1 << LayerMask.NameToLayer("Obstacle")))
                     {
-                        animator.SetBool("Dodge", false);
-                        if (input.GetMove())
-                        {
-                            animator.SetBool("Run", true);
-                            ChangeState(moveState);
-                        }
-                        else {
-                            animator.SetBool("Run", false);
-                            ChangeState(idleState);
-                        }
-                        
+                        selfTransform.position = nextPos;
                     }
                 }
+                else {
+                    inDodgeCD = true;
+                    animator.SetBool("Dodge", false);
+                    if (input.GetMove())
+                    {
+                        animator.SetBool("Run", true);
+                        ChangeState(moveState);
+                    }
+                    else
+                    {
+                        animator.SetBool("Run", false);
+                        ChangeState(idleState);
+                    }
+                }
+
             }
 
         }
+        void CountDodgeCD() {
+            dodgeCD += deltaTime;
+            if (dodgeCD > 0.5f) {
+                dodgeCD = .0f;
+                inDodgeCD = false;
+            }
+        }
 
-        public bool ChackNormalComboAttack()
+        public bool CheckNormalComboAttack()
         {
             if (input.GetNormalComboATK())
             {
@@ -168,13 +191,31 @@ namespace BloodBond {
             }
             else return false;
         }
-
-
-        public void Dash() { 
-            
+        public bool CheckNextCombo() {
+            if (input.GetNormalComboATK()) return true;
+            else return false;
         }
-        public void NormalComboAttack() { 
-        
+        public bool NormalComboAttack(int comboCount) {
+            AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
+            if (stateStep == 0) {
+                if (aniInfo.IsName("Combo" + comboCount.ToString())) {
+                    stateStep++;
+                }
+            }
+            else if (stateStep == 1) {
+                if (aniInfo.normalizedTime > 0.7f) {
+                    if(aniInfo.normalizedTime < 0.95f) return true;
+                    animator.SetBool("NormalComboATK", false);
+                    ChangeState(idleState);
+                }
+            }
+            return false;
+        }
+
+
+        public void Dash()
+        {
+
         }
 
         public bool CheckHurt() {

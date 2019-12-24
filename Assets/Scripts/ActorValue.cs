@@ -50,6 +50,13 @@ public class PlayerValue : ActorValue
     {
 
     }
+    [SerializeField]
+    float _dodgeSpeed;
+    public float DodgeSpeed
+    {
+        get { return _dodgeSpeed; }
+        set { _dodgeSpeed = value; }
+    }
 }
 
 public class EnemyValue : ActorValue

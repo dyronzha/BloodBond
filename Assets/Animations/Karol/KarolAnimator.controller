@@ -29,7 +29,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Karol@idle
+  m_Name: Idle
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -247,7 +247,7 @@ AnimatorStateTransition:
   m_TransitionOffset: 0
   m_ExitTime: 0.99
   m_HasExitTime: 0
-  m_HasFixedDuration: 1
+  m_HasFixedDuration: 0
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
@@ -297,7 +297,7 @@ AnimatorStateTransition:
   m_TransitionOffset: 0
   m_ExitTime: 0.99
   m_HasExitTime: 0
-  m_HasFixedDuration: 1
+  m_HasFixedDuration: 0
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
@@ -322,7 +322,7 @@ AnimatorStateTransition:
   m_TransitionOffset: 0
   m_ExitTime: 0.75
   m_HasExitTime: 1
-  m_HasFixedDuration: 1
+  m_HasFixedDuration: 0
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
@@ -406,7 +406,7 @@ AnimatorStateTransition:
   m_TransitionOffset: 0
   m_ExitTime: 0.99
   m_HasExitTime: 0
-  m_HasFixedDuration: 1
+  m_HasFixedDuration: 0
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
@@ -431,7 +431,7 @@ AnimatorStateTransition:
   m_TransitionOffset: 0
   m_ExitTime: 0.99
   m_HasExitTime: 0
-  m_HasFixedDuration: 1
+  m_HasFixedDuration: 0
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
@@ -481,7 +481,7 @@ AnimatorStateTransition:
   m_TransitionOffset: 0
   m_ExitTime: 0.99
   m_HasExitTime: 0
-  m_HasFixedDuration: 1
+  m_HasFixedDuration: 0
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
@@ -564,7 +564,7 @@ AnimatorStateTransition:
   m_TransitionOffset: 0
   m_ExitTime: 0.99
   m_HasExitTime: 0
-  m_HasFixedDuration: 1
+  m_HasFixedDuration: 0
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
@@ -614,7 +614,7 @@ AnimatorStateTransition:
   m_TransitionOffset: 0
   m_ExitTime: 0.99
   m_HasExitTime: 0
-  m_HasFixedDuration: 1
+  m_HasFixedDuration: 0
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
@@ -789,25 +789,25 @@ AnimatorStateMachine:
   m_AnyStateTransitions: []
   m_EntryTransitions: []
   m_StateMachineTransitions:
-  - first: {fileID: -9138168910578942646}
-    second:
-    - {fileID: -4790746667959642641}
-    - {fileID: -6320757543825132560}
-  - first: {fileID: -7237149710767632672}
-    second:
-    - {fileID: -5701567606247578316}
-    - {fileID: 445384927439735777}
-    - {fileID: 2112331414821580832}
-    - {fileID: -7854646135806584490}
   - first: {fileID: -5408570358804497356}
     second:
     - {fileID: 1975055954990548865}
     - {fileID: 7815321897525153782}
     - {fileID: 8924721699180904214}
     - {fileID: 2279876465795337539}
+  - first: {fileID: -9138168910578942646}
+    second:
+    - {fileID: -4790746667959642641}
+    - {fileID: -6320757543825132560}
   - first: {fileID: 2661518018606538128}
     second:
     - {fileID: 5678328951409805967}
+  - first: {fileID: -7237149710767632672}
+    second:
+    - {fileID: -5701567606247578316}
+    - {fileID: 445384927439735777}
+    - {fileID: 2112331414821580832}
+    - {fileID: -7854646135806584490}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: -50, y: -150, z: 0}
   m_EntryPosition: {x: 270, y: -130, z: 0}
@@ -886,7 +886,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Dodge
-  m_Speed: 1.5
+  m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -2188135579191344975}
@@ -899,7 +899,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: a6d82001ab5bd7746a69ff5fe32bab90,
+  m_Motion: {fileID: -7523799387860143440, guid: 736f369d58012464fa54e194b5bf6858,
     type: 3}
   m_Tag: 
   m_SpeedParameter: 
@@ -927,7 +927,7 @@ AnimatorStateTransition:
   m_TransitionOffset: 0
   m_ExitTime: 0.75
   m_HasExitTime: 1
-  m_HasFixedDuration: 1
+  m_HasFixedDuration: 0
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
@@ -983,7 +983,7 @@ AnimatorStateTransition:
   m_TransitionOffset: 0
   m_ExitTime: 0.75
   m_HasExitTime: 1
-  m_HasFixedDuration: 1
+  m_HasFixedDuration: 0
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1

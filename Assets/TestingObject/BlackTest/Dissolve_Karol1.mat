@@ -33,7 +33,7 @@ Material:
     m_Floats:
     - Vector1_6C5D4AB3: 0.157
     - Vector1_90BEE4F9: 30
-    - Vector1_F4D760A8: -0.00000015646219
+    - Vector1_F4D760A8: 0
     - Vector1_F778007A: 0.42
     - Vector1_FE6CA3E6: 0.01
     m_Colors:
