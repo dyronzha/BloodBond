@@ -10,15 +10,14 @@ public class Teleport : MonoBehaviour{
     bool OnDissolve = false;
     public float DissolveSpeed = 0.04f;
 
-    public Transform Teleport_Create;
     public VisualEffect VFX_Teleport;
 
     public float _Rate = 3.5f;
-    public float _Drag = 2.0f;
+    float _Drag = 2.0f;
 
     void Update(){
 
-        if (Input.GetKeyDown(KeyCode.Q) && OnDissolve == false) {
+        if (Input.GetKeyDown(KeyCode.Q) && OnDissolve == false){
             CurrentValue = 1.0f;
             OnDissolve = true;
         }
