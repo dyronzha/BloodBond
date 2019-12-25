@@ -24,8 +24,8 @@ namespace BloodBond {
         }
         public override void Update()
         {
-            Debug.Log("idle");
             if (player.CheckHurt()) return;
+            if (player.CheckNormalComboAttackInput("Idle")) return;
             player.IdleCheckMove();
         }
     }
@@ -40,8 +40,10 @@ namespace BloodBond {
         public override void Update()
         {
             Debug.Log("run");
-            if (player.MoveCheckDodge()) return;
-            if (player.CheckHurt()) return;
+            if (player.MoveCheckDodge() || player.CheckHurt() || player.CheckNormalComboAttackInput("Run")) {
+                player.SetAnimatorBool("Run", false);
+                return;
+            } 
             player.Movement();
         }
     }
@@ -74,13 +76,21 @@ namespace BloodBond {
 
     public class NormalComboATKState : PlayerState
     {
-        public NormalComboATKState(Player p) : base(p)
+        int _curCombo = 0;
+        int _maxCombo;
+        public NormalComboATKState(Player p, int maxCombo) : base(p)
         {
-
+            _maxCombo = maxCombo;
         }
         public override void Update()
         {
-            
+            if (player.CheckHurt() || player.AttackCheckDodge()) {
+                _curCombo = 0;
+                player.SetAnimatorBool("NormalComboATK", false);
+                return;
+            }
+            player.NormalComboAttack(ref _curCombo, _maxCombo);
+
         }
     }
 
