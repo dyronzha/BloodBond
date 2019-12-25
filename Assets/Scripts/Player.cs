@@ -44,21 +44,13 @@ namespace BloodBond {
             moveState = new MoveState(this);
             dodgeState = new DodgeState(this);
             dashState = new DashState(this);
-            normalComboAtkState = new NormalComboATKState(this, 3);
+            normalComboAtkState = new NormalComboATKState(this, 2);
             hurtState = new HurtState(this);
             curState = idleState;
         }
 
         // Update is called once per frame
-        void Update()
-        {
-            //if(animator.GetCurrentAnimatorStateInfo(0).IsName("Karol@Atack1")) 
-            //    Debug.Log("Karol@Atack1   " +  animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
-            //else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Karol@Atack2"))
-            //    Debug.Log("Karol@Atack2   " + animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
-            //else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Karol@Atack3"))
-            //    Debug.Log("Karol@Atack3   " + animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
-
+        void Update() {
             deltaTime = Time.deltaTime;
             curState.Update();
             if (inDodgeCD) CountDodgeCD();
@@ -69,11 +61,11 @@ namespace BloodBond {
             stateStep = 0;
             stateTime = .0f;
         }
-
         public void SetAnimatorBool(string name, bool v) {
             animator.SetBool(name, v);
         }
 
+        //待機相關
         public void IdleCheckMove() {
             Vector3 _dir = new Vector3(input.GetHMoveAxis(), .0f, input.GetVMoveAxis());
             if (_dir.sqrMagnitude > 0.1f && animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
@@ -81,6 +73,8 @@ namespace BloodBond {
                 ChangeState(moveState);
             }
         }
+
+        //移動相關-----------------------------------------------------
         public void Movement()
         {
             Vector3 baseFWD, baseRight;
@@ -106,10 +100,7 @@ namespace BloodBond {
             }
         }
         public bool MoveCheckDodge() {
-            float x = input.GetHMoveAxis();
-            float z = input.GetVMoveAxis();
-            if (input.GetDodgeInput() && (x * x + z * z) > 0.1f && !inDodgeCD) {
-                lastDir = new Vector3(x, .0f, z);
+            if (input.GetDodgeInput() && !inDodgeCD) {
                 animator.SetBool("Dodge", true);
                 ChangeState(dodgeState);
                 return true;
@@ -117,15 +108,16 @@ namespace BloodBond {
             else return false;
         }
 
+        //閃避相關-----------------------------------------------------
         public void Dodge() {
             if (stateStep == 0)
             {
                 stateStep++;
-                Vector3 baseFWD, baseRight;
-                baseFWD = mainCamera.transform.forward;
-                baseRight = mainCamera.transform.right;
-                moveForward = (new Vector3(lastDir.x * baseRight.x, 0, lastDir.x * baseRight.z)
-                                  + new Vector3(lastDir.z * baseFWD.x, 0, lastDir.z * baseFWD.z)).normalized;
+                //Vector3 baseFWD, baseRight;
+                //baseFWD = mainCamera.transform.forward;
+                //baseRight = mainCamera.transform.right;
+                //moveForward = (new Vector3(lastDir.x * baseRight.x, 0, lastDir.x * baseRight.z)
+                //                  + new Vector3(lastDir.z * baseFWD.x, 0, lastDir.z * baseFWD.z)).normalized;
 
                 transform.rotation = Quaternion.LookRotation(moveForward);
 
@@ -179,23 +171,57 @@ namespace BloodBond {
             }
         }
 
+        //確認移動方向-----------------------------------------------------
+        public bool GetMoveInput() {
+            float x = input.GetHMoveAxis();
+            float z = input.GetVMoveAxis();
+            if ((x * x + z * z) > 0.1f)
+            {
+                Vector3 baseFWD, baseRight;
+                lastDir = new Vector3(x, .0f, z);
+                baseFWD = mainCamera.transform.forward;
+                baseRight = mainCamera.transform.right;
+                moveForward = (new Vector3(lastDir.x * baseRight.x, 0, lastDir.x * baseRight.z)
+                                  + new Vector3(lastDir.z * baseFWD.x, 0, lastDir.z * baseFWD.z)).normalized;
+                return true;
+            }
+            return false;
+        }
+        public bool GetMoveInput(float maxAngle)
+        {
+            float x = input.GetHMoveAxis();
+            float z = input.GetVMoveAxis();
+            if ((x * x + z * z) > 0.1f)
+            {
+                Vector3 baseFWD, baseRight;
+                lastDir = new Vector3(x, .0f, z);
+                baseFWD = mainCamera.transform.forward;
+                baseRight = mainCamera.transform.right;
+                moveForward = (new Vector3(lastDir.x * baseRight.x, 0, lastDir.x * baseRight.z)
+                                  + new Vector3(lastDir.z * baseFWD.x, 0, lastDir.z * baseFWD.z)).normalized;
+
+                Debug.Log(moveForward + "   " + selfTransform.forward + "    " + Vector3.Angle(moveForward, selfTransform.forward) );
+                if (Vector3.Angle(moveForward, selfTransform.forward) < maxAngle) return true;
+                else if (moveForward.sqrMagnitude > .05f) moveForward = new Vector3(0, 0, 0);
+            }
+            return false;
+        }
+
+        //combo相關-----------------------------------------------------
         public bool AttackCheckDodge()
         {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
-            float x = input.GetHMoveAxis();
-            float z = input.GetVMoveAxis();
-            if (input.GetDodgeInput() && (x * x + z * z) > 0.1f && !inDodgeCD && aniInfo.IsTag("Attack") && aniInfo.normalizedTime > 0.3f)
+            if (input.GetDodgeInput() && GetMoveInput() && !inDodgeCD && aniInfo.IsTag("Attack") && aniInfo.normalizedTime > 0.15f)
             {
-                lastDir = new Vector3(x, .0f, z);
                 animator.SetBool("Dodge", true);
                 ChangeState(dodgeState);
                 return true;
             }
             else return false;
         }
-        public bool CheckNormalComboAttack()
+        public bool CheckNormalComboAttackInput(string state)
         {
-            if (input.GetNormalComboATK())
+            if (input.GetNormalComboATK() && animator.GetCurrentAnimatorStateInfo(0).IsName(state))
             {
                 animator.SetBool("NormalComboATK", true);
                 ChangeState(normalComboAtkState);
@@ -204,26 +230,34 @@ namespace BloodBond {
             else return false;
         }
         public bool CheckNextCombo() {
-            if (input.GetNormalComboATK()) return true;
+            if (input.GetNormalComboATK()) {
+
+                return true;
+            } 
             else return false;
         }
-        public void NormalComboAttack(ref int comboCount) {
+        public void NormalComboAttack(ref int comboCount, int maxCombo) {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateStep == 0) {
                 if (aniInfo.IsName("Combo" + comboCount.ToString())) {
+                    if (comboCount > 0 && moveForward.sqrMagnitude > 0.1f)  //接技的方向
+                    {
+                        selfTransform.rotation = Quaternion.LookRotation(moveForward);
+                    }
                     stateStep++;
                 }
             }
             else if (stateStep == 1) {
-                if (aniInfo.normalizedTime > 0.3f) {
-                    if (aniInfo.normalizedTime < 0.5f) {
-                        if (comboCount < 2 && input.GetNormalComboATK()) {
+                if (aniInfo.normalizedTime > 0.15f) {
+                    if (aniInfo.normalizedTime < 0.55f) {
+                        if (comboCount < maxCombo && input.GetNormalComboATK()) {
+                            GetMoveInput(90.0f);
                             animator.SetTrigger("NextCombo");
                             comboCount++;
                             stateStep = 0;
                         }
                     }
-                    else
+                    else if (aniInfo.normalizedTime >= 0.7f)
                     {
                         comboCount = 0;
                         animator.SetBool("NormalComboATK", false);
