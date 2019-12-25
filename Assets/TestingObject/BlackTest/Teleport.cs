@@ -13,7 +13,7 @@ public class Teleport : MonoBehaviour{
     public VisualEffect VFX_Teleport;
 
     public float _Rate = 3.5f;
-    float _Drag = 2.0f;
+    public float _Drag = 2.0f;
 
     void Update(){
 
