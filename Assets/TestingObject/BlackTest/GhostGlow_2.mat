@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: GhostGlow
+  m_Name: GhostGlow_2
   m_Shader: {fileID: -6465566751694194690, guid: 93296939dd8678f43921aef6949c9e1c,
     type: 3}
   m_ShaderKeywords: 
@@ -21,7 +21,15 @@ Material:
   - MOTIONVECTORS
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - Texture2D_6C5FB325:
+        m_Texture: {fileID: 2800000, guid: 2b1c5d8a6d6f93242933565b870b996e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_B0B376:
+        m_Texture: {fileID: 2800000, guid: 1eb16ba02bc9dba46a57e4b4fb990f27, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - Vector1_9F6BD034: 0
     - Vector1_E875BB58: 1

@@ -55,7 +55,7 @@ public class Dodge : MonoBehaviour{
             //產生殘影
             if (ArriveCount < Max_PhantomCount && Mathf.Abs(transform.position.x - Dodge_Current.x) >= Phantom_Spacing[ArriveCount].x) {
                 Instantiate(PhantomCreate,Dodge_Current + new Vector3(0.0f, 1.0f, 0.0f) + Phantom_Spacing[ArriveCount], transform.rotation);
-                PhantomCreate.GetComponent<Phantom>().PhantomEmission();
+                PhantomCreate.GetComponent<Phantom>().CheckOnce = true;
                 ArriveCount++;
             }
 
