@@ -57,7 +57,7 @@ VisualEffect:
       m_Array: []
     m_Int:
       m_Array:
-      - m_Value: 5000
+      - m_Value: 3000
         m_Name: Number_of_Particles
         m_Overridden: 1
     m_Matrix4x4f:
@@ -120,3 +120,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03d323d8d14b4c94193a8186c87265e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Emission_State: 1
