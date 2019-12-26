@@ -15,8 +15,12 @@ namespace BloodBond {
         bool inDodgeCD = false;
         float dodgeOffset, dodgeCD;
 
+        bool invincible = false;
+        float invincibleTime = .0f;
+
         Camera mainCamera;
         Transform selfTransform;
+        CapsuleCollider hurtAreaCollider;
         Animator animator;
 
         [SerializeField]
@@ -37,6 +41,7 @@ namespace BloodBond {
         {
             selfTransform = transform;
             mainCamera = Camera.main;
+            hurtAreaCollider = GetComponent<CapsuleCollider>();
             animator = GetComponent<Animator>();
             input = new InputSystem();
 
@@ -54,6 +59,7 @@ namespace BloodBond {
             deltaTime = Time.deltaTime;
             curState.Update();
             if (inDodgeCD) CountDodgeCD();
+            if (invincible) CountInvincibleTime();
         }
 
         public void ChangeState(PlayerState nextState) {
@@ -65,18 +71,36 @@ namespace BloodBond {
             animator.SetBool(name, v);
         }
 
+        //public bool CheckAniInfoState() {
+        //    if (stateStep > 0) return true;
+        //    else return false;
+        //}
+
         //待機相關
         public void IdleCheckMove() {
-            Vector3 _dir = new Vector3(input.GetHMoveAxis(), .0f, input.GetVMoveAxis());
-            if (_dir.sqrMagnitude > 0.1f && animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
-                animator.SetBool("Run", true);
-                ChangeState(moveState);
+            if (stateStep == 0)
+            {
+                AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
+                if (aniInfo.IsName("Idle")) stateStep++;
+            }
+            else {
+                Vector3 _dir = new Vector3(input.GetHMoveAxis(), .0f, input.GetVMoveAxis());
+                if (_dir.sqrMagnitude > 0.1f)
+                {
+                    animator.SetBool("Run", true);
+                    ChangeState(moveState);
+                }
             }
         }
 
         //移動相關-----------------------------------------------------
         public void Movement()
         {
+            if (stateStep == 0)
+            {
+                AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
+                if (aniInfo.IsName("Run")) stateStep++;
+            }
             Vector3 baseFWD, baseRight;
             baseFWD = mainCamera.transform.forward;
             baseRight = mainCamera.transform.right;
@@ -90,17 +114,20 @@ namespace BloodBond {
 
                 float difAngle = Vector3.Angle(selfTransform.forward, moveForward);
                 selfTransform.rotation = Quaternion.Lerp(selfTransform.rotation, Quaternion.LookRotation(moveForward), deltaTime * infoValue.RotateSpeed);
-                if (difAngle < 45.0f && !Physics.Linecast(selfTransform.position, nextPos, 1 << LayerMask.NameToLayer("Obstacle"))) {
+                if (difAngle < 45.0f && !Physics.Linecast(selfTransform.position, nextPos, 1 << LayerMask.NameToLayer("Obstacle")))
+                {
                     selfTransform.position = nextPos;
+                    
                 }
             }
-            else {
+            else
+            {
                 animator.SetBool("Run", false);
                 ChangeState(idleState);
             }
         }
         public bool MoveCheckDodge() {
-            if (input.GetDodgeInput() && !inDodgeCD) {
+            if (input.GetDodgeInput() && !inDodgeCD && stateStep > 0) {
                 animator.SetBool("Dodge", true);
                 ChangeState(dodgeState);
                 return true;
@@ -219,9 +246,9 @@ namespace BloodBond {
             }
             else return false;
         }
-        public bool CheckNormalComboAttackInput(string state)
+        public bool CheckNormalComboAttackInput()
         {
-            if (input.GetNormalComboATK() && animator.GetCurrentAnimatorStateInfo(0).IsName(state))
+            if (input.GetNormalComboATK() && stateStep > 0)//animator.GetCurrentAnimatorStateInfo(0).IsName(state)
             {
                 animator.SetBool("NormalComboATK", true);
                 ChangeState(normalComboAtkState);
@@ -267,14 +294,67 @@ namespace BloodBond {
             }
         }
 
-
+        public bool CheckDashInput() {
+            return input.GetDashInput();
+        }
         public void Dash()
         {
-
+            AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
+            if (stateStep == 0)
+            {
+                if (aniInfo.IsName("PreDash")) stateStep++;
+            }
+            else {
+                if (!CheckDashInput()) {
+                    
+                    if (!GetMoveInput())
+                    {
+                        animator.SetBool("Dash", false);
+                        ChangeState(idleState);
+                    }
+                    else { 
+                        
+                    }
+                }
+            }
         }
 
-        public bool CheckHurt() {
+        public bool CheckGetHurt() {
+            if (invincible) return false;
+            Vector3 center = hurtAreaCollider.center;
+            Vector3 point2 = selfTransform.position + center.x * selfTransform.right + center.z * selfTransform.forward;
+            Vector3 point1 = point2 + new Vector3(0, hurtAreaCollider.height, 0);
+            Debug.DrawLine(point1, point2, Color.red);
+            Collider[] cols =  Physics.OverlapCapsule(point1, point2, hurtAreaCollider.radius, infoValue.HurtAreaLayer);
+            if (cols != null && cols.Length > 0) {
+                ChangeState(hurtState);
+                animator.SetBool("Hurt", true);
+                return true;
+            }
+                
             return false;
+        }
+        public void InHurt() {
+            AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
+            if (stateStep == 0)
+            {
+                if (aniInfo.IsName("Hurt")) stateStep++;
+            }
+            else {
+                if (aniInfo.normalizedTime > 0.7f) {
+                    animator.SetBool("Hurt", false);
+                    ChangeState(idleState);
+                    invincible = true;
+                }
+            }
+        }
+
+        void CountInvincibleTime() {
+            invincibleTime += deltaTime;
+            if (invincibleTime > 0.7f) {
+                invincible = false;
+                invincibleTime = .0f;
+            } 
         }
     }
 }

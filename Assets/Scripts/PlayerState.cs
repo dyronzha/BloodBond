@@ -24,8 +24,8 @@ namespace BloodBond {
         }
         public override void Update()
         {
-            if (player.CheckHurt()) return;
-            if (player.CheckNormalComboAttackInput("Idle")) return;
+            if (player.CheckGetHurt()) return;
+            if (player.CheckNormalComboAttackInput() || player.CheckDashInput()) return;
             player.IdleCheckMove();
         }
     }
@@ -40,11 +40,13 @@ namespace BloodBond {
         public override void Update()
         {
             Debug.Log("run");
-            if (player.MoveCheckDodge() || player.CheckHurt() || player.CheckNormalComboAttackInput("Run")) {
+            if (player.CheckGetHurt() || player.MoveCheckDodge() || player.CheckNormalComboAttackInput() || player.CheckDashInput())
+            {
                 player.SetAnimatorBool("Run", false);
                 return;
-            } 
+            }
             player.Movement();
+
         }
     }
 
@@ -70,6 +72,11 @@ namespace BloodBond {
         }
         public override void Update()
         {
+            if (player.CheckGetHurt())
+            {
+                player.SetAnimatorBool("Dash", false);
+                return;
+            }
             player.Dash();
         }
     }
@@ -84,7 +91,7 @@ namespace BloodBond {
         }
         public override void Update()
         {
-            if (player.CheckHurt() || player.AttackCheckDodge()) {
+            if (player.CheckGetHurt() || player.AttackCheckDodge()) {
                 _curCombo = 0;
                 player.SetAnimatorBool("NormalComboATK", false);
                 return;
@@ -99,6 +106,9 @@ namespace BloodBond {
         public HurtState(Player p) : base(p)
         {
 
+        }
+        public override void Update() {
+            player.InHurt();
         }
     }
 
