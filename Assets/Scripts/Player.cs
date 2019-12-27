@@ -18,6 +18,8 @@ namespace BloodBond {
         bool invincible = false;
         float invincibleTime = .0f;
 
+        bool showDashEffect = false;
+
         Camera mainCamera;
         Transform selfTransform;
         CapsuleCollider hurtAreaCollider;
@@ -304,17 +306,34 @@ namespace BloodBond {
             {
                 if (aniInfo.IsName("PreDash")) stateStep++;
             }
-            else {
-                if (!CheckDashInput()) {
-                    
-                    if (!GetMoveInput())
+            else if (stateStep == 1)
+            {
+                if (!GetMoveInput())
+                {
+                    if (!CheckDashInput())
                     {
                         animator.SetBool("Dash", false);
                         ChangeState(idleState);
                     }
-                    else { 
-                        
+                }
+                else
+                {
+                    if (!CheckDashInput())
+                    {
+                        selfTransform.position += moveForward * 5.0f;
+                        selfTransform.rotation = Quaternion.LookRotation(moveForward);
+                        animator.SetTrigger("DashOver");
+                        stateStep++;
                     }
+                }
+            }
+            else if(stateStep == 2) {
+                if (aniInfo.IsName("DashOver")) stateStep++;
+            }
+            else {
+                if (aniInfo.normalizedTime > 0.95f) {
+                    animator.SetBool("Dash", false);
+                    ChangeState(idleState);
                 }
             }
         }
