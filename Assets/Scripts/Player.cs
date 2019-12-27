@@ -19,6 +19,7 @@ namespace BloodBond {
         float invincibleTime = .0f;
 
         bool showDashEffect = false;
+        Transform dashOrientEffect;
 
         Camera mainCamera;
         Transform selfTransform;
@@ -47,6 +48,9 @@ namespace BloodBond {
             animator = GetComponent<Animator>();
             input = new InputSystem();
 
+            dashOrientEffect = transform.Find("DashOrientEffect");
+            dashOrientEffect.gameObject.SetActive(false);
+
             idleState = new IdleState(this);
             moveState = new MoveState(this);
             dodgeState = new DodgeState(this);
@@ -59,6 +63,7 @@ namespace BloodBond {
         // Update is called once per frame
         void Update() {
             deltaTime = Time.deltaTime;
+
             curState.Update();
             if (inDodgeCD) CountDodgeCD();
             if (invincible) CountInvincibleTime();
@@ -230,8 +235,14 @@ namespace BloodBond {
                                   + new Vector3(lastDir.z * baseFWD.x, 0, lastDir.z * baseFWD.z)).normalized;
 
                 Debug.Log(moveForward + "   " + selfTransform.forward + "    " + Vector3.Angle(moveForward, selfTransform.forward) );
-                if (Vector3.Angle(moveForward, selfTransform.forward) < maxAngle) return true;
-                else if (moveForward.sqrMagnitude > .05f) moveForward = new Vector3(0, 0, 0);
+
+
+                float btwAngle = Vector3.Angle(moveForward, selfTransform.forward);
+
+                if (Mathf.Abs(btwAngle) > maxAngle) {
+                    moveForward = Quaternion.AngleAxis(btwAngle, Vector3.up)* selfTransform.forward;
+                }
+                return true;
             }
             return false;
         }
@@ -297,34 +308,62 @@ namespace BloodBond {
         }
 
         public bool CheckDashInput() {
-            return input.GetDashInput();
+            if (input.GetDashInput())
+            {
+                ChangeState(dashState);
+                animator.SetBool("Dash", true);
+                return true;
+            }
+            else return false;
         }
         public void Dash()
         {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateStep == 0)
             {
-                if (aniInfo.IsName("PreDash")) stateStep++;
+                if (aniInfo.IsName("PreDash")) {
+                    stateStep++;
+                    Time.timeScale = 0.2f;
+                } 
             }
             else if (stateStep == 1)
             {
-                if (!GetMoveInput())
+                if (!GetMoveInput()) //沒有方向輸入
                 {
-                    if (!CheckDashInput())
+                    if (!input.GetDashInput())
                     {
                         animator.SetBool("Dash", false);
                         ChangeState(idleState);
+                        dashOrientEffect.gameObject.SetActive(false);
+                        showDashEffect = false;
+                        Time.timeScale = 1.0f;
+                        return;
+                    }
+                    if (showDashEffect)
+                    {
+                        dashOrientEffect.gameObject.SetActive(false);
+                        showDashEffect = false;
                     }
                 }
                 else
                 {
-                    if (!CheckDashInput())
+                    if (!input.GetDashInput())
                     {
                         selfTransform.position += moveForward * 5.0f;
                         selfTransform.rotation = Quaternion.LookRotation(moveForward);
+                        dashOrientEffect.gameObject.SetActive(false);
                         animator.SetTrigger("DashOver");
+                        showDashEffect = false;
+                        
                         stateStep++;
+                        return;
                     }
+                    if (!showDashEffect)
+                    {
+                        dashOrientEffect.gameObject.SetActive(true);
+                        showDashEffect = true;
+                    }
+                    dashOrientEffect.rotation = Quaternion.LookRotation(moveForward);
                 }
             }
             else if(stateStep == 2) {
@@ -332,6 +371,7 @@ namespace BloodBond {
             }
             else {
                 if (aniInfo.normalizedTime > 0.95f) {
+                    Time.timeScale = 1.0f;
                     animator.SetBool("Dash", false);
                     ChangeState(idleState);
                 }
@@ -362,7 +402,16 @@ namespace BloodBond {
             else {
                 if (aniInfo.normalizedTime > 0.7f) {
                     animator.SetBool("Hurt", false);
-                    ChangeState(idleState);
+                    if (input.GetMove())
+                    {
+                        animator.SetBool("Run", true);
+                        ChangeState(moveState);
+                    }
+                    else
+                    {
+                        animator.SetBool("Run", false);
+                        ChangeState(idleState);
+                    }
                     invincible = true;
                 }
             }

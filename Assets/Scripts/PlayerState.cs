@@ -75,6 +75,7 @@ namespace BloodBond {
             if (player.CheckGetHurt())
             {
                 player.SetAnimatorBool("Dash", false);
+                Time.timeScale = 1.0f;
                 return;
             }
             player.Dash();
@@ -118,6 +119,7 @@ namespace BloodBond {
         {
 
         }
+
     }
 }
 
