@@ -48,7 +48,7 @@ MonoBehaviour:
     m_Value: 0
   sunSize:
     m_OverrideState: 1
-    m_Value: 0.04
+    m_Value: 0.019
     min: 0
     max: 1
   sunSizeConvergence:
@@ -63,7 +63,7 @@ MonoBehaviour:
     max: 5
   skyTint:
     m_OverrideState: 1
-    m_Value: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    m_Value: {r: 0.26415092, g: 0.25293696, b: 0.25293696, a: 1}
     hdr: 0
     showAlpha: 1
     showEyeDropper: 1
