@@ -29,10 +29,14 @@ namespace BloodBond {
         }
 
         public bool GetDodgeInput() {
-            if (playerInput.GetAxis("Dodge") > 0.75f) return true;
+            if (playerInput.GetButtonDown("Dodge")) return true;
             else return false;
         }
-
+        public bool GetDashInput()
+        {
+            if (playerInput.GetAxis("Dash") > 0.3f) return true;
+            else return false;
+        }
         public bool GetNormalComboATK() {
             return playerInput.GetButtonDown("NormalComboATK");
         }

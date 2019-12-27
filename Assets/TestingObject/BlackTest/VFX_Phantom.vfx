@@ -21,7 +21,7 @@ MonoBehaviour:
     x: -50
     y: -437
     width: 770
-    height: 2166
+    height: 2167
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -835,25 +835,25 @@ VisualEffectResource:
         - m_ExpressionIndex: 14
           m_Value:
             serializedVersion: 2
-            key0: {r: 0, g: 0.63498926, b: 1, a: 1}
-            key1: {r: 0.08223567, g: 0.3772548, b: 0.8301887, a: 1}
-            key2: {r: 0.2921858, g: 0.77878755, b: 0.9245283, a: 0}
-            key3: {r: 0.16958882, g: 0.9716981, b: 0.8711885, a: 0}
-            key4: {r: 0, g: 1, b: 0.8446779, a: 0}
+            key0: {r: 0, g: 0, b: 0, a: 1}
+            key1: {r: 0.4, g: 0, b: 0, a: 0.8}
+            key2: {r: 0.69, g: 0.1242, b: 0.14305998, a: 0.8862745}
+            key3: {r: 0.9372549, g: 0.078431375, b: 0.078431375, a: 0}
+            key4: {r: 0.04264706, g: 0.0024509805, b: 0.0024509805, a: 0}
             key5: {r: 0, g: 0, b: 0, a: 0}
             key6: {r: 0, g: 0, b: 0, a: 0}
             key7: {r: 0, g: 0, b: 0, a: 0}
             ctime0: 0
-            ctime1: 10987
-            ctime2: 25636
-            ctime3: 42270
+            ctime1: 19082
+            ctime2: 37394
+            ctime3: 50886
             ctime4: 65535
             ctime5: 0
             ctime6: 0
             ctime7: 0
             atime0: 0
-            atime1: 65535
-            atime2: 0
+            atime1: 52428
+            atime2: 65535
             atime3: 0
             atime4: 0
             atime5: 0
@@ -861,7 +861,7 @@ VisualEffectResource:
             atime7: 0
             m_Mode: 0
             m_NumColorKeys: 5
-            m_NumAlphaKeys: 2
+            m_NumAlphaKeys: 3
       m_NamedObject:
         m_Array:
         - m_ExpressionIndex: 25
@@ -1991,7 +1991,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Gradient, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"colorKeys":[{"color":{"r":0.0,"g":0.6349892616271973,"b":1.0,"a":1.0},"time":0.0},{"color":{"r":0.0822356715798378,"g":0.37725481390953066,"b":0.8301886916160584,"a":1.0},"time":0.16765087842941285},{"color":{"r":0.29218581318855288,"g":0.7787875533103943,"b":0.9245283007621765,"a":1.0},"time":0.39118027687072756},{"color":{"r":0.1695888191461563,"g":0.9716981053352356,"b":0.8711885213851929,"a":1.0},"time":0.6449988484382629},{"color":{"r":0.0,"g":1.0,"b":0.8446779251098633,"a":1.0},"time":1.0}],"alphaKeys":[{"alpha":1.0,"time":0.0},{"alpha":1.0,"time":1.0}],"gradientMode":0}'
+      m_SerializableObject: '{"colorKeys":[{"color":{"r":0.0,"g":0.0,"b":0.0,"a":1.0},"time":0.0},{"color":{"r":0.4000000059604645,"g":0.0,"b":0.0,"a":1.0},"time":0.29117265343666079},{"color":{"r":0.6899999976158142,"g":0.1242000013589859,"b":0.14305998384952546,"a":1.0},"time":0.5705958604812622},{"color":{"r":0.9372549057006836,"g":0.0784313753247261,"b":0.0784313753247261,"a":1.0},"time":0.7764706015586853},{"color":{"r":0.04264706000685692,"g":0.0024509804788976909,"b":0.0024509804788976909,"a":1.0},"time":1.0}],"alphaKeys":[{"alpha":1.0,"time":0.0},{"alpha":0.800000011920929,"time":0.800000011920929},{"alpha":0.886274516582489,"time":1.0}],"gradientMode":0}'
     m_Space: 2147483647
   m_Property:
     name: gradient

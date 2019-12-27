@@ -46,7 +46,13 @@ VisualEffect:
   m_ResetSeedOnPlay: 1
   m_PropertySheet:
     m_Float:
-      m_Array: []
+      m_Array:
+      - m_Value: 12
+        m_Name: LifeTime_Min
+        m_Overridden: 1
+      - m_Value: 16
+        m_Name: LifeTime_Max
+        m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
@@ -120,4 +126,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03d323d8d14b4c94193a8186c87265e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Emission_State: 1
+  CheckOnce: 1
