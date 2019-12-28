@@ -234,13 +234,14 @@ namespace BloodBond {
                 moveForward = (new Vector3(lastDir.x * baseRight.x, 0, lastDir.x * baseRight.z)
                                   + new Vector3(lastDir.z * baseFWD.x, 0, lastDir.z * baseFWD.z)).normalized;
 
-                Debug.Log(moveForward + "   " + selfTransform.forward + "    " + Vector3.Angle(moveForward, selfTransform.forward) );
 
 
-                float btwAngle = Vector3.Angle(moveForward, selfTransform.forward);
+                Debug.Log(moveForward);
+                float btwAngle = Vector3.SignedAngle(selfTransform.forward, moveForward, Vector3.up);
 
                 if (Mathf.Abs(btwAngle) > maxAngle) {
-                    moveForward = Quaternion.AngleAxis(btwAngle, Vector3.up)* selfTransform.forward;
+                    moveForward = Quaternion.AngleAxis(maxAngle * Mathf.Sign(btwAngle), Vector3.up)* selfTransform.forward;
+                    Debug.Log(moveForward + "   " + selfTransform.forward + "    " + btwAngle);
                 }
                 return true;
             }
@@ -280,7 +281,7 @@ namespace BloodBond {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateStep == 0) {
                 if (aniInfo.IsName("Combo" + comboCount.ToString())) {
-                    if (comboCount > 0 && moveForward.sqrMagnitude > 0.1f)  //接技的方向
+                    if (comboCount > 0 && moveForward.sqrMagnitude > 0.1f)  //接技的方向，第二下開始
                     {
                         selfTransform.rotation = Quaternion.LookRotation(moveForward);
                     }
