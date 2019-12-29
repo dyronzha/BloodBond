@@ -23,18 +23,21 @@ namespace BloodBond {
 
         Camera mainCamera;
         Transform selfTransform;
+        public Transform SelfTransform {
+            get { return selfTransform; }
+        }
         CapsuleCollider hurtAreaCollider;
         Animator animator;
 
         [SerializeField]
         PlayerValue infoValue;
         PlayerState curState;
-        IdleState idleState;
-        MoveState moveState;
-        DodgeState dodgeState;
-        DashState dashState;
-        NormalComboATKState normalComboAtkState;
-        HurtState hurtState;
+        PlayerIdleState idleState;
+        PlayerMoveState moveState;
+        PlayerDodgeState dodgeState;
+        PlayerDashState dashState;
+        PlayerNormalComboATKState normalComboAtkState;
+        PlayerHurtState hurtState;
         InputSystem input;
 
 
@@ -51,12 +54,12 @@ namespace BloodBond {
             dashOrientEffect = transform.Find("DashOrientEffect");
             dashOrientEffect.gameObject.SetActive(false);
 
-            idleState = new IdleState(this);
-            moveState = new MoveState(this);
-            dodgeState = new DodgeState(this);
-            dashState = new DashState(this);
-            normalComboAtkState = new NormalComboATKState(this, 2);
-            hurtState = new HurtState(this);
+            idleState = new PlayerIdleState(this);
+            moveState = new PlayerMoveState(this);
+            dodgeState = new PlayerDodgeState(this);
+            dashState = new PlayerDashState(this);
+            normalComboAtkState = new PlayerNormalComboATKState(this, 2);
+            hurtState = new PlayerHurtState(this);
             curState = idleState;
         }
 

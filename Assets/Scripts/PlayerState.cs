@@ -16,9 +16,9 @@ namespace BloodBond {
         }
     }
 
-    public class IdleState : PlayerState
+    public class PlayerIdleState : PlayerState
     {
-        public IdleState(Player p) : base(p)
+        public PlayerIdleState(Player p) : base(p)
         {
 
         }
@@ -30,10 +30,10 @@ namespace BloodBond {
         }
     }
 
-    public class MoveState : PlayerState
+    public class PlayerMoveState : PlayerState
     {
 
-        public MoveState(Player p) : base(p)
+        public PlayerMoveState(Player p) : base(p)
         {
 
         }
@@ -50,9 +50,9 @@ namespace BloodBond {
         }
     }
 
-    public class DodgeState : PlayerState
+    public class PlayerDodgeState : PlayerState
     {
-        public DodgeState(Player p) : base(p)
+        public PlayerDodgeState(Player p) : base(p)
         {
             
         }
@@ -64,9 +64,9 @@ namespace BloodBond {
         
     }
 
-    public class DashState : PlayerState
+    public class PlayerDashState : PlayerState
     {
-        public DashState(Player p) : base(p)
+        public PlayerDashState(Player p) : base(p)
         {
             
         }
@@ -82,11 +82,11 @@ namespace BloodBond {
         }
     }
 
-    public class NormalComboATKState : PlayerState
+    public class PlayerNormalComboATKState : PlayerState
     {
         int _curCombo = 0;
         int _maxCombo;
-        public NormalComboATKState(Player p, int maxCombo) : base(p)
+        public PlayerNormalComboATKState(Player p, int maxCombo) : base(p)
         {
             _maxCombo = maxCombo;
         }
@@ -102,9 +102,9 @@ namespace BloodBond {
         }
     }
 
-    public class HurtState : PlayerState
+    public class PlayerHurtState : PlayerState
     {
-        public HurtState(Player p) : base(p)
+        public PlayerHurtState(Player p) : base(p)
         {
 
         }
@@ -113,9 +113,9 @@ namespace BloodBond {
         }
     }
 
-    public class DieState : PlayerState
+    public class PlayerDieState : PlayerState
     {
-        public DieState(Player p) : base(p)
+        public PlayerDieState(Player p) : base(p)
         {
 
         }

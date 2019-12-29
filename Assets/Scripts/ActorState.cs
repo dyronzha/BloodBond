@@ -16,10 +16,5 @@ namespace BloodBond {
     }
 
 
-
-    public class EnemyState : ActorState { 
-        
-    }
-
 }
 
