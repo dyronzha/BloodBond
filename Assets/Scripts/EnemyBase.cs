@@ -16,6 +16,8 @@ namespace BloodBond {
 
         int lookARoundNum = 0;
 
+        bool canHurt = true;
+
         Vector3 selfPos;
         Vector3 moveFwdDir = new Vector3(0, 0, 0);
         Vector3 lookDir, lookPos;
@@ -277,8 +279,15 @@ namespace BloodBond {
             if (cols != null && cols.Length > 0)
             {
                 hp -= 10;
-                ChangeState(hurtState);
-                animator.SetBool("Hurt", true);
+                if (hp > 0)
+                {
+                    ChangeState(hurtState);
+                    canHurt = false;
+                    animator.SetBool("Hurt", true);
+                }
+                else {
+                    animator.SetBool("Dead", true);
+                }
                 return true;
             }
 
@@ -293,10 +302,27 @@ namespace BloodBond {
             }
             else
             {
-                if (aniInfo.normalizedTime > 0.7f)
+
+                if (!canHurt)
+                {
+                    stateTime += deltaTime;
+                    if (stateTime > 0.2f)
+                    {
+                        canHurt = true;
+                        stateTime = .0f;
+                    }
+                }
+                else if (CheckGetHurt() && hp <= 0)
                 {
                     animator.SetBool("Hurt", false);
-                    
+                    animator.SetBool("Dead", true);
+                    return;
+                }
+                if (aniInfo.normalizedTime > 0.85f)
+                {
+                    animator.SetBool("Hurt", false);
+                    ChangeState(patrolState);
+                    canHurt = true;
                 }
             }
         }
