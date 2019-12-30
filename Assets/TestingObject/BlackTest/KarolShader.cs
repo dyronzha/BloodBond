@@ -5,8 +5,9 @@ using UnityEngine;
 public class KarolShader : MonoBehaviour{
 
     public Material[] ShaderType;
-    public SkinnedMeshRenderer[] MeshType_1;
-    public SkinnedMeshRenderer[] MeshType_2;
+    public SkinnedMeshRenderer[] Mesh_Head;
+    public SkinnedMeshRenderer[] Mesh_Body;
+    public SkinnedMeshRenderer[] Mesh_Foot;
     int ShaderMode = 0;
 
     //瞬移
@@ -43,18 +44,21 @@ public class KarolShader : MonoBehaviour{
     }
 
     public void ChangeMaterial(int Type) {
-        if (Type == 2) {
-            DissolveValue = 1.0f;
-            ShaderMode = 1;
+
+        switch (Type) {
+            case 3:
+                DissolveValue = 1.0f;
+                ShaderMode = 1;
+                break;
+            case 5:
+                DodgeGlowValue = 1.0f;
+                ShaderMode = 2;
+                break;
         }
 
-        if (Type == 4) {
-            DodgeGlowValue = 1.0f;
-            ShaderMode = 2;
-        }
-
-        foreach (SkinnedMeshRenderer _skin in MeshType_1) {_skin.material = ShaderType[Type];}
-        foreach (SkinnedMeshRenderer _skin in MeshType_2) { _skin.material = ShaderType[Type+1]; }
+        foreach (SkinnedMeshRenderer _skin in Mesh_Head) {_skin.material = ShaderType[Type];}
+        foreach (SkinnedMeshRenderer _skin in Mesh_Body) { _skin.material = ShaderType[Type+1]; }
+        foreach (SkinnedMeshRenderer _skin in Mesh_Foot) { _skin.material = ShaderType[Type + 2]; }
     }
 
 

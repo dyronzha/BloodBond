@@ -45,7 +45,7 @@ public class MoveTest : MonoBehaviour{
             VFX_Teleport.SetInt("Number_of_Particles", 1000000);
             VFX_Teleport.SetFloat("AttractDrag", 0.0f);
             transform.eulerAngles = new Vector3(0.0f, 180.0f, 0.0f);
-            GetComponent<KarolShader>().ChangeMaterial(2);
+            GetComponent<KarolShader>().ChangeMaterial(3);
             GetComponent<Animator>().Play("DashForward_Mod");
         }
 
@@ -56,7 +56,7 @@ public class MoveTest : MonoBehaviour{
             VFX_Teleport.SetInt("Number_of_Particles", 1000000);
             VFX_Teleport.SetFloat("AttractDrag", 0.0f);
             transform.eulerAngles = new Vector3(0.0f, 90.0f, 0.0f);
-            GetComponent<KarolShader>().ChangeMaterial(2);
+            GetComponent<KarolShader>().ChangeMaterial(3);
             GetComponent<Animator>().Play("DashSide");
         }
 
@@ -67,7 +67,7 @@ public class MoveTest : MonoBehaviour{
             VFX_Teleport.SetInt("Number_of_Particles", 1000000);
             VFX_Teleport.SetFloat("AttractDrag", 0.0f);
             transform.eulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
-            GetComponent<KarolShader>().ChangeMaterial(2);
+            GetComponent<KarolShader>().ChangeMaterial(3);
             GetComponent<Animator>().Play("DashBackward");
         }
 
@@ -78,7 +78,7 @@ public class MoveTest : MonoBehaviour{
             VFX_Teleport.SetInt("Number_of_Particles", 1000000);
             VFX_Teleport.SetFloat("AttractDrag", 0.0f);
             transform.eulerAngles = new Vector3(0.0f, 270.0f, 0.0f);
-            GetComponent<KarolShader>().ChangeMaterial(2);
+            GetComponent<KarolShader>().ChangeMaterial(3);
             GetComponent<Animator>().Play("DashSide");
         }
 
@@ -97,7 +97,7 @@ public class MoveTest : MonoBehaviour{
             Dodge_Current = transform.position;
             Dodge_Target = transform.position + new Vector3(0.0f, 0.0f, 3.0f);
             PhantomDistance();
-            GetComponent<KarolShader>().ChangeMaterial(4);
+            GetComponent<KarolShader>().ChangeMaterial(5);
         }
 
         if (On_Dodging == true){
