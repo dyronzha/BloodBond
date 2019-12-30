@@ -68,6 +68,7 @@ public class PlayerValue : ActorValue
     }
 }
 
+[System.Serializable]
 public class EnemyValue : ActorValue
 {
     public EnemyValue(int hp, int damage, float moveSpeed, float rotateSpeed, LayerMask layer) : base(hp, damage, moveSpeed, rotateSpeed, layer)

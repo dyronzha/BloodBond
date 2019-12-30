@@ -18,6 +18,9 @@ namespace BloodBond {
         bool invincible = false;
         float invincibleTime = .0f;
 
+        bool showATKCollider = false;
+        public Collider attackCollider;
+
         bool showDashEffect = false;
         Transform dashOrientEffect;
 
@@ -124,7 +127,8 @@ namespace BloodBond {
 
                 float difAngle = Vector3.Angle(selfTransform.forward, moveForward);
                 selfTransform.rotation = Quaternion.Lerp(selfTransform.rotation, Quaternion.LookRotation(moveForward), deltaTime * infoValue.RotateSpeed);
-                if (difAngle < 45.0f && !Physics.Linecast(selfTransform.position, nextPos, 1 << LayerMask.NameToLayer("Obstacle")))
+                if (difAngle < 45.0f && !Physics.Linecast(selfTransform.position, nextPos + 5.0f * infoValue.MoveSpeed * deltaTime * moveForward, 
+                    1 << LayerMask.NameToLayer("Barrier")))
                 {
                     selfTransform.position = nextPos;
                     
@@ -177,7 +181,7 @@ namespace BloodBond {
                     dodgeOffset = Mathf.Clamp(dodgeOffset - deltaTime * 5.0f, .0f, 1.0f);
                     Debug.Log("dodge offset  " + dodgeOffset);
                     Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * moveForward;
-                    if (!Physics.Linecast(selfTransform.position, nextPos, 1 << LayerMask.NameToLayer("Obstacle")))
+                    if (!Physics.Linecast(selfTransform.position, nextPos + dSpeed * deltaTime * moveForward, 1 << LayerMask.NameToLayer("Barrier")))
                     {
                         selfTransform.position = nextPos;
                     }
@@ -287,7 +291,9 @@ namespace BloodBond {
                     if (comboCount > 0 && moveForward.sqrMagnitude > 0.1f)  //接技的方向，第二下開始
                     {
                         selfTransform.rotation = Quaternion.LookRotation(moveForward);
+                        
                     }
+                    animator.applyRootMotion = Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
                     stateStep++;
                 }
             }
@@ -309,6 +315,13 @@ namespace BloodBond {
                     } 
                 }
             }
+        }
+
+        public void EnableATKCollider() {
+            attackCollider.enabled = true;
+        }
+        public void CloseATKCollider() {
+            attackCollider.enabled = false;
         }
 
         public bool CheckDashInput() {

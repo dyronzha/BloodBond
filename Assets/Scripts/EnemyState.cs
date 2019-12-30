@@ -23,7 +23,8 @@ namespace BloodBond {
         }
         public override void Update()
         {
-
+            //if (!enemyBase.FindPlayer())enemyBase.Idle();
+            enemyBase.Idle();
         }
     }
     public class EnemyRambleState : EnemyBaseState
@@ -45,7 +46,9 @@ namespace BloodBond {
         }
         public override void Update()
         {
-            
+            enemyBase.Patroling();
+            //if (enemyBase.FindPlayer()) enemyBase.SetAniBool("Patrol", false);
+            //else enemyBase.Patroling();
         }
 
     }
@@ -57,7 +60,9 @@ namespace BloodBond {
         }
         public override void Update()
         {
-
+            enemyBase.LookAround();
+            //if (enemyBase.FindPlayer()) enemyBase.SetAniBool("Look", false);
+            //else enemyBase.LookAround();
         }
 
     }
@@ -69,7 +74,7 @@ namespace BloodBond {
         }
         public override void Update()
         {
-
+            enemyBase.Chasing();   
         }
     }
     public class EnemyAttackState : EnemyBaseState

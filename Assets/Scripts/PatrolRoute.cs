@@ -20,9 +20,7 @@ namespace BloodBond {
         public PathFinder.Path path;
         public PathFinder.Path reversePath;
 
-        public Vector3 StartPosition{
-            get { return points[0]; }
-        }
+        public Vector3 StartPosition;
 
         public enum RouteType
         {
@@ -34,6 +32,7 @@ namespace BloodBond {
 
         [SerializeField]
         private int lookRoundNum;
+        public int LookRoundNum { get { return lookRoundNum; } }
 
 
         public void Init() {
@@ -42,16 +41,24 @@ namespace BloodBond {
             {
                 points[i] = transform.GetChild(i).position;
             }
-            
+            StartPosition = points[0];
+
             if (routeType == RouteType.Cycle)
             {
                 Vector3[] p = new Vector3[points.Length + 1];
                 points.CopyTo(p, 0);
                 p[p.Length - 1] = points[0];
                 path = new PathFinder.Path(p, 1.0f);
+                foreach (Vector3 pp in p) {
+                    Debug.Log(pp);
+                }
             }
             else if (routeType == RouteType.Pingpong)
             {
+                foreach (Vector3 pp in points)
+                {
+                    Debug.Log(pp);
+                }
                 path = new PathFinder.Path(points, 1.0f);
                 System.Array.Reverse(points);
                 reversePath = new PathFinder.Path(points, 1.0f);

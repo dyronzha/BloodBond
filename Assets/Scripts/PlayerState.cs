@@ -39,7 +39,6 @@ namespace BloodBond {
         }
         public override void Update()
         {
-            Debug.Log("run");
             if (player.CheckGetHurt() || player.MoveCheckDodge() || player.CheckNormalComboAttackInput() || player.CheckDashInput())
             {
                 player.SetAnimatorBool("Run", false);

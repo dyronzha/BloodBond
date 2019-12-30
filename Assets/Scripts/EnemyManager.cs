@@ -7,6 +7,7 @@ namespace BloodBond {
     {
         float deltaTime;
         Player player;
+        public Player Player { get { return player; } }
 
         List<EnemyBase> freeHunterList = new List<EnemyBase>();
         List<EnemyBase> usedHunterList = new List<EnemyBase>();
@@ -31,6 +32,7 @@ namespace BloodBond {
 
             patrolManager = GameObject.Find("PatrolManager").GetComponent<PatrolManager>();
 
+            player = GameObject.Find("Karol").GetComponent<Player>();
         }
         void Start()
         {

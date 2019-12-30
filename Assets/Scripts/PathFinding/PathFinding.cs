@@ -28,84 +28,89 @@ namespace PathFinder {
             //Debug.Log("coroutine  findpath");
             Vector3[] waypoints = new Vector3[0];
             bool pathSuccess = false;
-
             Node startNode = grid.NodeFromWorldPoint(startPos);
             Node targetNode = grid.NodeFromWorldPoint(targetPos);
-            startNode.parent = startNode;
 
-            bool hasTarget = false;
-            if (!targetNode.walkable)
-            {
-                foreach (Node neighbour in grid.GetNeighbours(targetNode))
+            if (grid.CheckInGrid(targetPos)) {
+
+                startNode.parent = startNode;
+
+                bool hasTarget = false;
+                if (!targetNode.walkable)
                 {
-                    if (neighbour.walkable)
+                    foreach (Node neighbour in grid.GetNeighbours(targetNode))
                     {
-                        targetNode = neighbour;
-                        hasTarget = true;
-                        break;
+                        if (neighbour.walkable)
+                        {
+                            targetNode = neighbour;
+                            hasTarget = true;
+                            break;
+                        }
                     }
                 }
-            }
-            else hasTarget = true;
+                else hasTarget = true;
 
-            if (hasTarget)
-            {
-                Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
-                HashSet<Node> closedSet = new HashSet<Node>();
-                openSet.Add(startNode);
-
-                int loopCount = 0;
-                while (openSet.Count > 0)
+                if (hasTarget)
                 {
-                    loopCount++;
-                    if (loopCount > 10000)
-                    {
-                        //Debug.Break();
-                        Debug.Log("find path   " + loopCount);
-                        break;
-                    }
-                    Node currentNode = openSet.RemoveFirst();
-                    closedSet.Add(currentNode);
-                    //Debug.Log(currentNode.gridX + "   " + currentNode.gridY);
+                    Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
+                    HashSet<Node> closedSet = new HashSet<Node>();
+                    openSet.Add(startNode);
 
-                    if (currentNode == targetNode)
+                    int loopCount = 0;
+                    while (openSet.Count > 0)
                     {
-                        pathSuccess = true;
-                        break;
-                    }
-
-                    foreach (Node neighbour in grid.GetNeighbours(currentNode))
-                    {
-                        //Debug.Log("neighbor" + neighbour.gridX + "   " + neighbour.gridY);
-                        if (!neighbour.walkable || closedSet.Contains(neighbour))
+                        loopCount++;
+                        if (loopCount > 10000)
                         {
-                            //Debug.Log("continue  (" + neighbour.gridX + "," + neighbour.gridY + ")");
+                            //Debug.Break();
+                            Debug.Log("find path   " + loopCount);
+                            break;
+                        }
+                        Node currentNode = openSet.RemoveFirst();
+                        closedSet.Add(currentNode);
+                        //Debug.Log(currentNode.gridX + "   " + currentNode.gridY);
 
-                            if (neighbour == targetNode) //!neighbour.walkable && 
+                        if (currentNode == targetNode)
+                        {
+                            pathSuccess = true;
+                            break;
+                        }
+
+                        foreach (Node neighbour in grid.GetNeighbours(currentNode))
+                        {
+                            //Debug.Log("neighbor" + neighbour.gridX + "   " + neighbour.gridY);
+                            if (!neighbour.walkable || closedSet.Contains(neighbour))
                             {
-                                pathSuccess = true;
-                                targetNode = currentNode;
-                                break;
+                                //Debug.Log("continue  (" + neighbour.gridX + "," + neighbour.gridY + ")");
+
+                                if (neighbour == targetNode) //!neighbour.walkable && 
+                                {
+                                    pathSuccess = true;
+                                    targetNode = currentNode;
+                                    break;
+                                }
+                                continue;
                             }
-                            continue;
-                        }
 
-                        int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) + neighbour.movementPenalty + neighbour.extentPenalty;
-                        if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
-                        {
-                            neighbour.gCost = newMovementCostToNeighbour;
-                            neighbour.hCost = GetDistance(neighbour, targetNode);
-                            neighbour.parent = currentNode;
+                            int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) + neighbour.movementPenalty + neighbour.extentPenalty;
+                            if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                            {
+                                neighbour.gCost = newMovementCostToNeighbour;
+                                neighbour.hCost = GetDistance(neighbour, targetNode);
+                                neighbour.parent = currentNode;
 
-                            if (!openSet.Contains(neighbour))
-                                openSet.Add(neighbour);
-                            else
-                                openSet.UpdateItem(neighbour);
+                                if (!openSet.Contains(neighbour))
+                                    openSet.Add(neighbour);
+                                else
+                                    openSet.UpdateItem(neighbour);
+                            }
                         }
                     }
+                    yield return null;
                 }
-                yield return null;
             }
+
+           
 
             if (pathSuccess)
             {
