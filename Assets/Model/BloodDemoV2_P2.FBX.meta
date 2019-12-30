@@ -3,7 +3,222 @@ guid: 754712536a4df9b4dbd664af92b7dbd2
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 01 - Default
+    second: {fileID: 2100000, guid: dd1a6c99cb4bb7e4dbbcde4e29799835, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 07 - Default
+    second: {fileID: 2100000, guid: 9aa4cdb0278fbf74b9ee9b9e77447ea1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 'Material #36'
+    second: {fileID: 2100000, guid: c6ed7e87b79ec0f4da52ec233cfc6c29, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 'Material #37'
+    second: {fileID: 2100000, guid: bae4f5991533b254280f932febb06c42, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 'Material #38'
+    second: {fileID: 2100000, guid: d559e216a2cfe9242a72e0fb66324f92, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 'Material #39'
+    second: {fileID: 2100000, guid: 732296955bb94a3489680bf017166195, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: block
+    second: {fileID: 2100000, guid: b018ec824a5ae8a4883c97d753d06a2b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blue
+    second: {fileID: 2100000, guid: 80bb14c34b898a7409e61f0e1d3dccb6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: book
+    second: {fileID: 2100000, guid: 739051473026914488d054954e683e10, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: book14
+    second: {fileID: 2100000, guid: ec84c04ef0e61e5469ed713166049c24, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: brown
+    second: {fileID: 2100000, guid: d465d68b99fff424c9da0348d24d5d45, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: deep_iron
+    second: {fileID: 2100000, guid: a799fb1e701f2a84f8b0e1525031fb5a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: deep_iron4
+    second: {fileID: 2100000, guid: 94be798bd599d1749b06088b5e56a63f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: gIron
+    second: {fileID: 2100000, guid: 84b9f51ede3faf94f8af47f342d30b25, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glass
+    second: {fileID: 2100000, guid: 331273268f888864a8e9791aba917bc4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: iron
+    second: {fileID: 2100000, guid: 3bb8dc95875f49c49800c1cf267af7c9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert1
+    second: {fileID: 2100000, guid: f21fd580dfccb3c4f861f7eacdd9f61e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert10
+    second: {fileID: 2100000, guid: 864ec1b9534d0ca449203998e1553472, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert17
+    second: {fileID: 2100000, guid: 6deee3dcfc4b8f341ae7e7d863fd8a2c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert18
+    second: {fileID: 2100000, guid: 6d98adb35c3ec4d4d8e666c507f25c84, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert2
+    second: {fileID: 2100000, guid: bcdff589a4f962b4d81f31aa51ac7cef, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert4
+    second: {fileID: 2100000, guid: 2caaa36f938167f488f2d9d878e73425, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert6
+    second: {fileID: 2100000, guid: 374950d5b948af6419391e69e7e38193, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert7
+    second: {fileID: 2100000, guid: 808eedd95664e4142ab134d4c981b777, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: white
+    second: {fileID: 2100000, guid: d425cad4c673a4e4c93d282f4b5aa5ba, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 5944
+    second: {fileID: 2800000, guid: f9d873e5da9bd2a44b3c6ccea1b70cd3, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: "5ab07f6eN88425ce7\u62F7\u8C9D"
+    second: {fileID: 2800000, guid: ed2d1a273c2cd9a478f8fb14e72c729c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Aluminum-Metal-Sheet-Texture
+    second: {fileID: 2800000, guid: 3c191d1dc086a834390f45cc57a204f5, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Roof02
+    second: {fileID: 2800000, guid: b8cda25163c5d854eab8a8c8d32f710d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: case
+    second: {fileID: 2800000, guid: 3f20eca3ad67eff429b1c56aa24e72e8, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: concrete-boardmarked
+    second: {fileID: 2800000, guid: 141bddc4703573b43b9bcf200a9bfa02, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: cupboard
+    second: {fileID: 2800000, guid: 153b530b03727824e9608a4249b2d9e0, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: gray_steel
+    second: {fileID: 2800000, guid: 8b24bfb9a27663d46b8b339294f9263b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: iron(blackred)
+    second: {fileID: 2800000, guid: 9c1040a4aebd1b347a481c1dca45366e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: iron-orange
+    second: {fileID: 2800000, guid: c01b6778b0aeb9949babaa89b4affcbf, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: iron-rusty
+    second: {fileID: 2800000, guid: 3507709eee160d44ea431f4ee0acf509, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: iron-white
+    second: {fileID: 2800000, guid: 6f2aa4ece64e70549b4f35ef0d0469ce, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: passage-orange
+    second: {fileID: 2800000, guid: 059a9ea6fa7809041be60e6c8421e851, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: seamless_metal_texture_smooth_by_hhh316_d2pqmow-fullview
+    second: {fileID: 2800000, guid: d77807704e3f82d429cc8db9bba54dc9, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: train_gIron_AlbedoTransparency
+    second: {fileID: 2800000, guid: f82d832140692b8488a902971d4bb603, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: train_glass_AlbedoTransparency
+    second: {fileID: 2800000, guid: 675dbdeacbfd38f4bbbe62b24f710453, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: train_lambert1_AlbedoTransparency
+    second: {fileID: 2800000, guid: 37ecbeaad1dc123449503167275f929d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: train_lambert1_Normal
+    second: {fileID: 2800000, guid: 6c9a9e013d0d44944affe3b0703212a2, type: 3}
   materials:
     importMaterials: 1
     materialName: 0
