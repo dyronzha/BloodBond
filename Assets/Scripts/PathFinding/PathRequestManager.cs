@@ -16,6 +16,8 @@ namespace PathFinder
         static PathRequestManager instance;
         PathFinding pathFinding;
 
+        PathFinding[] pathFindings;
+
         bool isProcessingPath;
 
         void Awake()
