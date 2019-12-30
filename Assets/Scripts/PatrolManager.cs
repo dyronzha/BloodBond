@@ -34,6 +34,7 @@ namespace BloodBond {
                 for (int j = 0; j < area.childCount; j++)
                 {
                     PatrolRoute route = area.GetChild(j).GetComponent<PatrolRoute>();
+                    route.Init();
                     areaPatrolRoutes[i].patrolRoutes.Add(route);
                     route.gameObject.SetActive(false);
                 }
@@ -45,7 +46,7 @@ namespace BloodBond {
         {
             for (int i = 0; i < areaPatrolRoutes.Length; i++) {
                 for (int j = 0; j < areaPatrolRoutes[i].patrolRoutes.Count; j++) {
-                    enemyManager.SpawnEnemyWithRoute(areaPatrolRoutes[i].patrolRoutes[i].StartPosition, areaPatrolRoutes[i].patrolRoutes[j], areaPatrolRoutes[i].pathFinding);
+                    enemyManager.SpawnEnemyWithRoute(areaPatrolRoutes[i].patrolRoutes[j].StartPosition, areaPatrolRoutes[i].patrolRoutes[j], areaPatrolRoutes[i].pathFinding);
                 }
                 
             }

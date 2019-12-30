@@ -29,10 +29,11 @@ namespace BloodBond {
         [SerializeField]
         private int lookRoundNum;
 
-        private void Awake()
-        {
+
+        public void Init() {
             points = new Vector3[transform.childCount];
-            for (int i = 0; i < points.Length; i++) {
+            for (int i = 0; i < points.Length; i++)
+            {
                 points[i] = transform.GetChild(i).position;
             }
             path = new PathFinder.Path(points, 1.0f);

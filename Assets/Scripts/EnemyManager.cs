@@ -15,11 +15,11 @@ namespace BloodBond {
         // Start is called before the first frame update
         private void Awake()
         {
-            Transform freelist = transform.Find("FreeList");
-            for (int i = 0; i < freelist.childCount; i++)
+            for (int i = 0; i < transform.childCount; i++)
             {
-                EnemyBase enemy = new EnemyBase(freelist.GetChild(i));
+                EnemyBase enemy = new EnemyBase(transform.GetChild(i));
                 freeHunterList.Add(enemy);
+                enemy.transform.gameObject.SetActive(false);
             }
 
             patrolManager = GameObject.Find("PatrolManager").GetComponent<PatrolManager>();
@@ -39,6 +39,8 @@ namespace BloodBond {
         public EnemyBase SpawnEnemyWithRoute(Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding)
         {
             EnemyBase enemy = freeHunterList[0];
+            enemy.transform.position = loc;
+            enemy.transform.gameObject.SetActive(true);
             usedHunterList.Add(enemy);
             enemy.SetPatrolArea(route, finding);
             freeHunterList.RemoveAt(0);
