@@ -13,6 +13,10 @@ namespace BloodBond {
         public virtual void Update() {
             Debug.Log("actor state");
         }
+        public virtual void Update(float deltaTime)
+        {
+            Debug.Log("actor state");
+        }
     }
 
 

@@ -5,6 +5,7 @@ using UnityEngine;
 namespace BloodBond {
     public class EnemyManager : MonoBehaviour
     {
+        float deltaTime;
         Player player;
 
         List<EnemyBase> freeHunterList = new List<EnemyBase>();
@@ -12,12 +13,18 @@ namespace BloodBond {
 
         PatrolManager patrolManager;
 
+        [SerializeField]
+        EnemyValue hunterInfo;
+        public EnemyValue HunterValue {
+            get { return hunterInfo; }
+        }
+
         // Start is called before the first frame update
         private void Awake()
         {
             for (int i = 0; i < transform.childCount; i++)
             {
-                EnemyBase enemy = new EnemyBase(transform.GetChild(i));
+                EnemyBase enemy = new EnemyBase(transform.GetChild(i), this);
                 freeHunterList.Add(enemy);
                 enemy.transform.gameObject.SetActive(false);
             }
@@ -33,7 +40,10 @@ namespace BloodBond {
         // Update is called once per frame
         void Update()
         {
-
+            deltaTime = Time.deltaTime;
+            for (int i = usedHunterList.Count-1; i >= 0; i--) {
+                usedHunterList[i].Update(deltaTime);
+            }
         }
 
         public EnemyBase SpawnEnemyWithRoute(Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding)

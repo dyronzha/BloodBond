@@ -6503,11 +6503,11 @@ MonoBehaviour:
   boneAxis: {x: -1, y: 0, z: 0}
   radius: 0.05
   isUseEachBoneForceSettings: 0
-  stiffnessForce: 0.01
-  dragForce: 0.4
-  springForce: {x: 0, y: -0.0001, z: 0}
+  stiffnessForce: 0.15
+  dragForce: 0.9
+  springForce: {x: 0, y: -0.0005, z: 0}
   colliders:
-  - {fileID: 0}
+  - {fileID: 36834915}
   debug: 0
   threshold: 0.01
 --- !u!1001 &148756094
@@ -11343,12 +11343,12 @@ MonoBehaviour:
   child: {fileID: 615489086}
   boneAxis: {x: -1, y: 0, z: 0}
   radius: 0.05
-  isUseEachBoneForceSettings: 1
+  isUseEachBoneForceSettings: 0
   stiffnessForce: 0.15
   dragForce: 0.9
   springForce: {x: 0, y: -0.01, z: 0}
   colliders:
-  - {fileID: 0}
+  - {fileID: 36834915}
   debug: 0
   threshold: 0.01
 --- !u!1001 &425585851
@@ -11711,14 +11711,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 471973442}
-  m_LocalRotation: {x: 0.039809246, y: -0.039641917, z: 0.707567, w: 0.70440954}
-  m_LocalPosition: {x: 0.003, y: 0.919, z: 0.004}
+  m_LocalRotation: {x: 0.0140776355, y: -0.014592757, z: 0.7070762, w: 0.7068467}
+  m_LocalPosition: {x: 0.003, y: 0.918, z: -0.004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1299875332}
   m_Father: {fileID: 1245799702}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 6.4410005, y: 0.028, z: 90.258}
+  m_LocalEulerAnglesHint: {x: 2.3230002, y: -0.041, z: 90.018005}
 --- !u!114 &471973444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11739,7 +11739,7 @@ MonoBehaviour:
   dragForce: 0.4
   springForce: {x: 0, y: -0.0001, z: 0}
   colliders:
-  - {fileID: 0}
+  - {fileID: 289222454}
   debug: 0
   threshold: 0.01
 --- !u!1 &496780585
@@ -17862,7 +17862,7 @@ MonoBehaviour:
   child: {fileID: 1011839535}
   boneAxis: {x: -1, y: 0, z: 0}
   radius: 0.05
-  isUseEachBoneForceSettings: 1
+  isUseEachBoneForceSettings: 0
   stiffnessForce: 0.15
   dragForce: 0.9
   springForce: {x: 0, y: -0.01, z: 0}
@@ -22167,6 +22167,82 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 735089303}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &760617053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3df29e7cc05fbec4aa43e06ea875565d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  rotation:
+    m_OverrideState: 0
+    m_Value: 0
+    min: 0
+    max: 360
+  skyIntensityMode:
+    m_OverrideState: 0
+    m_Value: 0
+  exposure:
+    m_OverrideState: 0
+    m_Value: 0
+  multiplier:
+    m_OverrideState: 0
+    m_Value: 1
+    min: 0
+  upperHemisphereLuxValue:
+    m_OverrideState: 0
+    m_Value: 1
+    min: 0
+  desiredLuxValue:
+    m_OverrideState: 0
+    m_Value: 20000
+  updateMode:
+    m_OverrideState: 0
+    m_Value: 0
+  updatePeriod:
+    m_OverrideState: 0
+    m_Value: 0
+    min: 0
+  includeSunInBaking:
+    m_OverrideState: 0
+    m_Value: 0
+  sunSize:
+    m_OverrideState: 0
+    m_Value: 0.019
+    min: 0
+    max: 1
+  sunSizeConvergence:
+    m_OverrideState: 0
+    m_Value: 5
+    min: 1
+    max: 10
+  atmosphereThickness:
+    m_OverrideState: 0
+    m_Value: 1
+    min: 0
+    max: 5
+  skyTint:
+    m_OverrideState: 0
+    m_Value: {r: 0.26415092, g: 0.25293696, b: 0.25293696, a: 1}
+    hdr: 0
+    showAlpha: 1
+    showEyeDropper: 1
+  groundColor:
+    m_OverrideState: 0
+    m_Value: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 1}
+    hdr: 0
+    showAlpha: 1
+    showEyeDropper: 1
+  enableSunDisk:
+    m_OverrideState: 0
+    m_Value: 1
 --- !u!1001 &801696245
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25252,7 +25328,7 @@ MonoBehaviour:
   child: {fileID: 385447337}
   boneAxis: {x: -1, y: 0, z: 0}
   radius: 0.05
-  isUseEachBoneForceSettings: 1
+  isUseEachBoneForceSettings: 0
   stiffnessForce: 0.15
   dragForce: 0.9
   springForce: {x: 0, y: -0.01, z: 0}
@@ -25642,7 +25718,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Profile: {fileID: 11400000, guid: 59ebb46e7319d914bb803620e2771d5f, type: 2}
   m_StaticLightingSkyUniqueID: 2
-  m_SkySettings: {fileID: 2041006132}
+  m_SkySettings: {fileID: 760617053}
   m_SkySettingsFromProfile: {fileID: -4485979501356406074, guid: 59ebb46e7319d914bb803620e2771d5f,
     type: 2}
 --- !u!1001 &1062431168
@@ -28502,7 +28578,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  dragForce: 0.9
+  dragForce: 0.4
   dragCurve:
     serializedVersion: 2
     m_Curve:
@@ -30675,12 +30751,12 @@ MonoBehaviour:
   child: {fileID: 1640450477}
   boneAxis: {x: -1, y: 0, z: 0}
   radius: 0.05
-  isUseEachBoneForceSettings: 1
-  stiffnessForce: 0.1
+  isUseEachBoneForceSettings: 0
+  stiffnessForce: 0.15
   dragForce: 0.9
   springForce: {x: 0, y: -0.1, z: 0}
   colliders:
-  - {fileID: 0}
+  - {fileID: 289222454}
   debug: 0
   threshold: 0.01
 --- !u!1 &1312346875
@@ -39869,7 +39945,7 @@ MonoBehaviour:
   dragForce: 0.4
   springForce: {x: 0, y: -0.0001, z: 0}
   colliders:
-  - {fileID: 0}
+  - {fileID: 289222454}
   debug: 0
   threshold: 0.01
 --- !u!1001 &1648088051
@@ -50924,82 +51000,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2038914142}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2041006132
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3df29e7cc05fbec4aa43e06ea875565d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  active: 1
-  m_AdvancedMode: 0
-  rotation:
-    m_OverrideState: 0
-    m_Value: 0
-    min: 0
-    max: 360
-  skyIntensityMode:
-    m_OverrideState: 0
-    m_Value: 0
-  exposure:
-    m_OverrideState: 0
-    m_Value: 0
-  multiplier:
-    m_OverrideState: 0
-    m_Value: 1
-    min: 0
-  upperHemisphereLuxValue:
-    m_OverrideState: 0
-    m_Value: 1
-    min: 0
-  desiredLuxValue:
-    m_OverrideState: 0
-    m_Value: 20000
-  updateMode:
-    m_OverrideState: 0
-    m_Value: 0
-  updatePeriod:
-    m_OverrideState: 0
-    m_Value: 0
-    min: 0
-  includeSunInBaking:
-    m_OverrideState: 0
-    m_Value: 0
-  sunSize:
-    m_OverrideState: 0
-    m_Value: 0.019
-    min: 0
-    max: 1
-  sunSizeConvergence:
-    m_OverrideState: 0
-    m_Value: 5
-    min: 1
-    max: 10
-  atmosphereThickness:
-    m_OverrideState: 0
-    m_Value: 1
-    min: 0
-    max: 5
-  skyTint:
-    m_OverrideState: 0
-    m_Value: {r: 0.26415092, g: 0.25293696, b: 0.25293696, a: 1}
-    hdr: 0
-    showAlpha: 1
-    showEyeDropper: 1
-  groundColor:
-    m_OverrideState: 0
-    m_Value: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 1}
-    hdr: 0
-    showAlpha: 1
-    showEyeDropper: 1
-  enableSunDisk:
-    m_OverrideState: 0
-    m_Value: 1
 --- !u!1 &2047533115
 GameObject:
   m_ObjectHideFlags: 0

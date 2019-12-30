@@ -49,6 +49,18 @@ namespace BloodBond {
         }
 
     }
+    public class EnemyLookAroundState : EnemyBaseState
+    {
+        public EnemyLookAroundState(EnemyBase enemy) : base(enemy)
+        {
+
+        }
+        public override void Update()
+        {
+
+        }
+
+    }
     public class EnemyChaseState : EnemyBaseState
     {
         public EnemyChaseState(EnemyBase enemy) : base(enemy)

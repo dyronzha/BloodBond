@@ -6,6 +6,11 @@ using UnityEngine;
 namespace BloodBond {
     public class PatrolRoute : MonoBehaviour
     {
+        bool reverse = false;
+        public bool Reverse {
+            get { return reverse; }
+            set { reverse = value; }
+        } 
         int curPointID = 1;
         public int CurPointID {
             get { return curPointID; }
@@ -13,6 +18,7 @@ namespace BloodBond {
         }
         Vector3[] points;
         public PathFinder.Path path;
+        public PathFinder.Path reversePath;
 
         public Vector3 StartPosition{
             get { return points[0]; }
@@ -36,7 +42,21 @@ namespace BloodBond {
             {
                 points[i] = transform.GetChild(i).position;
             }
-            path = new PathFinder.Path(points, 1.0f);
+            
+            if (routeType == RouteType.Cycle)
+            {
+                Vector3[] p = new Vector3[points.Length + 1];
+                points.CopyTo(p, 0);
+                p[p.Length - 1] = points[0];
+                path = new PathFinder.Path(p, 1.0f);
+            }
+            else if (routeType == RouteType.Pingpong)
+            {
+                path = new PathFinder.Path(points, 1.0f);
+                System.Array.Reverse(points);
+                reversePath = new PathFinder.Path(points, 1.0f);
+                
+            }
         }
 
     }
