@@ -6,9 +6,13 @@ using UnityEngine;
 namespace BloodBond {
     public class PatrolRoute : MonoBehaviour
     {
-
+        int curPointID = 1;
+        public int CurPointID {
+            get { return curPointID; }
+            set { curPointID = value; }
+        }
         Vector3[] points;
-        PathFinder.Path path;
+        public PathFinder.Path path;
 
         public Vector3 StartPosition{
             get { return points[0]; }
@@ -19,8 +23,8 @@ namespace BloodBond {
             Pingpong, Cycle, Rotate
         }
 
-        [SerializeField]
-        private RouteType routeType;
+
+        public RouteType routeType;
 
         [SerializeField]
         private int lookRoundNum;

@@ -9,9 +9,11 @@ namespace PathFinder {
         PathRequestManager requestManager;
         PathFindGrid grid;
 
+        public Action findCallBack;
+
         void Awake()
         {
-            requestManager = GetComponent<PathRequestManager>();
+            requestManager = transform.parent.GetComponent<PathRequestManager>();
             grid = GetComponent<PathFindGrid>();
         }
 

@@ -65,7 +65,7 @@ namespace PathFinder
         //特定區域要求路徑
         public static PathRequest RequestPath(PathFinding pathfinding, PathRequest oldRequest, Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> _successCbk)
         {
-            PathRequest newRequest = new PathRequest(pathStart, pathEnd, _successCbk);
+            PathRequest newRequest = new PathRequest(pathStart, pathEnd, _successCbk, pathfinding);
 
             if (instance.CheckProcessingRequest(oldRequest))
             {
@@ -80,7 +80,7 @@ namespace PathFinder
             {
                 instance.pathRequestList.Add(newRequest);
             }
-            instance.TryProcessNext();
+            instance.AreaTryProcessNext();
 
             return newRequest;
 
@@ -103,6 +103,22 @@ namespace PathFinder
                 pathRequestList.RemoveAt(0);
                 isProcessingPath = true;
                 pathFinding.StartFindPath(currentPathRequest.pathStart, currentPathRequest.pathEnd);
+            }
+        }
+        void AreaTryProcessNext()
+        {
+            //if (!isProcessingPath && pathRequestQueue.Count > 0)
+            //{
+            //    currentPathRequest = pathRequestQueue.Dequeue();
+            //    isProcessingPath = true;
+            //    pathFinding.StartFindPath(currentPathRequest.pathStart, currentPathRequest.pathEnd);
+            //}
+            if (!isProcessingPath && pathRequestList.Count > 0)
+            {
+                currentPathRequest = pathRequestList[0];
+                pathRequestList.RemoveAt(0);
+                isProcessingPath = true;
+                currentPathRequest.pathfinding.StartFindPath(currentPathRequest.pathStart, currentPathRequest.pathEnd);
             }
         }
 
@@ -132,9 +148,6 @@ namespace PathFinder
             currentPathRequest.callback(path, success);
             isProcessingPath = false;
             TryProcessNext();
-            //if (success) {
-
-            //}
         }
 
 

@@ -38,8 +38,11 @@ namespace BloodBond {
 
         public EnemyBase SpawnEnemyWithRoute(Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding)
         {
-
-            return freeHunterList[0];
+            EnemyBase enemy = freeHunterList[0];
+            usedHunterList.Add(enemy);
+            enemy.SetPatrolArea(route, finding);
+            freeHunterList.RemoveAt(0);
+            return enemy;
         }
 
 

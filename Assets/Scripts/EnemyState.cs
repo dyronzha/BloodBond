@@ -12,7 +12,7 @@ namespace BloodBond {
         }
         public override void Update()
         {
-            Debug.Log("player state");
+            
         }
 
     }
@@ -21,7 +21,10 @@ namespace BloodBond {
         public EnemyIdleState(EnemyBase enemy) : base(enemy) { 
             
         }
+        public override void Update()
+        {
 
+        }
     }
     public class EnemyRambleState : EnemyBaseState
     {
@@ -29,7 +32,10 @@ namespace BloodBond {
         {
 
         }
+        public override void Update()
+        {
 
+        }
     }
     public class EnemyPatrolState : EnemyBaseState
     {
@@ -49,7 +55,10 @@ namespace BloodBond {
         {
 
         }
+        public override void Update()
+        {
 
+        }
     }
     public class EnemyAttackState : EnemyBaseState
     {
@@ -57,7 +66,10 @@ namespace BloodBond {
         {
 
         }
+        public override void Update()
+        {
 
+        }
     }
     public class EnemyHurtState : EnemyBaseState
     {
@@ -65,7 +77,10 @@ namespace BloodBond {
         {
 
         }
+        public override void Update()
+        {
 
+        }
     }
     public class EnemyYellState : EnemyBaseState
     {
@@ -73,7 +88,10 @@ namespace BloodBond {
         {
 
         }
+        public override void Update()
+        {
 
+        }
     }
     public class EnemyDieState : EnemyBaseState
     {
@@ -81,7 +99,10 @@ namespace BloodBond {
         {
 
         }
+        public override void Update()
+        {
 
+        }
     }
 }
 
