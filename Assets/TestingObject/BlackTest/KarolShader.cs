@@ -22,8 +22,9 @@ public class KarolShader : MonoBehaviour{
 
         if (ShaderMode == 1){
             DissolveValue = DissolveValue - DissolveSpeed;
-            ShaderType[2].SetFloat("Vector1_F4D760A8", DissolveValue);
             ShaderType[3].SetFloat("Vector1_F4D760A8", DissolveValue);
+            ShaderType[4].SetFloat("Vector1_F4D760A8", DissolveValue);
+            ShaderType[5].SetFloat("Vector1_F4D760A8", DissolveValue);
 
             if (DissolveValue <= 0.0f) {
                 GetComponent<MoveTest>().DissolveEnd();
@@ -34,8 +35,9 @@ public class KarolShader : MonoBehaviour{
 
         else if (ShaderMode == 2) {
             DodgeGlowValue = DodgeGlowValue - DodgeGlowSpeed;
-            ShaderType[4].SetVector("Vector4_83C1BE40", new Vector4(DodgeGlowValue, DodgeGlowValue, DodgeGlowValue, DodgeGlowValue));
-            ShaderType[5].SetVector("Vector4_83C1BE40", new Vector4(DodgeGlowValue, DodgeGlowValue, DodgeGlowValue, DodgeGlowValue));
+            ShaderType[6].SetVector("Vector4_83C1BE40", new Vector4(DodgeGlowValue, DodgeGlowValue, DodgeGlowValue, DodgeGlowValue));
+            ShaderType[7].SetVector("Vector4_83C1BE40", new Vector4(DodgeGlowValue, DodgeGlowValue, DodgeGlowValue, DodgeGlowValue));
+            ShaderType[8].SetVector("Vector4_83C1BE40", new Vector4(DodgeGlowValue, DodgeGlowValue, DodgeGlowValue, DodgeGlowValue));
             if (DodgeGlowValue <= 0.0f){
                 ShaderMode = 0;
                 ChangeMaterial(ShaderMode);
@@ -50,7 +52,7 @@ public class KarolShader : MonoBehaviour{
                 DissolveValue = 1.0f;
                 ShaderMode = 1;
                 break;
-            case 5:
+            case 6:
                 DodgeGlowValue = 1.0f;
                 ShaderMode = 2;
                 break;
