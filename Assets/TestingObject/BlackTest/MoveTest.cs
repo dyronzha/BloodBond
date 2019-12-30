@@ -97,7 +97,7 @@ public class MoveTest : MonoBehaviour{
             Dodge_Current = transform.position;
             Dodge_Target = transform.position + new Vector3(0.0f, 0.0f, 3.0f);
             PhantomDistance();
-            GetComponent<KarolShader>().ChangeMaterial(5);
+            GetComponent<KarolShader>().ChangeMaterial(6);
         }
 
         if (On_Dodging == true){
