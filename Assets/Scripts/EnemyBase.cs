@@ -8,7 +8,7 @@ namespace BloodBond {
 
         float routeEndTime;
         PatrolRoute.RouteType routeType;
-
+        PathFinder.PathFinding pathFinding;
 
         public Transform transform;
 

@@ -36,7 +36,7 @@ namespace BloodBond {
 
         }
 
-        public EnemyBase SpawnEnemyWithRoute(Vector3 loc, PatrolRoute route)
+        public EnemyBase SpawnEnemyWithRoute(Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding)
         {
 
             return freeHunterList[0];
@@ -44,7 +44,6 @@ namespace BloodBond {
 
 
     }
-}
 }
 
 

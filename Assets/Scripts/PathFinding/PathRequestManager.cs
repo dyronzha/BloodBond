@@ -26,6 +26,7 @@ namespace PathFinder
             pathFinding = GetComponent<PathFinding>();
         }
 
+        //基礎要求路徑
         public static PathRequest RequestPath(Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> _successCbk)
         {
             PathRequest newRequest = new PathRequest(pathStart, pathEnd, _successCbk);
@@ -35,6 +36,7 @@ namespace PathFinder
             //Debug.Log("add new finding path request   " + instance.pathRequestList.IndexOf(newRequest));
             return newRequest;
         }
+        //比對舊路徑要求路徑
         public static PathRequest RequestPath(PathRequest oldRequest, Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> _successCbk)
         {
             PathRequest newRequest = new PathRequest(pathStart, pathEnd, _successCbk);
@@ -59,6 +61,33 @@ namespace PathFinder
 
             //instance.pathRequestQueue.Enqueue(newRequest);
         }
+
+        //特定區域要求路徑
+        public static PathRequest RequestPath(PathFinding pathfinding, PathRequest oldRequest, Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> _successCbk)
+        {
+            PathRequest newRequest = new PathRequest(pathStart, pathEnd, _successCbk);
+
+            if (instance.CheckProcessingRequest(oldRequest))
+            {
+                return null;
+            }
+
+            if (oldRequest != null && instance.pathRequestList.Contains(oldRequest))
+            {
+                instance.pathRequestList[instance.pathRequestList.IndexOf(oldRequest)] = newRequest;
+            }
+            else
+            {
+                instance.pathRequestList.Add(newRequest);
+            }
+            instance.TryProcessNext();
+
+            return newRequest;
+
+
+            //instance.pathRequestQueue.Enqueue(newRequest);
+        }
+
 
         void TryProcessNext()
         {
@@ -120,6 +149,7 @@ namespace PathFinder
 
         public class PathRequest
         {
+            public PathFinding pathfinding;
             public Vector3 pathStart;
             public Vector3 pathEnd;
             public Action<Vector3[], bool> callback;
@@ -131,6 +161,13 @@ namespace PathFinder
                 callback = _successCbk;
             }
 
+            public PathRequest(Vector3 _start, Vector3 _end, Action<Vector3[], bool> _successCbk, PathFinding _pathFinding)
+            {
+                pathStart = _start;
+                pathEnd = _end;
+                callback = _successCbk;
+                pathfinding = _pathFinding;
+            }
         }
     }
 }
