@@ -17,6 +17,7 @@ namespace BloodBond {
         int lookARoundNum = 0;
 
         bool canHurt = true;
+        int lastHurtHash;
 
         Vector3 selfPos;
         Vector3 moveFwdDir = new Vector3(0, 0, 0);
@@ -276,21 +277,52 @@ namespace BloodBond {
             Vector3 point1 = point2 + new Vector3(0, hurtAreaCollider.height, 0);
             Debug.DrawLine(point1, point2, Color.red);
             Collider[] cols = Physics.OverlapCapsule(point1, point2, hurtAreaCollider.radius, enemyManager.HunterValue.HurtAreaLayer);
-            if (cols != null && cols.Length > 0)
+            if (cols != null && cols.Length > 0 && lastHurtHash != enemyManager.Player.GetAttackHash())
             {
                 hp -= 10;
+                lastHurtHash = enemyManager.Player.GetAttackHash();
                 if (hp > 0)
                 {
-                    ChangeState(hurtState);
                     canHurt = false;
                     animator.SetBool("Hurt", true);
+                    ChangeState(hurtState);
                 }
                 else {
                     animator.SetBool("Dead", true);
+                    lastHurtHash = 0;
+                    ChangeState(dieState);
                 }
                 return true;
             }
 
+            return false;
+        }
+        public bool CheckGetHurtDie()
+        {
+
+            Vector3 center = hurtAreaCollider.center;
+            Vector3 point2 = transform.position + center.x * transform.right + center.z * transform.forward;
+            Vector3 point1 = point2 + new Vector3(0, hurtAreaCollider.height, 0);
+            Debug.DrawLine(point1, point2, Color.red);
+            Collider[] cols = Physics.OverlapCapsule(point1, point2, hurtAreaCollider.radius, enemyManager.HunterValue.HurtAreaLayer);
+            if (cols != null && cols.Length > 0 && lastHurtHash != enemyManager.Player.GetAttackHash())
+            {
+                hp -= 10;
+                lastHurtHash = enemyManager.Player.GetAttackHash();
+                if (hp > 0)
+                {
+                    canHurt = false;
+                    animator.SetBool("Hurt", true);
+                    ChangeState(hurtState);
+                }
+                else
+                {
+                    animator.SetBool("Dead", true);
+                    lastHurtHash = 0;
+                    ChangeState(dieState);
+                    return true;
+                }  
+            }
             return false;
         }
 
@@ -303,27 +335,30 @@ namespace BloodBond {
             else
             {
 
-                if (!canHurt)
-                {
-                    stateTime += deltaTime;
-                    if (stateTime > 0.2f)
-                    {
-                        canHurt = true;
-                        stateTime = .0f;
-                    }
-                }
-                else if (CheckGetHurt() && hp <= 0)
-                {
-                    animator.SetBool("Hurt", false);
-                    animator.SetBool("Dead", true);
-                    return;
-                }
+                if(CheckGetHurtDie())return;
                 if (aniInfo.normalizedTime > 0.85f)
                 {
                     animator.SetBool("Hurt", false);
-                    ChangeState(patrolState);
+                    if (patrolRoute.routeType != PatrolRoute.RouteType.Rotate) {
+                        animator.SetBool("Patrol", true);
+                        ChangeState(patrolState);
+                    }
+                    else ChangeState(idleState);
                     canHurt = true;
+                    lastHurtHash = 0;
                 }
+            }
+        }
+        public void Dead() {
+            Debug.Log("dddddddddddddiiiiiiiiiiiiiiiiie");
+            if (stateStep == 0)
+            {
+                AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
+                if (aniInfo.IsName("Dead")) {
+                    Debug.Log("dddddddddddddiiiiiiiiiiiiiiiiie   confirm");
+                    animator.SetBool("Dead", false);
+                    stateStep++;
+                } 
             }
         }
     }

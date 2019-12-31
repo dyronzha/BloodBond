@@ -24,6 +24,7 @@ namespace BloodBond {
         public override void Update()
         {
             //if (!enemyBase.FindPlayer())enemyBase.Idle();
+            if (enemyBase.CheckGetHurt()) return;
             enemyBase.Idle();
         }
     }
@@ -46,6 +47,10 @@ namespace BloodBond {
         }
         public override void Update()
         {
+            if (enemyBase.CheckGetHurt()) {
+                enemyBase.SetAniBool("Patrol", false);
+                return;
+            }
             enemyBase.Patroling();
             //if (enemyBase.FindPlayer()) enemyBase.SetAniBool("Patrol", false);
             //else enemyBase.Patroling();
@@ -60,6 +65,10 @@ namespace BloodBond {
         }
         public override void Update()
         {
+            if (enemyBase.CheckGetHurt()) {
+                enemyBase.SetAniBool("Look", false);
+                return;
+            }
             enemyBase.LookAround();
             //if (enemyBase.FindPlayer()) enemyBase.SetAniBool("Look", false);
             //else enemyBase.LookAround();
@@ -96,7 +105,7 @@ namespace BloodBond {
         }
         public override void Update()
         {
-
+            enemyBase.InHurt();
         }
     }
     public class EnemyYellState : EnemyBaseState
@@ -118,7 +127,7 @@ namespace BloodBond {
         }
         public override void Update()
         {
-
+            enemyBase.Dead();
         }
     }
 }

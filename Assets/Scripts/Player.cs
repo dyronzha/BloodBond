@@ -13,7 +13,7 @@ namespace BloodBond {
         Vector3 moveForward = new Vector3(0, 0, 0), lastDir;
 
         bool inDodgeCD = false;
-        float dodgeOffset, dodgeCD;
+        float dodgeOffset, dodgeCD, dodgeTime;
 
         bool invincible = false;
         float invincibleTime = .0f;
@@ -23,6 +23,11 @@ namespace BloodBond {
 
         bool showDashEffect = false;
         Transform dashOrientEffect;
+
+        KarolShader karolShader;
+        public GameObject PhantomCreate;
+
+        public UnityEngine.Experimental.VFX.VisualEffect VFX_Teleport;
 
         Camera mainCamera;
         Transform selfTransform;
@@ -64,6 +69,8 @@ namespace BloodBond {
             normalComboAtkState = new PlayerNormalComboATKState(this, 2);
             hurtState = new PlayerHurtState(this);
             curState = idleState;
+
+            karolShader = GetComponent<KarolShader>();
         }
 
         // Update is called once per frame
@@ -171,14 +178,24 @@ namespace BloodBond {
                 {
                     stateStep++;
                     dodgeOffset = 1.0f;
+                    karolShader.ChangeMaterial(6);
+                    Instantiate(PhantomCreate, selfTransform.position + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
                 }
             }
             else {
                 stateTime += deltaTime;
+                if (stateTime - dodgeTime > 0.05f) {
+                    dodgeTime = stateTime;
+                    Instantiate(PhantomCreate, selfTransform.position + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
+                }
+                
                 if (stateTime < 0.3f)
                 {
                     float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
                     dodgeOffset = Mathf.Clamp(dodgeOffset - deltaTime * 5.0f, .0f, 1.0f);
+
+                    
+
                     Debug.Log("dodge offset  " + dodgeOffset);
                     Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * moveForward;
                     if (!Physics.Linecast(selfTransform.position, nextPos + dSpeed * deltaTime * moveForward, 1 << LayerMask.NameToLayer("Barrier")))
@@ -188,6 +205,7 @@ namespace BloodBond {
                 }
                 else {
                     inDodgeCD = true;
+                    dodgeTime = .0f;
                     animator.SetBool("Dodge", false);
                     if (input.GetMove())
                     {
@@ -293,7 +311,7 @@ namespace BloodBond {
                         selfTransform.rotation = Quaternion.LookRotation(moveForward);
                         
                     }
-                    animator.applyRootMotion = Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
+                    animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
                     stateStep++;
                 }
             }
@@ -315,6 +333,11 @@ namespace BloodBond {
                     } 
                 }
             }
+        }
+
+        public int GetAttackHash() {
+            AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
+            return aniInfo.fullPathHash;
         }
 
         public void EnableATKCollider() {
@@ -341,6 +364,9 @@ namespace BloodBond {
                 if (aniInfo.IsName("PreDash")) {
                     stateStep++;
                     Time.timeScale = 0.2f;
+                    VFX_Teleport.playRate = 6.0f;
+                    VFX_Teleport.SetInt("Number_of_Particles", 1000000);
+                    VFX_Teleport.SetFloat("AttractDrag", 0.0f);
                 } 
             }
             else if (stateStep == 1)
@@ -354,6 +380,8 @@ namespace BloodBond {
                         dashOrientEffect.gameObject.SetActive(false);
                         showDashEffect = false;
                         Time.timeScale = 1.0f;
+                        VFX_Teleport.SetFloat("AttractDrag", 1.0f);
+                        VFX_Teleport.SetInt("Number_of_Particles", 0);
                         return;
                     }
                     if (showDashEffect)
@@ -366,13 +394,32 @@ namespace BloodBond {
                 {
                     if (!input.GetDashInput())
                     {
-                        selfTransform.position += moveForward * 5.0f;
+                        RaycastHit hit;
+                        Vector3 pos = selfTransform.position + new Vector3(0, 1, 0);
+                        Vector3 nextPos = selfTransform.position + moveForward * 5.0f;
+
+                        if (Physics.Linecast(pos, nextPos, out hit, infoValue.HurtAreaLayer | 1<<LayerMask.NameToLayer("Barrier"))) {
+                            if (hit.transform.tag.CompareTo("Barrier") == 0)
+                            {
+                                Debug.Log("hiiiiiiiiiiiiit barrier   " + new Vector3(hit.point.x, 0, hit.point.z));
+                                selfTransform.position = new Vector3(hit.point.x, 0, hit.point.z) - moveForward;
+                            }
+                            else {
+                                selfTransform.position = new Vector3(hit.transform.position.x, 0, hit.transform.position.z);
+                            }
+                        }
+                        else selfTransform.position = nextPos;
+
+
                         selfTransform.rotation = Quaternion.LookRotation(moveForward);
                         dashOrientEffect.gameObject.SetActive(false);
                         animator.SetTrigger("DashOver");
                         showDashEffect = false;
                         
                         stateStep++;
+
+                        VFX_Teleport.SetFloat("AttractDrag", 1.0f);
+                        VFX_Teleport.SetInt("Number_of_Particles", 0);
                         return;
                     }
                     if (!showDashEffect)
@@ -390,6 +437,8 @@ namespace BloodBond {
                 if (aniInfo.normalizedTime > 0.95f) {
                     Time.timeScale = 1.0f;
                     animator.SetBool("Dash", false);
+                    VFX_Teleport.SetFloat("AttractDrag", 1.0f);
+                    VFX_Teleport.SetInt("Number_of_Particles", 0);
                     ChangeState(idleState);
                 }
             }
