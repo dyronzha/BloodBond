@@ -21,11 +21,11 @@ namespace BloodBond {
         // Update is called once per frame
         void Update()
         {
-            if (SceneManager.sceneCountInBuildSettings == 0)
+            if (SceneManager.GetActiveScene().buildIndex == 0)
             {
                 if (input.GetDodgeInput()) SceneManager.LoadScene(1);
             }
-            else if (SceneManager.sceneCountInBuildSettings == 1)
+            else if (SceneManager.GetActiveScene().buildIndex == 1)
             {
                 Vector3 goalPoint = new Vector3(goal.position.x, 0, goal.position.z);
                 Vector3 dif = goalPoint - player.transform.position;
@@ -33,7 +33,7 @@ namespace BloodBond {
                     SceneManager.LoadScene(2);
                 }
             }
-            else if (SceneManager.sceneCountInBuildSettings == 2)
+            else if (SceneManager.GetActiveScene().buildIndex == 2)
             {
                 if (input.GetDodgeInput()) SceneManager.LoadScene(0);
             }

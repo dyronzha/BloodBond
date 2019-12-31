@@ -5,7 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+  - enabled: 0
+    path: Assets/Scenes/samplescene.unity
     guid: cbfe36cfddfde964d9dfce63a355d5dd
+  - enabled: 1
+    path: Assets/TestingObject/HalaTest/StartScene.unity
+    guid: 38f0245e47ef35b4a82979e0974fd348
+  - enabled: 1
+    path: Assets/TestingObject/ZhaTest/ZhaTest.unity
+    guid: 429030ad6ab49854c8c554998549af57
+  - enabled: 1
+    path: Assets/TestingObject/HalaTest/Dancing.unity
+    guid: 2f8683e7f7606924eb7c72a5c44dc768
   m_configObjects: {}

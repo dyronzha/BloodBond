@@ -398,19 +398,19 @@ namespace BloodBond {
                         Vector3 pos = selfTransform.position + new Vector3(0, 1, 0);
                         Vector3 nextPos = selfTransform.position + moveForward * 5.0f;
 
-                        if (Physics.Linecast(pos, nextPos, out hit, infoValue.HurtAreaLayer | 1<<LayerMask.NameToLayer("Barrier"))) {
-                            if (hit.transform.tag.CompareTo("Barrier") == 0)
-                            {
-                                Debug.Log("hiiiiiiiiiiiiit barrier   " + new Vector3(hit.point.x, 0, hit.point.z));
-                                selfTransform.position = new Vector3(hit.point.x, 0, hit.point.z) - moveForward;
-                            }
-                            else {
-                                selfTransform.position = new Vector3(hit.transform.position.x, 0, hit.transform.position.z);
-                            }
-                        }
-                        else selfTransform.position = nextPos;
+                        //if (Physics.Linecast(pos, nextPos, out hit, infoValue.HurtAreaLayer | 1<<LayerMask.NameToLayer("Barrier"))) {
+                        //    if (hit.transform.tag.CompareTo("Barrier") == 0)
+                        //    {
+                        //        Debug.Log("hiiiiiiiiiiiiit barrier   " + new Vector3(hit.point.x, 0, hit.point.z));
+                        //        selfTransform.position = new Vector3(hit.point.x, 0, hit.point.z) - moveForward;
+                        //    }
+                        //    else {
+                        //        selfTransform.position = new Vector3(hit.transform.position.x, 0, hit.transform.position.z);
+                        //    }
+                        //}
+                        //else selfTransform.position = nextPos;
 
-
+                        selfTransform.position = nextPos;
                         selfTransform.rotation = Quaternion.LookRotation(moveForward);
                         dashOrientEffect.gameObject.SetActive(false);
                         animator.SetTrigger("DashOver");
