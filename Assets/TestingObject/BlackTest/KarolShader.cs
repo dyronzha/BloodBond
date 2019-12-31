@@ -34,7 +34,7 @@ public class KarolShader : MonoBehaviour{
         }
 
         else if (ShaderMode == 2) {
-            DodgeGlowValue = DodgeGlowValue - DodgeGlowSpeed;
+            DodgeGlowValue = DodgeGlowValue - Time.deltaTime*1.5f;
             ShaderType[6].SetVector("Vector4_83C1BE40", new Vector4(DodgeGlowValue, DodgeGlowValue, DodgeGlowValue, DodgeGlowValue));
             ShaderType[7].SetVector("Vector4_83C1BE40", new Vector4(DodgeGlowValue, DodgeGlowValue, DodgeGlowValue, DodgeGlowValue));
             ShaderType[8].SetVector("Vector4_83C1BE40", new Vector4(DodgeGlowValue, DodgeGlowValue, DodgeGlowValue, DodgeGlowValue));
