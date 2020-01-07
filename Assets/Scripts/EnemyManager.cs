@@ -51,7 +51,7 @@ namespace BloodBond {
         public EnemyBase SpawnEnemyWithRoute(Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding)
         {
             EnemyBase enemy = freeHunterList[0];
-            enemy.transform.position = loc;
+            enemy.transform.position = new Vector3(loc.x, 0, loc.z);
             enemy.transform.gameObject.SetActive(true);
             usedHunterList.Add(enemy);
             enemy.SetPatrolArea(route, finding);

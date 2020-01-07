@@ -348,7 +348,7 @@ namespace BloodBond {
         }
 
         public bool CheckDashInput() {
-            if (input.GetDashInput())
+            if (input.GetDashInput() && stateStep >0)
             {
                 ChangeState(dashState);
                 animator.SetBool("Dash", true);
@@ -373,6 +373,11 @@ namespace BloodBond {
             {
                 if (!GetMoveInput()) //沒有方向輸入
                 {
+                    if (showDashEffect)
+                    {
+                        dashOrientEffect.gameObject.SetActive(false);
+                        showDashEffect = false;
+                    }
                     if (!input.GetDashInput())
                     {
                         animator.SetBool("Dash", false);
@@ -384,31 +389,34 @@ namespace BloodBond {
                         VFX_Teleport.SetInt("Number_of_Particles", 0);
                         return;
                     }
-                    if (showDashEffect)
-                    {
-                        dashOrientEffect.gameObject.SetActive(false);
-                        showDashEffect = false;
-                    }
+                    
                 }
                 else
                 {
+                    if (!showDashEffect)
+                    {
+                        dashOrientEffect.gameObject.SetActive(true);
+                        showDashEffect = true;
+                    }
                     if (!input.GetDashInput())
                     {
                         RaycastHit hit;
                         Vector3 pos = selfTransform.position + new Vector3(0, 1, 0);
-                        Vector3 nextPos = selfTransform.position + moveForward * 5.0f;
+                        Vector3 nextPos = pos + moveForward * 5.0f;
 
-                        //if (Physics.Linecast(pos, nextPos, out hit, infoValue.HurtAreaLayer | 1<<LayerMask.NameToLayer("Barrier"))) {
-                        //    if (hit.transform.tag.CompareTo("Barrier") == 0)
-                        //    {
-                        //        Debug.Log("hiiiiiiiiiiiiit barrier   " + new Vector3(hit.point.x, 0, hit.point.z));
-                        //        selfTransform.position = new Vector3(hit.point.x, 0, hit.point.z) - moveForward;
-                        //    }
-                        //    else {
-                        //        selfTransform.position = new Vector3(hit.transform.position.x, 0, hit.transform.position.z);
-                        //    }
-                        //}
-                        //else selfTransform.position = nextPos;
+                        if (Physics.Linecast(pos, nextPos, out hit, infoValue.HurtAreaLayer | 1 << LayerMask.NameToLayer("Barrier")))
+                        {
+                            if (hit.transform.tag.CompareTo("Barrier") == 0)
+                            {
+                                Debug.Log("hiiiiiiiiiiiiit barrier   " + new Vector3(hit.point.x, 0, hit.point.z));
+                                selfTransform.position = new Vector3(hit.point.x, 0, hit.point.z) - moveForward;
+                            }
+                            else
+                            {
+                                selfTransform.position = new Vector3(hit.transform.position.x, 0, hit.transform.position.z);
+                            }
+                        }
+                        else selfTransform.position = new Vector3(nextPos.x,0, nextPos.z);
 
                         selfTransform.position = nextPos;
                         selfTransform.rotation = Quaternion.LookRotation(moveForward);
@@ -422,11 +430,7 @@ namespace BloodBond {
                         VFX_Teleport.SetInt("Number_of_Particles", 0);
                         return;
                     }
-                    if (!showDashEffect)
-                    {
-                        dashOrientEffect.gameObject.SetActive(true);
-                        showDashEffect = true;
-                    }
+                   
                     dashOrientEffect.rotation = Quaternion.LookRotation(moveForward);
                 }
             }
