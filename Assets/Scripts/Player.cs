@@ -9,8 +9,9 @@ namespace BloodBond {
         int stateStep = 0;
         float stateTime, deltaTime;
 
+        bool isMoving = false;
         float inputMoveX, inputMoveY;
-        Vector3 moveForward = new Vector3(0, 0, 0), lastDir;
+        Vector3 moveForward = new Vector3(0, 0, 0), inputDir;
 
         bool inDodgeCD = false;
         float dodgeOffset, dodgeCD, dodgeTime;
@@ -121,32 +122,24 @@ namespace BloodBond {
                 AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
                 if (aniInfo.IsName("Run")) stateStep++;
             }
-            Vector3 baseFWD, baseRight;
-            baseFWD = mainCamera.transform.forward;
-            baseRight = mainCamera.transform.right;
 
-            Vector3 _dir = new Vector3(input.GetHMoveAxis(), .0f, input.GetVMoveAxis());
-            if (_dir.sqrMagnitude > 0.1f)
+            if (GetMove())
             {
-                moveForward = (new Vector3(_dir.x * baseRight.x, 0, _dir.x * baseRight.z)
-                                  + new Vector3(_dir.z * baseFWD.x, 0, _dir.z * baseFWD.z)).normalized;
+                selfTransform.rotation = Quaternion.Lerp(selfTransform.rotation, Quaternion.LookRotation(inputDir), deltaTime * infoValue.RotateSpeed);
                 Vector3 nextPos = selfTransform.position + infoValue.MoveSpeed * deltaTime * moveForward;
-
-                float difAngle = Vector3.Angle(selfTransform.forward, moveForward);
-                selfTransform.rotation = Quaternion.Lerp(selfTransform.rotation, Quaternion.LookRotation(moveForward), deltaTime * infoValue.RotateSpeed);
-                if (difAngle < 45.0f && !Physics.Linecast(selfTransform.position, nextPos + 5.0f * infoValue.MoveSpeed * deltaTime * moveForward, 
-                    1 << LayerMask.NameToLayer("Barrier")))
+                float difAngle = Vector3.Angle(selfTransform.forward, inputDir);
+                if (difAngle < 45.0f)
                 {
                     selfTransform.position = nextPos;
-                    
                 }
+
             }
-            else
-            {
+            else {
                 animator.SetBool("Run", false);
                 ChangeState(idleState);
             }
         }
+
         public bool MoveCheckDodge() {
             if (input.GetDodgeInput() && !inDodgeCD && stateStep > 0) {
                 animator.SetBool("Dodge", true);
@@ -167,8 +160,7 @@ namespace BloodBond {
                 //moveForward = (new Vector3(lastDir.x * baseRight.x, 0, lastDir.x * baseRight.z)
                 //                  + new Vector3(lastDir.z * baseFWD.x, 0, lastDir.z * baseFWD.z)).normalized;
 
-                transform.rotation = Quaternion.LookRotation(moveForward);
-
+                transform.rotation = Quaternion.LookRotation(inputDir);
             }
             else if (stateStep == 1)
             {
@@ -180,6 +172,12 @@ namespace BloodBond {
                     dodgeOffset = 1.0f;
                     karolShader.ChangeMaterial(6);
                     Instantiate(PhantomCreate, selfTransform.position + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
+                }
+                float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
+                Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * inputDir;
+                if (!Physics.Linecast(selfTransform.position, nextPos + dSpeed * deltaTime * inputDir, 1 << LayerMask.NameToLayer("Barrier")))
+                {
+                    selfTransform.position = nextPos;
                 }
             }
             else {
@@ -197,8 +195,8 @@ namespace BloodBond {
                     
 
                     Debug.Log("dodge offset  " + dodgeOffset);
-                    Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * moveForward;
-                    if (!Physics.Linecast(selfTransform.position, nextPos + dSpeed * deltaTime * moveForward, 1 << LayerMask.NameToLayer("Barrier")))
+                    Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * inputDir;
+                    if (!Physics.Linecast(selfTransform.position, nextPos + dSpeed * deltaTime * inputDir, 1 << LayerMask.NameToLayer("Barrier")))
                     {
                         selfTransform.position = nextPos;
                     }
@@ -231,45 +229,88 @@ namespace BloodBond {
         }
 
         //確認移動方向-----------------------------------------------------
-        public bool GetMoveInput() {
+        public bool GetMove() {
             float x = input.GetHMoveAxis();
             float z = input.GetVMoveAxis();
             if ((x * x + z * z) > 0.1f)
             {
+
                 Vector3 baseFWD, baseRight;
-                lastDir = new Vector3(x, .0f, z);
                 baseFWD = mainCamera.transform.forward;
                 baseRight = mainCamera.transform.right;
-                moveForward = (new Vector3(lastDir.x * baseRight.x, 0, lastDir.x * baseRight.z)
-                                  + new Vector3(lastDir.z * baseFWD.x, 0, lastDir.z * baseFWD.z)).normalized;
+
+                moveForward = new Vector3(0, 0, 0);
+                bool V_MoveCheck = false, H_MoveCheck = false;
+                Vector3 hVector = new Vector3(x * baseRight.x, 0, x * baseRight.z);
+                H_MoveCheck = Physics.Raycast(selfTransform.position, hVector.normalized, 5.0f * infoValue.MoveSpeed * deltaTime, 1 << LayerMask.NameToLayer("Barrier"));
+                Vector3 vVector = new Vector3(z * baseFWD.x, 0, z * baseFWD.z);
+                V_MoveCheck = Physics.Raycast(selfTransform.position, vVector.normalized, 5.0f * infoValue.MoveSpeed * deltaTime, 1 << LayerMask.NameToLayer("Barrier"));
+
+                inputDir = (hVector + vVector).normalized;
+
+                if (!H_MoveCheck && !V_MoveCheck)
+                {
+                    if (!Physics.Raycast(selfTransform.position, moveForward, 5.0f * infoValue.MoveSpeed * deltaTime, 1 << LayerMask.NameToLayer("Barrier")))
+                    {
+                        moveForward = inputDir;
+                    }
+                }
+                else
+                {
+                    if (!H_MoveCheck) moveForward += hVector;
+                    if (!V_MoveCheck) moveForward += vVector;
+                }
+                isMoving = true;
                 return true;
             }
+            //else {
+            //    if (isMoving) {
+            //        inputDir = new Vector3(0, 0, 0);
+            //        isMoving = false;
+            //    }
+            //}
             return false;
         }
-        public bool GetMoveInput(float maxAngle)
+        public bool GetInputDir()
         {
             float x = input.GetHMoveAxis();
             float z = input.GetVMoveAxis();
             if ((x * x + z * z) > 0.1f)
             {
                 Vector3 baseFWD, baseRight;
-                lastDir = new Vector3(x, .0f, z);
                 baseFWD = mainCamera.transform.forward;
                 baseRight = mainCamera.transform.right;
-                moveForward = (new Vector3(lastDir.x * baseRight.x, 0, lastDir.x * baseRight.z)
-                                  + new Vector3(lastDir.z * baseFWD.x, 0, lastDir.z * baseFWD.z)).normalized;
+                inputDir = (new Vector3(x * baseRight.x, 0, x * baseRight.z)
+                                  + new Vector3(z * baseFWD.x, 0, z * baseFWD.z)).normalized;
 
+                Debug.Log(inputDir);
+                return true;
+            }
+            else inputDir = new Vector3(0, 0, 0);
+            return false;
+        }
+        public bool GetInputDir(float maxAngle)
+        {
+            float x = input.GetHMoveAxis();
+            float z = input.GetVMoveAxis();
+            if ((x * x + z * z) > 0.1f)
+            {
+                Vector3 baseFWD, baseRight;
+                baseFWD = mainCamera.transform.forward;
+                baseRight = mainCamera.transform.right;
+                inputDir = (new Vector3(x * baseRight.x, 0, x * baseRight.z)
+                                  + new Vector3(z * baseFWD.x, 0, z * baseFWD.z)).normalized;
 
-
-                Debug.Log(moveForward);
-                float btwAngle = Vector3.SignedAngle(selfTransform.forward, moveForward, Vector3.up);
+                Debug.Log(inputDir);
+                float btwAngle = Vector3.SignedAngle(selfTransform.forward, inputDir, Vector3.up);
 
                 if (Mathf.Abs(btwAngle) > maxAngle) {
-                    moveForward = Quaternion.AngleAxis(maxAngle * Mathf.Sign(btwAngle), Vector3.up)* selfTransform.forward;
-                    Debug.Log(moveForward + "   " + selfTransform.forward + "    " + btwAngle);
+                    inputDir = Quaternion.AngleAxis(maxAngle * Mathf.Sign(btwAngle), Vector3.up)* selfTransform.forward;
+                    Debug.Log(inputDir + "   " + selfTransform.forward + "    " + btwAngle);
                 }
                 return true;
             }
+            else inputDir = new Vector3(0, 0, 0);
             return false;
         }
 
@@ -277,7 +318,7 @@ namespace BloodBond {
         public bool AttackCheckDodge()
         {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
-            if (input.GetDodgeInput() && GetMoveInput() && !inDodgeCD && aniInfo.IsTag("Attack") && aniInfo.normalizedTime > 0.15f)
+            if (input.GetDodgeInput() && GetInputDir() && !inDodgeCD && aniInfo.IsTag("Attack") && aniInfo.normalizedTime > 0.15f)
             {
                 animator.SetBool("Dodge", true);
                 ChangeState(dodgeState);
@@ -305,11 +346,12 @@ namespace BloodBond {
         public void NormalComboAttack(ref int comboCount, int maxCombo) {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateStep == 0) {
+               
                 if (aniInfo.IsName("Combo" + comboCount.ToString())) {
-                    if (comboCount > 0 && moveForward.sqrMagnitude > 0.1f)  //接技的方向，第二下開始
+                    GetInputDir();
+                    if (comboCount > 0 && inputDir.sqrMagnitude > 0.1f)  //接技的方向，第二下開始
                     {
-                        selfTransform.rotation = Quaternion.LookRotation(moveForward);
-                        
+                        selfTransform.rotation = Quaternion.LookRotation(inputDir);
                     }
                     animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
                     stateStep++;
@@ -319,7 +361,6 @@ namespace BloodBond {
                 if (aniInfo.normalizedTime > 0.15f) {
                     if (aniInfo.normalizedTime < 0.55f) {
                         if (comboCount < maxCombo && input.GetNormalComboATK()) {
-                            GetMoveInput(90.0f);
                             animator.SetTrigger("NextCombo");
                             comboCount++;
                             stateStep = 0;
@@ -371,7 +412,7 @@ namespace BloodBond {
             }
             else if (stateStep == 1)
             {
-                if (!GetMoveInput()) //沒有方向輸入
+                if (!GetInputDir()) //沒有方向輸入
                 {
                     if (showDashEffect)
                     {
@@ -402,14 +443,14 @@ namespace BloodBond {
                     {
                         RaycastHit hit;
                         Vector3 pos = selfTransform.position + new Vector3(0, 1, 0);
-                        Vector3 nextPos = pos + moveForward * 5.0f;
+                        Vector3 nextPos = pos + inputDir * 5.0f;
 
                         if (Physics.Linecast(pos, nextPos, out hit, infoValue.HurtAreaLayer | 1 << LayerMask.NameToLayer("Barrier")))
                         {
                             if (hit.transform.tag.CompareTo("Barrier") == 0)
                             {
                                 Debug.Log("hiiiiiiiiiiiiit barrier   " + new Vector3(hit.point.x, 0, hit.point.z));
-                                selfTransform.position = new Vector3(hit.point.x, 0, hit.point.z) - moveForward;
+                                selfTransform.position = new Vector3(hit.point.x, 0, hit.point.z) - inputDir;
                             }
                             else
                             {
@@ -419,7 +460,7 @@ namespace BloodBond {
                         else selfTransform.position = new Vector3(nextPos.x,0, nextPos.z);
 
                         selfTransform.position = nextPos;
-                        selfTransform.rotation = Quaternion.LookRotation(moveForward);
+                        selfTransform.rotation = Quaternion.LookRotation(inputDir);
                         dashOrientEffect.gameObject.SetActive(false);
                         animator.SetTrigger("DashOver");
                         showDashEffect = false;
@@ -431,7 +472,7 @@ namespace BloodBond {
                         return;
                     }
                    
-                    dashOrientEffect.rotation = Quaternion.LookRotation(moveForward);
+                    dashOrientEffect.rotation = Quaternion.LookRotation(inputDir);
                 }
             }
             else if(stateStep == 2) {
