@@ -6347,7 +6347,7 @@ MonoBehaviour:
       inputSlot: {fileID: 8926484042661614778}
     position: {x: -881, y: 1099}
     expandedSlots: []
-    expanded: 0
+    expanded: 1
 --- !u!114 &8926484042661614691
 MonoBehaviour:
   m_ObjectHideFlags: 0
