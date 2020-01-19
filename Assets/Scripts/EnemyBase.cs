@@ -30,6 +30,7 @@ namespace BloodBond {
         Transform head;
         Animator animator;
 
+
         int playerPathIndex = 0;
         PathFinder.Path curPath, playerPath;
         PatrolRoute patrolRoute;
@@ -38,6 +39,9 @@ namespace BloodBond {
         public PatrolRoute PatrolRoute {
             get { return patrolRoute; }
         }
+        int curPointID = 1;
+        PatrolRoute.RouteType routeType;
+        bool pathOver = false;
 
         EnemyBaseState curState;
         EnemyIdleState idleState;
@@ -73,13 +77,27 @@ namespace BloodBond {
             yellState = new EnemyYellState(this);
             dieState = new EnemyDieState(this);
 
+            routeType = _patrolRoute.routeType;
             curPath = patrolRoute.path;
-            if (patrolRoute.routeType == PatrolRoute.RouteType.Rotate) curState = idleState;
+
+            if (patrolRoute.routeType == PatrolRoute.RouteType.Rotate) {
+                curState = idleState;
+            } 
             else {
-                curState = patrolState;
-                animator.SetBool("Patrol", true);
                 moveFwdDir = new Vector3(curPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
-                transform.rotation = Quaternion.LookRotation(moveFwdDir);
+                if (patrolRoute.LastLookAround)
+                {
+                    curState = lookAroundState;
+                    animator.SetBool("Look", true);
+                    transform.rotation = Quaternion.LookRotation(patrolRoute.LastLookForward);
+                    
+                }
+                else {
+                    curState = patrolState;
+                    animator.SetBool("Patrol", true);
+                    transform.rotation = Quaternion.LookRotation(moveFwdDir);
+                }
+                
             }
 
             head = transform.Find("mixamorig:Hips").GetChild(2).GetChild(0).GetChild(0).GetChild(1).GetChild(0);
@@ -163,16 +181,24 @@ namespace BloodBond {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateStep == 0)
             {
-                if (aniInfo.IsName("LookRound")) stateStep++;
+                if (aniInfo.IsName("LookRound")) {
+                    stateStep++;
+                    lookARoundNum = 1;
+                    
+                } 
             }
             else {
-                if (aniInfo.normalizedTime > patrolRoute.LookRoundNum * 0.9f) {
-                    animator.SetBool("Look", false);
-
-                    if (patrolRoute.routeType == PatrolRoute.RouteType.Rotate) ChangeState(idleState);
-                    else {
-                        ChangeState(patrolState);
-                        animator.SetBool("Patrol", true);
+                if (aniInfo.normalizedTime > lookARoundNum * 0.9f) {
+                    lookARoundNum++;
+                    if (lookARoundNum > patrolRoute.LastLookNum) {  //巡邏點已經提前+1，所以是看上一個點的旋轉次數
+                        lookARoundNum = 0;
+                        animator.SetBool("Look", false);
+                        if (patrolRoute.routeType == PatrolRoute.RouteType.Rotate) ChangeState(idleState);
+                        else
+                        {
+                            ChangeState(patrolState);
+                            animator.SetBool("Patrol", true);
+                        }
                     }
                 }
             }
@@ -183,53 +209,74 @@ namespace BloodBond {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateStep == 0)
             {
-                if (aniInfo.IsName("Patrol")) {
+                if (aniInfo.IsName("Patrol"))
+                {
                     stateStep++;
                     moveFwdDir = new Vector3(curPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
                     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
                 }
             }
-            else
+            else if (stateStep == 1)
             {
                 Vector2 pos2D = new Vector2(selfPos.x, selfPos.z);
                 if (curPath.turnBoundaries[patrolRoute.CurPointID].HasCrossedLine(pos2D))
                 {
-
-                    if (patrolRoute.CurPointID == patrolRoute.path.finishLineIndex) //|| pathIndex >= path.canAttckIndex
+                    if (patrolRoute.CurPointID == patrolRoute.path.finishLineIndex)
                     {
                         patrolRoute.CurPointID = 1;
-                        animator.SetBool("Look", true);
-                        ChangeState(lookAroundState);
-                        if (patrolRoute.routeType == PatrolRoute.RouteType.Pingpong)
-                        {
-
-
-                            if (!patrolRoute.Reverse)
+                        pathOver = true;
+                        if (!patrolRoute.LastLookAround && patrolRoute.routeType == PatrolRoute.RouteType.Pingpong) {
+                            if (patrolRoute.SetReversePath())
                             {
-                                patrolRoute.Reverse = true;
                                 curPath = patrolRoute.reversePath;
                             }
                             else
                             {
-                                patrolRoute.Reverse = false;
                                 curPath = patrolRoute.path;
                             }
+                            pathOver = false;
+                            return;
                         }
                     }
-                    else
-                    {
+                    else {
                         patrolRoute.CurPointID++;
-                        moveFwdDir = new Vector3(curPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
-                        if (patrolRoute.routeType == PatrolRoute.RouteType.Cycle)
-                        {
-                            animator.SetBool("Look", true);
-                            ChangeState(lookAroundState);
-                        }
+                    }
+
+                    if (patrolRoute.LastLookAround)
+                    {
+                        stateStep++;
+                        animator.speed = 0.3f;
+                        return;
                     }
                 }
+                moveFwdDir = new Vector3(curPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
                 transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * transform.forward;
 
+            }
+            else if (stateStep == 2){   //旋轉巡視
+                
+                if (Vector3.Angle(patrolRoute.LastLookForward, transform.forward) > 5.0f)
+                {
+                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(patrolRoute.LastLookForward), deltaTime * enemyManager.HunterValue.RotateSpeed);
+                }
+                else {
+                    if (pathOver && patrolRoute.routeType == PatrolRoute.RouteType.Pingpong)
+                    {
+                        if (patrolRoute.SetReversePath())
+                        {
+                            curPath = patrolRoute.reversePath;
+                        }
+                        else
+                        {
+                            curPath = patrolRoute.path;
+                        }
+                        pathOver = false;
+                    }
+                    animator.speed = 1.0f;
+                    animator.SetBool("Look", true);
+                    ChangeState(lookAroundState);
+                }
             }
         }
 
