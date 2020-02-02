@@ -12,6 +12,9 @@ namespace BloodBond {
         bool isMoving = false;
         float inputMoveX, inputMoveY;
         Vector3 moveForward = new Vector3(0, 0, 0), inputDir;
+        bool moveFix = false;
+        Vector3 moveFixVector;
+        RaycastHit moveRayHit;
 
         bool inDodgeCD = false;
         float dodgeOffset, dodgeCD, dodgeTime;
@@ -105,8 +108,8 @@ namespace BloodBond {
                 if (aniInfo.IsName("Idle")) stateStep++;
             }
             else {
-                Vector3 _dir = new Vector3(input.GetHMoveAxis(), .0f, input.GetVMoveAxis());
-                if (_dir.sqrMagnitude > 0.1f)
+                //Vector3 _dir = new Vector3(input.GetHMoveAxis(), .0f, input.GetVMoveAxis());
+                if (GetMove())
                 {
                     animator.SetBool("Run", true);
                     ChangeState(moveState);
@@ -125,19 +128,20 @@ namespace BloodBond {
 
             if (GetMove())
             {
-                selfTransform.rotation = Quaternion.Lerp(selfTransform.rotation, Quaternion.LookRotation(inputDir), deltaTime * infoValue.RotateSpeed);
                 Vector3 nextPos = selfTransform.position + infoValue.MoveSpeed * deltaTime * moveForward;
-                float difAngle = Vector3.Angle(selfTransform.forward, inputDir);
-                if (difAngle < 45.0f)
-                {
-                    selfTransform.position = nextPos;
-                }
+                selfTransform.position = nextPos;
+                //float difAngle = Vector3.Angle(selfTransform.forward, inputDir);
+                //if (difAngle < 45.0f)
+                //{
+                //    selfTransform.position = nextPos;
+                //}
 
             }
             else {
                 animator.SetBool("Run", false);
                 ChangeState(idleState);
             }
+            selfTransform.rotation = Quaternion.Lerp(selfTransform.rotation, Quaternion.LookRotation(inputDir), deltaTime * infoValue.RotateSpeed);
         }
 
         public bool MoveCheckDodge() {
@@ -174,11 +178,10 @@ namespace BloodBond {
                     Instantiate(PhantomCreate, selfTransform.position + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
                 }
                 float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
-                Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * inputDir;
-                if (!Physics.Linecast(selfTransform.position, nextPos + dSpeed * deltaTime * inputDir, 1 << LayerMask.NameToLayer("Barrier")))
-                {
-                    selfTransform.position = nextPos;
-                }
+                
+                Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * ModifyHitWallMove(inputDir);
+                selfTransform.position = nextPos;
+
             }
             else {
                 stateTime += deltaTime;
@@ -239,28 +242,9 @@ namespace BloodBond {
                 baseFWD = mainCamera.transform.forward;
                 baseRight = mainCamera.transform.right;
 
-                moveForward = new Vector3(0, 0, 0);
-                bool V_MoveCheck = false, H_MoveCheck = false;
-                Vector3 hVector = new Vector3(x * baseRight.x, 0, x * baseRight.z);
-                H_MoveCheck = Physics.Raycast(selfTransform.position, hVector.normalized, 5.0f * infoValue.MoveSpeed * deltaTime, 1 << LayerMask.NameToLayer("Barrier"));
-                Vector3 vVector = new Vector3(z * baseFWD.x, 0, z * baseFWD.z);
-                V_MoveCheck = Physics.Raycast(selfTransform.position, vVector.normalized, 5.0f * infoValue.MoveSpeed * deltaTime, 1 << LayerMask.NameToLayer("Barrier"));
-
-                inputDir = (hVector + vVector).normalized;
-
-                if (!H_MoveCheck && !V_MoveCheck)
-                {
-                    if (!Physics.Raycast(selfTransform.position, moveForward, 5.0f * infoValue.MoveSpeed * deltaTime, 1 << LayerMask.NameToLayer("Barrier")))
-                    {
-                        moveForward = inputDir;
-                    }
-                }
-                else
-                {
-                    if (!H_MoveCheck) moveForward += hVector;
-                    if (!V_MoveCheck) moveForward += vVector;
-                }
-                isMoving = true;
+                inputDir = (new Vector3(x * baseRight.x, 0, x * baseRight.z) + new Vector3(z * baseFWD.x, 0, z * baseFWD.z)).normalized;
+                moveForward = ModifyHitWallMove(inputDir);
+                //if (moveForward.sqrMagnitude < 0.1f) return false;
                 return true;
             }
             //else {
@@ -312,6 +296,42 @@ namespace BloodBond {
             }
             else inputDir = new Vector3(0, 0, 0);
             return false;
+        }
+
+        Vector3 ModifyHitWallMove(Vector3 way) {
+            
+            Vector3 detectPos = selfTransform.position + 2.5f * infoValue.MoveSpeed * deltaTime * way;
+            Vector3 nextRight = detectPos + 0.35f * new Vector3(way.z, 0, -way.x);
+            Vector3 nextLeft = detectPos + 0.35f * new Vector3(-way.z, 0, way.x);
+
+            Debug.DrawLine(selfTransform.position, nextRight, Color.red);
+            Debug.DrawLine(selfTransform.position, nextLeft, Color.red);
+            if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")) ||
+                   Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
+            {
+                Vector3 hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
+                float crossValue = way.x * hitNormal.z - way.z * hitNormal.x;
+                if (Mathf.Abs(crossValue) > 0.1f)
+                {
+                    if (crossValue > .0f) way = new Vector3(hitNormal.z, 0, -hitNormal.x);
+                    else way = new Vector3(-hitNormal.z, 0, hitNormal.x);
+                    detectPos = selfTransform.position + 2.5f * infoValue.MoveSpeed * deltaTime * way;
+                    nextRight = detectPos + 0.35f * new Vector3(way.z, 0, -way.x);
+                    nextLeft = detectPos + 0.35f * new Vector3(-way.z, 0, way.x);
+                    Debug.DrawLine(selfTransform.position, nextRight, Color.white);
+                    Debug.DrawLine(selfTransform.position, nextLeft, Color.white);
+                    if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")) ||
+                       Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
+                    {
+                        moveFix = true;
+                        return new Vector3(0, 0, 0);
+                    }
+
+                }
+                else return new Vector3(0, 0, 0);
+            }
+            return way;
+
         }
 
         //combo相關-----------------------------------------------------
