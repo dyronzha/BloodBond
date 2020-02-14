@@ -29,6 +29,17 @@ public class MoveTest : MonoBehaviour{
     int ArriveCount = 0;
     float[] PhantomMoment;
 
+    //衝刺瞬移(有傷害判定的)
+    public GameObject TeleportShadow;
+    Vector3 Teleport_Target;
+    Vector3 Teleport_Current;
+    bool On_Teleport = false;
+    float AquaMoment = 0.0f;
+    public float Teleport_Time = 0.2f;
+    float Teleport_Moment;
+    public float Teleport_Dis = 0.8f;
+    bool On_Aqua = false;
+
     void Start() {
         Phantom_Spacing = new Vector3[Max_PhantomCount];
         PhantomMoment = new float[Max_PhantomCount];
@@ -36,6 +47,20 @@ public class MoveTest : MonoBehaviour{
     }
 
     void Update(){
+
+        //衝刺瞬移(有傷害判定的)
+        if (Input.GetKeyDown(KeyCode.Q) && On_Teleport == false && On_Aqua == false) {
+            Teleport_Current = transform.position;
+            Teleport_Target = transform.position + new Vector3(0.0f, 0.0f, 6.0f);
+            Instantiate(TeleportShadow, Teleport_Current, transform.rotation);
+            //Instantiate(PhantomCreate, Teleport_Current, transform.rotation);
+            //PhantomCreate.GetComponent<Phantom>().CheckOnce = true;
+            On_Teleport = true;
+            GetComponent<Animator>().Play("Dodge");
+            GetComponent<Animator>().speed = 0.0f;
+            Teleport_Moment = Time.time;
+            GetComponent<KarolShader>().ChangeMaterial(9);
+        }
 
         //瞬移
         if (Input.GetKeyDown(KeyCode.W) && OnDissolve == false){
@@ -115,6 +140,23 @@ public class MoveTest : MonoBehaviour{
                 GetComponent<Animator>().speed = 1.0f;
                 ArriveCount = 0;
             }
+        }
+
+        if (On_Teleport == true) {
+            transform.position = Vector3.Lerp(transform.position,Teleport_Target, Teleport_Dis);
+
+            if (Time.time > Teleport_Moment + Teleport_Time && On_Aqua == false) {
+                On_Aqua = true;
+                AquaMoment = Time.time;
+                GetComponent<Animator>().speed = 1.0f;
+            }
+
+            if (Time.time > AquaMoment + 2.0f && On_Aqua == true) {
+                On_Aqua = false;
+                On_Teleport = false;
+                GetComponent<KarolShader>().ChangeMaterial(0);
+            }
+
         }
     }
 
