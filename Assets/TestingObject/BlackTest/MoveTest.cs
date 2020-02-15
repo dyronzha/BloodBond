@@ -39,6 +39,9 @@ public class MoveTest : MonoBehaviour{
     float Teleport_Moment;
     public float Teleport_Dis = 0.8f;
     bool On_Aqua = false;
+    public ParticleSystem Ps_Trail;
+    public ParticleSystem Ps_Particle;
+    public GameObject Ps_Arrive;
 
     void Start() {
         Phantom_Spacing = new Vector3[Max_PhantomCount];
@@ -60,6 +63,8 @@ public class MoveTest : MonoBehaviour{
             GetComponent<Animator>().speed = 0.0f;
             Teleport_Moment = Time.time;
             GetComponent<KarolShader>().ChangeMaterial(9);
+            Ps_Trail.Play();
+            Ps_Particle.Play();
         }
 
         //瞬移
@@ -149,6 +154,8 @@ public class MoveTest : MonoBehaviour{
                 On_Aqua = true;
                 AquaMoment = Time.time;
                 GetComponent<Animator>().speed = 1.0f;
+                Instantiate(Ps_Arrive, transform.position + new Vector3(0.0f,1.1f,-0.2f), Quaternion.identity);
+                StartCoroutine(StopTrail());
             }
 
             if (Time.time > AquaMoment + 2.0f && On_Aqua == true) {
@@ -172,6 +179,12 @@ public class MoveTest : MonoBehaviour{
         for (int i = 0; i < Max_PhantomCount; i++){
             Phantom_Spacing[i] = new Vector3(Dis_BetweenPhantom.x * i, Dis_BetweenPhantom.y * i, Dis_BetweenPhantom.z * i);
         }
+    }
+
+    IEnumerator StopTrail() {
+        yield return new WaitForSeconds(0.2f);
+        Ps_Trail.Stop();
+        Ps_Trail.Stop();
     }
 
 }

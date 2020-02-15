@@ -27,4 +27,4 @@ Material:
     - _GlowPower: 1
     m_Colors:
     - _FresnelAmount: {r: 1, g: 1, b: 1, a: 1}
-    - _GlowColor: {r: 0, g: 0.929374, b: 1.866066, a: 1}
+    - _GlowColor: {r: 1.8660661, g: 0, b: 0.047507826, a: 1}

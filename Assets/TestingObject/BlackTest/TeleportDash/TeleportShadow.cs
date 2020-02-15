@@ -14,7 +14,7 @@ public class TeleportShadow : MonoBehaviour{
         Speed = Mathf.Lerp(Speed, 0.0f, 0.5f);
         ShadowDisappear(Speed);
 
-        if (Speed < 0.005f) Destroy(gameObject);
+        if (Speed < 0.005f) Destroy(gameObject.transform.parent.gameObject);
     }
 
     void ShadowDisappear(float x) {
