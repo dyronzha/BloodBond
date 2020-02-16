@@ -52,8 +52,8 @@ ModelImporter:
       name: DashForward
       takeName: Dash
       internalID: 0
-      firstFrame: 8.1
-      lastFrame: 9
+      firstFrame: 2.8
+      lastFrame: 8.1
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
