@@ -31,8 +31,6 @@ public class MoveTest : MonoBehaviour{
 
     //衝刺瞬移(有傷害判定的)
     public GameObject TeleportShadow;
-    Vector3 Teleport_Target;
-    Vector3 Teleport_Current;
     bool On_Teleport = false;
     float AquaMoment = 0.0f;
     public float Teleport_Time = 0.2f;
@@ -53,18 +51,15 @@ public class MoveTest : MonoBehaviour{
 
         //衝刺瞬移(有傷害判定的)
         if (Input.GetKeyDown(KeyCode.Q) && On_Teleport == false && On_Aqua == false) {
-            Teleport_Current = transform.position;
-            Teleport_Target = transform.position + new Vector3(0.0f, 0.0f, 6.0f);
-            Instantiate(TeleportShadow, Teleport_Current, transform.rotation);
-            //Instantiate(PhantomCreate, Teleport_Current, transform.rotation);
-            //PhantomCreate.GetComponent<Phantom>().CheckOnce = true;
+            //Ps_Trail.Play();
+            //Ps_Particle.Play();
+            Instantiate(TeleportShadow, transform.position, transform.rotation);
+            transform.position = transform.position + new Vector3(0.0f, 0.0f, 6.0f);
             On_Teleport = true;
             GetComponent<Animator>().Play("Dodge");
             GetComponent<Animator>().speed = 0.0f;
             Teleport_Moment = Time.time;
             GetComponent<KarolShader>().ChangeMaterial(9);
-            Ps_Trail.Play();
-            Ps_Particle.Play();
         }
 
         //瞬移
@@ -148,8 +143,8 @@ public class MoveTest : MonoBehaviour{
         }
 
         if (On_Teleport == true) {
-            transform.position = Vector3.Lerp(transform.position,Teleport_Target, Teleport_Dis);
-
+            //transform.position = Vector3.Lerp(transform.position,Teleport_Target, Teleport_Dis);
+            //GetComponent<KarolShader>().LerpMaterial(12, 9);
             if (Time.time > Teleport_Moment + Teleport_Time && On_Aqua == false) {
                 On_Aqua = true;
                 AquaMoment = Time.time;
@@ -186,5 +181,4 @@ public class MoveTest : MonoBehaviour{
         Ps_Trail.Stop();
         Ps_Trail.Stop();
     }
-
 }

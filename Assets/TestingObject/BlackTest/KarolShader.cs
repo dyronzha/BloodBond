@@ -18,6 +18,8 @@ public class KarolShader : MonoBehaviour{
     float DodgeGlowValue = 1.0f;
     public float DodgeGlowSpeed = 0.004f;
 
+    float Duration = 2.0f;
+
     void Update(){
 
         if (ShaderMode == 1){
@@ -63,5 +65,11 @@ public class KarolShader : MonoBehaviour{
         foreach (SkinnedMeshRenderer _skin in Mesh_Foot) { _skin.material = ShaderType[Type + 2]; }
     }
 
+    public void LerpMaterial(int Before, int After) {
+        //float lerp = Mathf.PingPong(Time.time, Duration) / Duration;
+        foreach (SkinnedMeshRenderer _skin in Mesh_Head) { _skin.material.Lerp(ShaderType[Before], ShaderType[After], 0.5f); }
+        foreach (SkinnedMeshRenderer _skin in Mesh_Head) { _skin.material.Lerp(ShaderType[Before+1], ShaderType[After+1], 0.5f); }
+        foreach (SkinnedMeshRenderer _skin in Mesh_Head) { _skin.material.Lerp(ShaderType[Before+2], ShaderType[After+2], 0.5f); }
+    }
 
 }
