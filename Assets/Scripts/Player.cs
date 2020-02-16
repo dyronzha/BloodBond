@@ -365,8 +365,7 @@ namespace BloodBond {
         }
         public void NormalComboAttack(ref int comboCount, int maxCombo) {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
-            if (stateStep == 0) {
-               
+            if (stateStep == 0) { 
                 if (aniInfo.IsName("Combo" + comboCount.ToString())) {
                     GetInputDir();
                     if (comboCount > 0 && inputDir.sqrMagnitude > 0.1f)  //接技的方向，第二下開始
@@ -378,6 +377,7 @@ namespace BloodBond {
                 }
             }
             else if (stateStep == 1) {
+                if(animator.applyRootMotion) animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
                 if (aniInfo.normalizedTime > 0.15f) {
                     if (aniInfo.normalizedTime < 0.55f) {
                         if (comboCount < maxCombo && input.GetNormalComboATK()) {
@@ -439,6 +439,12 @@ namespace BloodBond {
                         dashOrientEffect.gameObject.SetActive(false);
                         showDashEffect = false;
                     }
+                    if (CheckGetHurt())
+                    {
+                        animator.SetBool("Dash", false);
+                        Time.timeScale = 1.0f;
+                        return;
+                    }
                     if (!input.GetDashInput())
                     {
                         animator.SetBool("Dash", false);
@@ -458,6 +464,14 @@ namespace BloodBond {
                     {
                         dashOrientEffect.gameObject.SetActive(true);
                         showDashEffect = true;
+                    }
+                    if (CheckGetHurt())
+                    {
+                        animator.SetBool("Dash", false);
+                        Time.timeScale = 1.0f;
+                        dashOrientEffect.gameObject.SetActive(false);
+                        showDashEffect = false;
+                        return;
                     }
                     if (!input.GetDashInput())
                     {

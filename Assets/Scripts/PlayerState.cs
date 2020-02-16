@@ -71,12 +71,6 @@ namespace BloodBond {
         }
         public override void Update()
         {
-            if (player.CheckGetHurt())
-            {
-                player.SetAnimatorBool("Dash", false);
-                Time.timeScale = 1.0f;
-                return;
-            }
             player.Dash();
         }
     }
