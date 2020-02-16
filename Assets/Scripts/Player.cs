@@ -11,7 +11,7 @@ namespace BloodBond {
 
         bool isMoving = false;
         float inputMoveX, inputMoveY;
-        Vector3 moveForward = new Vector3(0, 0, 0), inputDir;
+        Vector3 moveForward = new Vector3(0, 0, 0), inputDir, lastFace = new Vector3(10,10,10);
         bool moveFix = false;
         Vector3 moveFixVector;
         RaycastHit moveRayHit;
@@ -25,8 +25,12 @@ namespace BloodBond {
         bool showATKCollider = false;
         public Collider attackCollider;
 
-        bool showDashEffect = false;
+        bool canTelePort = true;
+        int dashPointCount = 1, dashPointMaxCount = 0;
+        float dashTime = .0f, dashLength = .0f;
         Transform dashOrientEffect;
+        Vector3 dashFixPos, goalPoint, dashDir;
+        RaycastHit dashHit;
 
         KarolShader karolShader;
         public GameObject PhantomCreate;
@@ -40,6 +44,7 @@ namespace BloodBond {
         }
         CapsuleCollider hurtAreaCollider;
         Animator animator;
+
 
         [SerializeField]
         PlayerValue infoValue;
@@ -306,13 +311,20 @@ namespace BloodBond {
 
             Debug.DrawLine(selfTransform.position, nextRight, Color.red);
             Debug.DrawLine(selfTransform.position, nextLeft, Color.red);
-            if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")) ||
-                   Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
-            {
-                Vector3 hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
-                float crossValue = way.x * hitNormal.z - way.z * hitNormal.x;
-                if (Mathf.Abs(crossValue) > 0.1f)
-                {
+
+
+            float crossValue = -10000;
+            Vector3 hitNormal = new Vector3(0,0,0);
+            if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier"))){
+                hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
+                crossValue = way.x * hitNormal.z - way.z * hitNormal.x;
+            }
+            else if (Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier"))) {
+                hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
+                crossValue = way.x * hitNormal.z - way.z * hitNormal.x;
+            }
+            if (crossValue > -9999) {  //確認其中一條線有打到
+                if (Mathf.Abs(crossValue) > 0.1f) {   //打中面的法向量與前進方向不能一致
                     if (crossValue > .0f) way = new Vector3(hitNormal.z, 0, -hitNormal.x);
                     else way = new Vector3(-hitNormal.z, 0, hitNormal.x);
                     detectPos = selfTransform.position + 2.5f * infoValue.MoveSpeed * deltaTime * way;
@@ -326,11 +338,36 @@ namespace BloodBond {
                         moveFix = true;
                         return new Vector3(0, 0, 0);
                     }
-
                 }
                 else return new Vector3(0, 0, 0);
             }
             return way;
+
+            //if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")) ||
+            //       Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
+            //{
+            //    Vector3 hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
+            //    crossValue = way.x * hitNormal.z - way.z * hitNormal.x;
+            //    if (Mathf.Abs(crossValue) > 0.1f)
+            //    {
+            //        if (crossValue > .0f) way = new Vector3(hitNormal.z, 0, -hitNormal.x);
+            //        else way = new Vector3(-hitNormal.z, 0, hitNormal.x);
+            //        detectPos = selfTransform.position + 2.5f * infoValue.MoveSpeed * deltaTime * way;
+            //        nextRight = detectPos + 0.35f * new Vector3(way.z, 0, -way.x);
+            //        nextLeft = detectPos + 0.35f * new Vector3(-way.z, 0, way.x);
+            //        Debug.DrawLine(selfTransform.position, nextRight, Color.white);
+            //        Debug.DrawLine(selfTransform.position, nextLeft, Color.white);
+            //        if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")) ||
+            //           Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
+            //        {
+            //            moveFix = true;
+            //            return new Vector3(0, 0, 0);
+            //        }
+
+            //    }
+            //    else return new Vector3(0, 0, 0);
+            //}
+            //return way;
 
         }
 
@@ -422,23 +459,29 @@ namespace BloodBond {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateStep == 0)
             {
-                if (aniInfo.IsName("PreDash")) {
+                if (aniInfo.IsName("PreDash"))
+                {
                     stateStep++;
                     Time.timeScale = 0.2f;
                     VFX_Teleport.playRate = 6.0f;
                     VFX_Teleport.SetInt("Number_of_Particles", 1000000);
                     VFX_Teleport.SetFloat("AttractDrag", 0.0f);
-                } 
+
+                    dashFixPos = selfTransform.position + new Vector3(0, 1.0f, 0);
+                    dashDir = transform.forward;
+                    canTelePort = true;
+                    goalPoint = selfTransform.position + 0.5f * dashDir+ new Vector3(0, 5.0f, 0);
+                    if (Physics.Raycast(goalPoint, new Vector3(0, -1, 0), 1 << LayerMask.NameToLayer("Ground")))
+                    {
+                        canTelePort = false;
+                        //瞬移改顏色
+                    }
+                }
             }
             else if (stateStep == 1)
             {
                 if (!GetInputDir()) //沒有方向輸入
                 {
-                    if (showDashEffect)
-                    {
-                        dashOrientEffect.gameObject.SetActive(false);
-                        showDashEffect = false;
-                    }
                     if (CheckGetHurt())
                     {
                         animator.SetBool("Dash", false);
@@ -450,27 +493,19 @@ namespace BloodBond {
                         animator.SetBool("Dash", false);
                         ChangeState(idleState);
                         dashOrientEffect.gameObject.SetActive(false);
-                        showDashEffect = false;
                         Time.timeScale = 1.0f;
                         VFX_Teleport.SetFloat("AttractDrag", 1.0f);
                         VFX_Teleport.SetInt("Number_of_Particles", 0);
                         return;
                     }
-                    
                 }
                 else
                 {
-                    if (!showDashEffect)
-                    {
-                        dashOrientEffect.gameObject.SetActive(true);
-                        showDashEffect = true;
-                    }
                     if (CheckGetHurt())
                     {
                         animator.SetBool("Dash", false);
                         Time.timeScale = 1.0f;
                         dashOrientEffect.gameObject.SetActive(false);
-                        showDashEffect = false;
                         return;
                     }
                     if (!input.GetDashInput())
@@ -493,11 +528,10 @@ namespace BloodBond {
                         }
                         else selfTransform.position = new Vector3(nextPos.x,0, nextPos.z);
 
-                        selfTransform.position = nextPos;
+                        selfTransform.position = nextPos - new Vector3(0, 1, 0); ;
                         selfTransform.rotation = Quaternion.LookRotation(inputDir);
                         dashOrientEffect.gameObject.SetActive(false);
                         animator.SetTrigger("DashOver");
-                        showDashEffect = false;
                         
                         stateStep++;
 
@@ -507,6 +541,43 @@ namespace BloodBond {
                     }
                    
                     dashOrientEffect.rotation = Quaternion.LookRotation(inputDir);
+                }
+
+                
+                dashTime += deltaTime;
+                if (dashTime > 0.15f)
+                {
+                    dashPointCount++;
+                    if (dashPointCount > 5) dashPointCount = 5;
+                    else
+                    {
+                        goalPoint = selfTransform.position + 0.5f * dashPointCount * dashDir + new Vector3(0, 5.0f, 0);
+                        if (Physics.Raycast(goalPoint, new Vector3(0, -1, 0), 1 << LayerMask.NameToLayer("Ground")))
+                        {
+                            canTelePort = false;
+                            //瞬移改顏色
+                        }
+                        else canTelePort = true;
+                    }
+                    dashTime = .0f;
+                }
+
+                dashLength += deltaTime * 6.66f;
+                goalPoint = selfTransform.position + dashLength * dashDir + new Vector3(0, 5.0f, 0);
+                if (canTelePort)
+                {
+                    if (Physics.Raycast(dashFixPos, dashDir, out dashHit, 1 << LayerMask.NameToLayer("Barrier")))
+                    {
+                        if (dashHit.transform.tag.CompareTo("Through") == 0)
+                        {
+
+                        }
+                        else { 
+                            
+                        }
+                    }
+                    Collider[] hits = Physics.OverlapSphere(goalPoint, 0.3f, 1 << LayerMask.NameToLayer("Barrier"));
+                    
                 }
             }
             else if(stateStep == 2) {
