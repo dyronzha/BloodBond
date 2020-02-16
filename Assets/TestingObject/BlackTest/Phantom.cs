@@ -26,12 +26,10 @@ public class Phantom : MonoBehaviour{
 
         if (Emission_State == true) {
             if (Time.time > Emission_Moment + AliveTime){
-                Debug.Log("line21");
                 GetComponent<VisualEffect>().SetInt("Number_of_Particles", 0);
             }
 
             if (Time.time > Emission_Moment + DisappearTime){
-                Debug.Log("line24");
                 Destroy(gameObject);
             }
         }
