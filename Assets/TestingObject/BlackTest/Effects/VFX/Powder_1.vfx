@@ -223,7 +223,7 @@ MonoBehaviour:
     x: 324
     y: -336
     width: 761
-    height: 1649
+    height: 1684
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -234,7 +234,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d4c867f6b72b714dbb5fd1780afe208, type: 3}
-  m_Name: New VFX
+  m_Name: Type1
   m_EditorClassIdentifier: 
   m_Parent: {fileID: 0}
   m_Children:
@@ -784,7 +784,7 @@ VisualEffectResource:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New VFX
+  m_Name: Type1
   m_Graph: {fileID: 114350483966674976}
   m_ShaderSources:
   - compute: 1
@@ -1383,7 +1383,7 @@ VisualEffectResource:
       m_NamedObject:
         m_Array:
         - m_ExpressionIndex: 24
-          m_Value: {fileID: 6918954641851045129, guid: 25a9b6d30c5af274e83e4a39f732d5cf,
+          m_Value: {fileID: 6918954641851045129, guid: 36b18d9cd546e3c468faccbf437ca4b9,
             type: 3}
         - m_ExpressionIndex: 28
           m_Value: {fileID: 2800000, guid: 276d9e395ae18fe40a9b4988549f2349, type: 3}
@@ -3035,7 +3035,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
-  m_UIPosition: {x: 329, y: 65}
+  m_UIPosition: {x: 329, y: 67}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
@@ -3043,7 +3043,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614596}
   - {fileID: 8926484042661614597}
   - {fileID: 8926484042661614598}
-  Asset: {fileID: -3256353808211938606, guid: 25a9b6d30c5af274e83e4a39f732d5cf, type: 3}
+  Asset: {fileID: -3256353808211938606, guid: 36b18d9cd546e3c468faccbf437ca4b9, type: 3}
 --- !u!114 &8926484042661614596
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Opaque_Head
+  m_Name: Opaque_Body
   m_Shader: {fileID: -6465566751694194690, guid: 704bbcacd767b14449550075640157d7,
     type: 3}
   m_ShaderKeywords: 
@@ -23,11 +23,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - Texture2D_7253A972:
-        m_Texture: {fileID: 2800000, guid: 7464f09901610344bae8009427f6e123, type: 3}
+        m_Texture: {fileID: 2800000, guid: 615e14c6494508941886d71632606a83, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_7B165622:
-        m_Texture: {fileID: 2800000, guid: 18ba01c7e78579a4badfb6c31e024d91, type: 3}
+        m_Texture: {fileID: 2800000, guid: 37351b90aabef244399bd356fbe9ba87, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -36,4 +36,4 @@ Material:
     m_Colors:
     - Color_4A1805D7: {r: 1.4807053, g: 0.020953339, b: 0.032928422, a: 0}
     - Color_79923DF0: {r: 1, g: 1, b: 1, a: 0}
-    - Vector4_83C1BE40: {r: -0.026456121, g: -0.026456121, b: -0.026456121, a: -0.026456121}
+    - Vector4_83C1BE40: {r: -0.01516364, g: -0.01516364, b: -0.01516364, a: -0.01516364}

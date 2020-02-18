@@ -143,8 +143,6 @@ public class MoveTest : MonoBehaviour{
         }
 
         if (On_Teleport == true) {
-            //transform.position = Vector3.Lerp(transform.position,Teleport_Target, Teleport_Dis);
-            //GetComponent<KarolShader>().LerpMaterial(12, 9);
             if (Time.time > Teleport_Moment + Teleport_Time && On_Aqua == false) {
                 On_Aqua = true;
                 AquaMoment = Time.time;
@@ -158,8 +156,12 @@ public class MoveTest : MonoBehaviour{
                 On_Teleport = false;
                 GetComponent<KarolShader>().ChangeMaterial(0);
             }
-
         }
+
+        //攻擊測試
+        if (Input.GetKeyDown(KeyCode.R) && GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) GetComponent<Animator>().Play("Attack_Mode1");
+        else if (Input.GetKeyDown(KeyCode.T) && GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) GetComponent<Animator>().Play("Attack_Mode2");
+        else if (Input.GetKeyDown(KeyCode.Y) && GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) GetComponent<Animator>().Play("Attack_Mode31");
     }
 
     public void DissolveEnd() {
