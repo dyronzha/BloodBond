@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:Assets/TestingObject/ZhaTest/ParticlesShaders.meta
-guid: 94750a8a7bfbe254bae7f6fbd3b39e33
-=======
-guid: 96efa5dc91204924085b1b861e58fbbb
->>>>>>> 9e360501b9b44eec65330eff481205aca3b4359d:Assets/TestingObject/BlackTest/Anim.meta
+guid: 63457ba08f3d4fd4bbb418369c907ddc
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

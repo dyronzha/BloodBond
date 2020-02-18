@@ -51,9 +51,8 @@ public class MoveTest : MonoBehaviour{
 
         //衝刺瞬移(有傷害判定的)
         if (Input.GetKeyDown(KeyCode.Q) && On_Teleport == false && On_Aqua == false) {
-            //Ps_Trail.Play();
-            //Ps_Particle.Play();
             Instantiate(TeleportShadow, transform.position, transform.rotation);
+            GetComponent<AnimationEventEffects>().InstantiateEffect(2);
             transform.position = transform.position + new Vector3(0.0f, 0.0f, 6.0f);
             On_Teleport = true;
             GetComponent<Animator>().Play("Dodge");
