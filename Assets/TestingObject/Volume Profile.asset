@@ -63,13 +63,13 @@ MonoBehaviour:
     max: 5
   skyTint:
     m_OverrideState: 1
-    m_Value: {r: 0.26415092, g: 0.25293696, b: 0.25293696, a: 1}
+    m_Value: {r: 0.35095578, g: 0.18983625, b: 0.509434, a: 1}
     hdr: 0
     showAlpha: 1
     showEyeDropper: 1
   groundColor:
     m_OverrideState: 1
-    m_Value: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 1}
+    m_Value: {r: 0.5188679, g: 0.5188679, b: 0.5188679, a: 1}
     hdr: 0
     showAlpha: 1
     showEyeDropper: 1
@@ -149,7 +149,7 @@ MonoBehaviour:
   m_AdvancedMode: 0
   skyType:
     m_OverrideState: 1
-    m_Value: 3
+    m_Value: 2
   skyAmbientMode:
     m_OverrideState: 0
     m_Value: 0
