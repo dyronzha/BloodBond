@@ -4821,7 +4821,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4673061110187000}
   m_Layer: 0
-  m_Name: Eff1_Right
+  m_Name: Ground_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
