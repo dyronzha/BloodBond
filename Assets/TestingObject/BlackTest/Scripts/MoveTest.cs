@@ -40,6 +40,7 @@ public class MoveTest : MonoBehaviour{
     public ParticleSystem Ps_Trail;
     public ParticleSystem Ps_Particle;
     public GameObject Ps_Arrive;
+    Vector3 TargetPos;
 
     void Start() {
         Phantom_Spacing = new Vector3[Max_PhantomCount];
@@ -51,12 +52,16 @@ public class MoveTest : MonoBehaviour{
 
         //衝刺瞬移(有傷害判定的)
         if (Input.GetKeyDown(KeyCode.Q) && On_Teleport == false && On_Aqua == false) {
+            //Ps_Particle.Play();
+            //Ps_Trail.Play();
+            GetComponent<Animator>().Play("Dodge");
             Instantiate(TeleportShadow, transform.position, transform.rotation);
             GetComponent<AnimationEventEffects>().InstantiateEffect(2);
+            //TargetPos = transform.position + new Vector3(0.0f, 0.0f, 6.0f);
             transform.position = transform.position + new Vector3(0.0f, 0.0f, 6.0f);
             On_Teleport = true;
-            GetComponent<Animator>().Play("Dodge");
-            GetComponent<Animator>().speed = 0.0f;
+
+            //GetComponent<Animator>().speed = 0.0f;
             Teleport_Moment = Time.time;
             GetComponent<KarolShader>().ChangeMaterial(9);
         }
@@ -147,7 +152,7 @@ public class MoveTest : MonoBehaviour{
                 AquaMoment = Time.time;
                 GetComponent<Animator>().speed = 1.0f;
                 Instantiate(Ps_Arrive, transform.position + new Vector3(0.0f,1.1f,-0.2f), Quaternion.identity);
-                StartCoroutine(StopTrail());
+                //StartCoroutine(StopTrail());
             }
 
             if (Time.time > AquaMoment + 2.0f && On_Aqua == true) {
@@ -160,7 +165,8 @@ public class MoveTest : MonoBehaviour{
         //攻擊測試
         if (Input.GetKeyDown(KeyCode.R) && GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) GetComponent<Animator>().Play("Attack_Mode1");
         else if (Input.GetKeyDown(KeyCode.T) && GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) GetComponent<Animator>().Play("Attack_Mode2");
-        else if (Input.GetKeyDown(KeyCode.Y) && GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) GetComponent<Animator>().Play("Attack_Mode31");
+        else if (Input.GetKeyDown(KeyCode.Y) && GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) GetComponent<Animator>().Play("Attack_Mode3");
+        else if (Input.GetKeyDown(KeyCode.U) && GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) GetComponent<Animator>().Play("Attack_Mode41");
     }
 
     public void DissolveEnd() {
@@ -180,6 +186,17 @@ public class MoveTest : MonoBehaviour{
     IEnumerator StopTrail() {
         yield return new WaitForSeconds(0.2f);
         Ps_Trail.Stop();
-        Ps_Trail.Stop();
+        Ps_Particle.Stop();
+    }
+
+    public void Linear_Switch(int State){
+        if (State == 1){
+            Ps_Particle.Play();
+            Ps_Trail.Play();
+        }
+        else {
+            Ps_Particle.Stop();
+            Ps_Trail.Stop();
+        }
     }
 }
