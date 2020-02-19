@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Barrier
   - PatrolRotatePoint
+  - Through
   layers:
   - Default
   - TransparentFX

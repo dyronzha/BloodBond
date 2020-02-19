@@ -416,13 +416,14 @@ namespace BloodBond {
                 }
             }
             else if (stateStep == 1) {
-                if(animator.applyRootMotion) animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
+                if(animator.applyRootMotion && comboCount < 2) animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
                 if (aniInfo.normalizedTime > 0.15f) {
                     if (aniInfo.normalizedTime < 0.55f) {
                         if (comboCount < maxCombo && input.GetNormalComboATK()) {
                             animator.SetTrigger("NextCombo");
                             comboCount++;
                             stateStep = 0;
+                            if (comboCount == 2) animator.applyRootMotion = false;
                         }
                     }
                     else if (aniInfo.normalizedTime >= 0.7f)
