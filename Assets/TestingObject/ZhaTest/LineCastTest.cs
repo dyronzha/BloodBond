@@ -9,7 +9,7 @@ public class LineCastTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(Vector3.Angle(new Vector3(100,100,100), new Vector3(100,0,-100)));
+        
     }
 
     // Update is called once per frame

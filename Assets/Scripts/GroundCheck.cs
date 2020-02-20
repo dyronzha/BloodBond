@@ -22,7 +22,7 @@ public class GroundCheck
         RaycastHit hit;
         if (Physics.Raycast(fromPoint, new Vector3(0, -1.0f, 0), out hit, 10.0f, 1 << LayerMask.NameToLayer("Ground")))
         {
-            groundPos = hit.point + new Vector3(0,0.1f,0);
+            groundPos = hit.point;
             return true;
         }
         else {

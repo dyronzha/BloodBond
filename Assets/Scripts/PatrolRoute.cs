@@ -51,6 +51,7 @@ namespace BloodBond {
         public bool LastLookAround
         {
             get {
+                Debug.Log("point id  " + lastPointID);
                 return lookArounds[Mathf.Abs( curIDOffset - lastPointID)];}
         }
         private int[] lookNums;

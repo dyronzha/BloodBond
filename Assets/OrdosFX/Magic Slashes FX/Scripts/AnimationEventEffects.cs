@@ -39,7 +39,7 @@ public class AnimationEventEffects : MonoBehaviour {
     void Start() {
     }
             
-    public void InstantiateEffect(int EffectNumber)
+    void InstantiateEffect(int EffectNumber)
     {
         if(Effects == null || Effects.Length <= EffectNumber)
         {

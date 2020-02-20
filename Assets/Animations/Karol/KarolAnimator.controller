@@ -446,7 +446,7 @@ AnimatorStateMachine:
     m_Position: {x: 550, y: 130, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4830906195602142426}
-    m_Position: {x: 420, y: 260, z: 0}
+    m_Position: {x: 390, y: 240, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -750,7 +750,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -4270308647183148518, guid: dc72ea9d236fa73458399ad3a75fcf01,
+  m_Motion: {fileID: -4270308647183148518, guid: d033c1df5b1f49f4ba67b90edf9b7334,
     type: 3}
   m_Tag: Attack
   m_SpeedParameter: 
@@ -860,7 +860,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: DashOver
-  m_Speed: 0.7
+  m_Speed: 0.1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -7214086399336774512}
@@ -874,7 +874,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -804556913361581091, guid: 736f369d58012464fa54e194b5bf6858,
+  m_Motion: {fileID: -8444228808809566427, guid: 736f369d58012464fa54e194b5bf6858,
     type: 3}
   m_Tag: 
   m_SpeedParameter: 
@@ -1063,7 +1063,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0
+  m_TransitionDuration: 0.05
   m_TransitionOffset: 0
   m_ExitTime: 0.55
   m_HasExitTime: 1

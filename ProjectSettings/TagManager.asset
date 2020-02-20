@@ -6,7 +6,6 @@ TagManager:
   tags:
   - Barrier
   - PatrolRotatePoint
-  - Through
   layers:
   - Default
   - TransparentFX
@@ -21,7 +20,7 @@ TagManager:
   - DamageToEnemy
   - Wall
   - Barrier
-  - Ground
+  - 
   - 
   - 
   - 

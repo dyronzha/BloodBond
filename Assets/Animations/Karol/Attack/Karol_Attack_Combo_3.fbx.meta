@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: dc72ea9d236fa73458399ad3a75fcf01
+guid: d033c1df5b1f49f4ba67b90edf9b7334
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable:
@@ -23,9 +23,9 @@ ModelImporter:
     animationImportErrors: 
     animationImportWarnings: "\nClip 'karol_Attack_Combo_3' has import animation warnings
       that might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'mixamorig:LeftForeArm' has translation animation
-      that will be discarded.\n\t'mixamorig:RightLeg' has translation animation that
-      will be discarded.\n"
+      to improve retargeting quality.\n\t'mixamorig:RightForeArm' has translation
+      animation that will be discarded.\n\t'mixamorig:RightLeg' has translation animation
+      that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -42,7 +42,7 @@ ModelImporter:
       name: karol_Attack_Combo_3
       takeName: karol_Attack_Combo_3
       internalID: 0
-      firstFrame: 1
+      firstFrame: 13
       lastFrame: 96
       wrapMode: 0
       orientationOffsetY: 0
@@ -62,14 +62,7 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 0.12564544
-        functionName: InstantiateEffect
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 2
-        messageOptions: 0
+      events: []
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
