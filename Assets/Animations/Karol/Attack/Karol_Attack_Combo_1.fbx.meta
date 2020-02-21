@@ -64,7 +64,7 @@ ModelImporter:
       curves: []
       events:
       - time: 0.26180285
-        functionName: InstantiateEffect
+        functionName: PlayWhichEffect
         data: 
         objectReferenceParameter: {fileID: -927199367670048503, guid: d0cff39d57bae5540b339fe1cdc7b219,
           type: 3}

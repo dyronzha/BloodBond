@@ -31,6 +31,7 @@ public class MoveTest : MonoBehaviour{
 
     //衝刺瞬移(有傷害判定的)
     public GameObject TeleportShadow;
+    public GameObject FlyingDust;
     bool On_Teleport = false;
     float AquaMoment = 0.0f;
     public float Teleport_Time = 0.2f;
@@ -56,8 +57,7 @@ public class MoveTest : MonoBehaviour{
             //Ps_Trail.Play();
             GetComponent<Animator>().Play("Dodge");
             Instantiate(TeleportShadow, transform.position, transform.rotation);
-            GetComponent<AnimationEventEffects>().InstantiateEffect(2);
-            //TargetPos = transform.position + new Vector3(0.0f, 0.0f, 6.0f);
+            Instantiate(FlyingDust, transform.position, transform.rotation);
             transform.position = transform.position + new Vector3(0.0f, 0.0f, 6.0f);
             On_Teleport = true;
 
