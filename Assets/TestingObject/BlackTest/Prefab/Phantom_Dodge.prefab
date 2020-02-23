@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1377712804020010869}
   - component: {fileID: 3825464933532723780}
   m_Layer: 0
-  m_Name: PhantomCreate
+  m_Name: Phantom_Dodge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
