@@ -5,15 +5,35 @@ using UnityEngine;
 public class EffectPlay : MonoBehaviour{
 
     public GameObject[] EffectPool;
-    public SkinnedMeshRenderer[] _KarolSkin;
+    ParticleSystem[,] _PsPool;
+    SkinnedMeshRenderer[] _KarolSkin;
     public GameObject Combo2_Phantom;
+    int MaxCount = 0;
+
+    void Start(){
+        _KarolSkin = GetComponentsInChildren<SkinnedMeshRenderer>();
+
+        for (int i = 0; i < EffectPool.Length; i++) {if (MaxCount < EffectPool[i].transform.childCount) MaxCount = EffectPool[i].transform.childCount;}
+        _PsPool = new ParticleSystem[EffectPool.Length, MaxCount];
+
+        for (int i = 0; i < EffectPool.Length; i++){
+            int j = 0;
+            foreach (Transform _ps in EffectPool[i].transform){
+                if (_ps.GetComponent<ParticleSystem>() != null) {
+                    _PsPool[i, j] = _ps.GetComponent<ParticleSystem>();
+                    j++;
+                }
+            }
+        }
+
+    }
 
     public void PlayWhichEffect(int num){
         if (EffectPool == null || EffectPool.Length <= num) Debug.Log("Wrong Number");
         EffectPool[num].SetActive(true);
-        foreach (Transform Child in EffectPool[num].transform) {
-            if (Child.GetComponent<ParticleSystem>() == null) Debug.Log("A child without Particle");
-            else Child.GetComponent<ParticleSystem>().Play();
+
+        for (int i = 0; i < MaxCount; i++) {
+            if (_PsPool[num, i] != null) _PsPool[num, i].Play();
         }
     }
 
