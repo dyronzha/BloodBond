@@ -77,11 +77,31 @@ namespace BloodBond {
 
     public class PlayerNormalComboATKState : PlayerState
     {
+        public bool hasEnableCollider = false;
         int _curCombo = 0;
         int _maxCombo;
+        float[] colliderEnableTimes;
+        public float currentColliderTime { get { return colliderEnableTimes[_curCombo]; } }
+        Collider[] AtkColliders;
+        public Collider[] ATKColliders { set { AtkColliders = value; } }
+        public Collider curATKCollider { get { return AtkColliders[_curCombo]; } }
+        public struct AttackAreaInfo {
+            public Vector3 pos;
+            public Vector3 size;
+        }
+
+        //用於在玩家攻擊時判斷有沒有打到敵人的overlap
+        AttackAreaInfo[] attackAreaInfo;
+        public AttackAreaInfo curATKAreaInfo { get { return attackAreaInfo[_curCombo]; } }
+
         public PlayerNormalComboATKState(Player p, int maxCombo) : base(p)
         {
             _maxCombo = maxCombo;
+        }
+        public PlayerNormalComboATKState(Player p, int maxCombo, float[] collEnabTimes) : base(p)
+        {
+            _maxCombo = maxCombo;
+            colliderEnableTimes = collEnabTimes;
         }
         public override void Update()
         {
@@ -92,6 +112,16 @@ namespace BloodBond {
             }
             player.NormalComboAttack(ref _curCombo, _maxCombo);
 
+        }
+        
+        //用於在玩家攻擊時判斷有沒有打到敵人的overlap
+        public void SetCollider(Collider[] colliders) {
+            attackAreaInfo = new AttackAreaInfo[colliders.Length];
+            for (int i = 0; i < attackAreaInfo.Length; i++) {
+                attackAreaInfo[i] = new AttackAreaInfo();
+                attackAreaInfo[i].pos = colliders[i].bounds.center;
+                attackAreaInfo[i].size = colliders[i].bounds.extents;
+            }
         }
     }
 

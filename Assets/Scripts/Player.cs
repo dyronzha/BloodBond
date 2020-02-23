@@ -78,12 +78,18 @@ namespace BloodBond {
             moveState = new PlayerMoveState(this);
             dodgeState = new PlayerDodgeState(this);
             dashState = new PlayerDashState(this);
-            normalComboAtkState = new PlayerNormalComboATKState(this, 2);
+
+            float[] ATKColliderEnableTimes = new float[3] { 0.27f, 0.18f, 0.128f};
+            normalComboAtkState = new PlayerNormalComboATKState(this, 3, ATKColliderEnableTimes);
+            Transform atkColliders = transform.Find("ATKColliders");
+            Collider atk1 = atkColliders.GetChild(0).GetComponent<Collider>();
+            Collider atk2 = atkColliders.GetChild(1).GetComponent<Collider>();
+            normalComboAtkState.ATKColliders = new Collider[3] { atk1, atk1, atk2 };
+            //normalComboAtkState.SetCollider(new Collider[3] { atk1, atk1, atk2});
+
             hurtState = new PlayerHurtState(this);
             curState = idleState;
-
             karolShader = GetComponent<KarolShader>();
-
         }
 
         // Update is called once per frame
@@ -417,17 +423,25 @@ namespace BloodBond {
             }
             else if (stateStep == 1) {
                 if(animator.applyRootMotion && comboCount < 2) animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
+                if (!normalComboAtkState.hasEnableCollider && aniInfo.normalizedTime >= normalComboAtkState.currentColliderTime) {
+                    normalComboAtkState.hasEnableCollider = true;
+                    normalComboAtkState.curATKCollider.enabled = true;
+                }
                 if (aniInfo.normalizedTime > 0.15f) {
                     if (aniInfo.normalizedTime < 0.55f) {
-                        if (comboCount < maxCombo && input.GetNormalComboATK()) {
+                        if (comboCount < maxCombo-1 && input.GetNormalComboATK()) {
+                            normalComboAtkState.curATKCollider.enabled = false;
                             animator.SetTrigger("NextCombo");
                             comboCount++;
                             stateStep = 0;
                             if (comboCount == 2) animator.applyRootMotion = false;
+                            normalComboAtkState.hasEnableCollider = false;
                         }
                     }
                     else if (aniInfo.normalizedTime >= 0.7f)
                     {
+                        normalComboAtkState.curATKCollider.enabled = false;
+                        normalComboAtkState.hasEnableCollider = false;
                         comboCount = 0;
                         animator.SetBool("NormalComboATK", false);
                         ChangeState(idleState);
@@ -583,9 +597,9 @@ namespace BloodBond {
                     } 
                     dashTime = .0f;
                     dashPointCount++;
-                    if (dashPointCount >= 17)
+                    if (dashPointCount >= 20)
                     {  //按太久沒放開
-                        dashPointCount = 16;
+                        //dashPointCount = 16;
                         dashOrientEffect.enabled = false;
                         Time.timeScale = 1.0f;
                         VFX_Teleport.SetFloat("AttractDrag", 1.0f);

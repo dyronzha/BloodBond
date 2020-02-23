@@ -41,6 +41,7 @@ public class AnimationEventEffects : MonoBehaviour {
             
     public void InstantiateEffect(int EffectNumber)
     {
+        return;
         if(Effects == null || Effects.Length <= EffectNumber)
         {
             Debug.LogError("Incorrect effect number or effect is null");

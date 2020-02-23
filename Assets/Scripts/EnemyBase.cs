@@ -51,6 +51,8 @@ namespace BloodBond {
         EnemyAttackState attackState;
         EnemyHurtState hurtState;
         EnemyYellState yellState;
+        EnemySuspectIdleState suspectIdleState;
+        EnemySuspectMoveState suspectMoveState;
         EnemyDieState dieState;
 
         public Transform transform;
@@ -122,12 +124,15 @@ namespace BloodBond {
 
         public bool FindPlayer()
         {
+            return false;
             if (!findingPath && Physics.Raycast(lookPos, lookDir, 5.0f, 1 << LayerMask.NameToLayer("Player")))
             {
                 findingPath = true;
                 curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, enemyManager.Player.transform.position, OnPathFound);
+                ChangeState(suspectIdleState);  //先進"懷疑idle"以免尋路過久
+
                 //animator.SetBool("Chase", true);
-                ChangeState(chaseState);
+                //ChangeState(chaseState);
                 return true;
             }
             else return false;
@@ -135,7 +140,7 @@ namespace BloodBond {
 
         public virtual void OnPathFound(Vector3[] waypoints, bool pathSuccessful)
         {
-            curPathRequest = null;
+            curPathRequest = null;  //找到之後把尋路請求清除
             if (pathSuccessful)
             {
                 if (curState != chaseState) {
@@ -152,7 +157,7 @@ namespace BloodBond {
             }
             else
             {
-                ChangeState(idleState);
+                ChangeState(idleState);  //沒找到路徑回idle
             }
         }
 
@@ -346,7 +351,6 @@ namespace BloodBond {
         }
         public bool CheckGetHurtDie()
         {
-
             Vector3 center = hurtAreaCollider.center;
             Vector3 point2 = transform.position + center.x * transform.right + center.z * transform.forward;
             Vector3 point1 = point2 + new Vector3(0, hurtAreaCollider.height, 0);
