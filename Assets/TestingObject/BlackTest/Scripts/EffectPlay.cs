@@ -44,6 +44,11 @@ public class EffectPlay : MonoBehaviour{
         Instantiate(Teleport_Phantom, transform.position, transform.rotation);
         Instantiate(FlyingDust, transform.position, transform.rotation);
     }
+    public void Phantom_ForTeleport(Vector3 dir)
+    {
+        Instantiate(Teleport_Phantom, transform.position, Quaternion.LookRotation(dir));
+        Instantiate(FlyingDust, transform.position, Quaternion.LookRotation(dir));
+    }
 
     public void Phantom_ForCombo2() {
         Instantiate(Combo2_Phantom, transform.position, transform.rotation);

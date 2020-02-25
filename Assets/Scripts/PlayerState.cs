@@ -108,6 +108,8 @@ namespace BloodBond {
             if (player.CheckGetHurt() || player.AttackCheckDodge()) {
                 _curCombo = 0;
                 player.SetAnimatorBool("NormalComboATK", false);
+                curATKCollider.enabled = false;
+                hasEnableCollider = false;
                 return;
             }
             player.NormalComboAttack(ref _curCombo, _maxCombo);

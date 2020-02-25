@@ -48,6 +48,7 @@ namespace BloodBond {
         CapsuleCollider hurtAreaCollider;
         Animator animator;
 
+        EffectPlay effectPlay;
 
         [SerializeField]
         PlayerValue infoValue;
@@ -89,6 +90,8 @@ namespace BloodBond {
             hurtState = new PlayerHurtState(this);
             curState = idleState;
             karolShader = GetComponent<KarolShader>();
+
+            effectPlay = GetComponent<EffectPlay>();
         }
 
         // Update is called once per frame
@@ -457,12 +460,12 @@ namespace BloodBond {
             return aniInfo.fullPathHash;
         }
 
-        public void EnableATKCollider() {
-            attackCollider.enabled = true;
-        }
-        public void CloseATKCollider() {
-            attackCollider.enabled = false;
-        }
+        //public void EnableATKCollider() {
+        //    attackCollider.enabled = true;
+        //}
+        //public void CloseATKCollider() {
+        //    attackCollider.enabled = false;
+        //}
 
         public bool CheckDashInput() {
             if (input.GetDashInput() && stateStep >0)
@@ -576,6 +579,7 @@ namespace BloodBond {
                     if (canDash) {
                         Debug.Log("進行step 2");
                         animator.SetTrigger("DashOver");
+                        effectPlay.Phantom_ForTeleport(dashDir);
                         stateStep++;
                         return;
                     } 
@@ -634,7 +638,10 @@ namespace BloodBond {
                     selfTransform.position = goalPoint;
                     selfTransform.rotation = Quaternion.LookRotation(inputDir);
                 }
-                if (aniInfo.IsName("DashOver")) stateStep++;
+                if (aniInfo.IsName("DashOver")) {
+                    stateStep++;
+                    
+                } 
             }
             else {
                 if (aniInfo.normalizedTime > 0.95f) {
