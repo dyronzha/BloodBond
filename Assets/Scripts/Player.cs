@@ -27,7 +27,7 @@ namespace BloodBond {
 
         bool canDash = true, dashHitThing = false;
         int dashPointCount = 1;
-        float dashTime = .0f, dashLength = .0f;
+        float dashTime = .0f, dashLength = .0f, lastDashLength = .0f;
         LineRenderer dashOrientEffect;
         Vector3 dashFixPos, goalPoint, dashDir, lastDashDir = new Vector3(0,0,0);
         Vector3 dashEffectPos;
@@ -60,8 +60,7 @@ namespace BloodBond {
         PlayerHurtState hurtState;
         InputSystem input;
 
-
-
+        public Transform goalPointObject;
         // Start is called before the first frame update
         void Awake()
         {
@@ -79,7 +78,7 @@ namespace BloodBond {
             dodgeState = new PlayerDodgeState(this);
             dashState = new PlayerDashState(this);
 
-            float[] ATKColliderEnableTimes = new float[3] { 0.27f, 0.18f, 0.128f};
+            float[] ATKColliderEnableTimes = new float[3] { 0.25f, 0.16f, 0.11f};
             normalComboAtkState = new PlayerNormalComboATKState(this, 3, ATKColliderEnableTimes);
             Transform atkColliders = transform.Find("ATKColliders");
             Collider atk1 = atkColliders.GetChild(0).GetComponent<Collider>();
@@ -99,6 +98,9 @@ namespace BloodBond {
             curState.Update();
             if (inDodgeCD) CountDodgeCD();
             if (invincible) CountInvincibleTime();
+
+            Vector3 groundPos = new Vector3(0,0,0);
+            if (GroundCheck.DetectGround(transform.position, ref groundPos)) transform.position = groundPos;
         }
 
         public void ChangeState(PlayerState nextState) {
@@ -610,6 +612,7 @@ namespace BloodBond {
                     else if(!dashHitThing)
                     {
                         CheckDash();
+                        dashOrientEffect.SetPosition(1, new Vector3(selfTransform.position.x + lastDashLength * dashDir.x, dashEffectHeight, selfTransform.position.z + lastDashLength * dashDir.z));
                     }
 
                 }
@@ -618,6 +621,7 @@ namespace BloodBond {
                         dashDir = inputDir;
                         dashHitThing = false;
                         CheckDash();
+                        dashOrientEffect.SetPosition(1, new Vector3(selfTransform.position.x + lastDashLength * dashDir.x, dashEffectHeight, selfTransform.position.z + lastDashLength * dashDir.z));
                     } 
                 }
                 //沒打到不可穿的會一直長
@@ -637,6 +641,7 @@ namespace BloodBond {
                     animator.SetBool("Dash", false);
                     VFX_Teleport.SetFloat("AttractDrag", 1.0f);
                     VFX_Teleport.SetInt("Number_of_Particles", 0);
+                    
                     ChangeState(idleState);
                 }
             }
@@ -645,7 +650,9 @@ namespace BloodBond {
         void CheckDash() {
             bool _dash = false;
             int count = dashPointCount > 16 ? 16 : dashPointCount;
-            goalPoint = dashFixPos + 0.5f * dashPointCount * dashDir;
+            goalPoint = dashFixPos + 0.5f * count * dashDir;
+            goalPointObject.position = goalPoint;
+            Debug.Log("new dash " + count);
             if (Physics.Linecast(dashFixPos, goalPoint + new Vector3(0,1,0), out dashHit, 1 << LayerMask.NameToLayer("Barrier")))  //橫向射線判斷
             {
                 Debug.Log("打中障礙物");
@@ -672,6 +679,7 @@ namespace BloodBond {
                         Debug.Log("目的地有障礙物");
                         _dash = false;
                     }
+                    lastDashLength = dashLength;
                 }
                 else
                 {
@@ -681,8 +689,10 @@ namespace BloodBond {
                     float percent = 16 * ((dashHit.point.x - selfTransform.position.x) / (0.5f * 16.0f * dashDir.x));
                     float fp = Mathf.Floor(percent);
                     float f = percent - fp;
-                    int num = (f > 0.1f) ? (int)fp : (int)(fp - 1); 
-                    goalPoint = dashFixPos + 0.5f * num * dashDir;
+                    int num = (f > 0.1f) ? (int)fp : (int)(fp - 1);   
+                    lastDashLength = 0.5f * num;
+                    goalPoint = dashFixPos + lastDashLength * dashDir;
+
                     Debug.Log("第幾個： " + num);
                     if (Physics.Raycast(goalPoint + new Vector3(0, 5, 0), new Vector3(0, -1, 0), out dashHit, 10.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
                     {
@@ -711,17 +721,18 @@ namespace BloodBond {
                     else {
                         _dash = false;
                     }
-
+                    lastDashLength = dashLength;
                 }
                 else
                 {
                     Debug.Log("目的地有障礙物  " + hits[0].transform.name);
-                    goalPoint = dashFixPos + 0.5f * (dashPointCount - 1) * dashDir;
+                    lastDashLength = 0.5f*(dashPointCount-1);
+                    goalPoint = dashFixPos + lastDashLength * dashDir;
                     if (Physics.Raycast(goalPoint + new Vector3(0, 5, 0), new Vector3(0, -1, 0), out dashHit, 10.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
                     {
                         Debug.Log("目的地有地板");
                         _dash = true;
-                        dashHitThing = true;
+                        //dashHitThing = true;
                         dashEffectHeight = dashHit.point.y + 0.1f;
                         goalPoint = new Vector3(goalPoint.x, dashEffectHeight, goalPoint.z);
                     }

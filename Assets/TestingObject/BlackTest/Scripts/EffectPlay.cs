@@ -8,6 +8,7 @@ public class EffectPlay : MonoBehaviour{
     ParticleSystem[,] _PsPool;
     SkinnedMeshRenderer[] _KarolSkin;
     public GameObject Combo2_Phantom;
+    public GameObject shawl;
     int MaxCount = 0;
 
     void Start(){
@@ -43,8 +44,14 @@ public class EffectPlay : MonoBehaviour{
 
 
     public void Disappear_ForCombo3(int i){
-        if (i == 0) { foreach (SkinnedMeshRenderer _skin in _KarolSkin) _skin.enabled = false; }
-        else { foreach (SkinnedMeshRenderer _skin in _KarolSkin) _skin.enabled = true; }
+        if (i == 0) { 
+            foreach (SkinnedMeshRenderer _skin in _KarolSkin) _skin.enabled = false;
+            if (shawl != null) shawl.SetActive(false);
+        }
+        else { 
+            foreach (SkinnedMeshRenderer _skin in _KarolSkin) _skin.enabled = true;
+            if (shawl != null) shawl.SetActive(true);
+        }
     }
 
 }
