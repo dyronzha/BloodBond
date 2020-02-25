@@ -7,7 +7,9 @@ public class EffectPlay : MonoBehaviour{
     public GameObject[] EffectPool;
     ParticleSystem[,] _PsPool;
     SkinnedMeshRenderer[] _KarolSkin;
+    public GameObject Teleport_Phantom;
     public GameObject Combo2_Phantom;
+    public GameObject FlyingDust;
     public GameObject shawl;
     int MaxCount = 0;
 
@@ -38,10 +40,14 @@ public class EffectPlay : MonoBehaviour{
         }
     }
 
+    public void Phantom_ForTeleport() {
+        Instantiate(Teleport_Phantom, transform.position, transform.rotation);
+        Instantiate(FlyingDust, transform.position, transform.rotation);
+    }
+
     public void Phantom_ForCombo2() {
         Instantiate(Combo2_Phantom, transform.position, transform.rotation);
     }
-
 
     public void Disappear_ForCombo3(int i){
         if (i == 0) { 

@@ -84517,24 +84517,13 @@ MonoBehaviour:
   - {fileID: 764455524}
   - {fileID: 1517268000}
   - {fileID: 345933597}
-  _KarolSkin:
-  - {fileID: 1658928675}
-  - {fileID: 1658928674}
-  - {fileID: 1658928668}
-  - {fileID: 1658928667}
-  - {fileID: 1658928673}
-  - {fileID: 1658928679}
-  - {fileID: 1658928678}
-  - {fileID: 1658928677}
-  - {fileID: 1658928672}
-  - {fileID: 1658928671}
-  - {fileID: 1658928676}
-  - {fileID: 1658928670}
-  - {fileID: 1658928669}
-  - {fileID: 1658928665}
-  - {fileID: 1658928663}
+  Teleport_Phantom: {fileID: 4794217048514547748, guid: 730835d96503c5d45867cbf46abca5c6,
+    type: 3}
   Combo2_Phantom: {fileID: 2197552095266773530, guid: 1469284bcb07a1a4faacfbfe70277321,
     type: 3}
+  FlyingDust: {fileID: 8032183092028060474, guid: 817fbf7ef173f774ba4d76d19e812070,
+    type: 3}
+  shawl: {fileID: 0}
 --- !u!1001 &1663654845
 PrefabInstance:
   m_ObjectHideFlags: 0
