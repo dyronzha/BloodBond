@@ -78,7 +78,7 @@ namespace BloodBond {
         public bool drawOnce = false;
 
 #if UNITY_EDITOR
-
+        //需要重新enable來載入新的點
         private void OnDisable()
         {
             drawOnce = false;
@@ -109,7 +109,8 @@ namespace BloodBond {
         //    }
         //}
 #endif
-
+        
+        //建立路線
         public void Init()
         {
             patrolPoints = new PatrolPoint[transform.childCount];
@@ -170,8 +171,12 @@ namespace BloodBond {
                 System.Array.Reverse(points);
                 reversePath = new PathFinder.Path(points, 0.5f);
             }
+            for (int i = 0; i < patrolPoints.Length; i++)
+            {
+                Destroy(patrolPoints[i]);
+            }
 #if !UNITY_EDITOR
-                        for (int i = 0; i < patrolPoints.Length; i++) {
+            for (int i = 0; i < patrolPoints.Length; i++) {
                 Destroy(patrolPoints[i]);
             }
 #endif
@@ -205,7 +210,7 @@ namespace BloodBond {
         static void DrawPatrolRouteGizmo(PatrolRoute scr, UnityEditor.GizmoType gizmoType)
         {
             if (Application.isPlaying) return;
-            if (!scr.drawOnce)
+            if (!scr.drawOnce)  //初始化參照所有子物件為點
             {
                 
                 if (scr.transform.childCount > 1)

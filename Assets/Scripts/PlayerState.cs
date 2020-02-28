@@ -79,12 +79,14 @@ namespace BloodBond {
     {
         public bool hasEnableCollider = false;
         int _curCombo = 0;
+        public int CurComboCount { get { return _curCombo; } }
         int _maxCombo;
         float[] colliderEnableTimes;
         public float currentColliderTime { get { return colliderEnableTimes[_curCombo]; } }
         Collider[] AtkColliders;
         public Collider[] ATKColliders { set { AtkColliders = value; } }
         public Collider curATKCollider { get { return AtkColliders[_curCombo]; } }
+        public Collider lastATKCollider { get { return AtkColliders[_curCombo-1]; } }
         public struct AttackAreaInfo {
             public Vector3 pos;
             public Vector3 size;

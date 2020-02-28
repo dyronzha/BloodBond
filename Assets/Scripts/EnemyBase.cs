@@ -17,7 +17,7 @@ namespace BloodBond {
         int lookARoundNum = 0;
 
         bool canHurt = true;
-        int lastHurtHash;
+        int lastHurtHash = 999;
 
         Vector3 selfPos;
         Vector3 moveFwdDir = new Vector3(0, 0, 0);
@@ -329,10 +329,13 @@ namespace BloodBond {
             Vector3 point1 = point2 + new Vector3(0, hurtAreaCollider.height, 0);
             Debug.DrawLine(point1, point2, Color.red);
             Collider[] cols = Physics.OverlapCapsule(point1, point2, hurtAreaCollider.radius, enemyManager.HunterValue.HurtAreaLayer);
-            if (cols != null && cols.Length > 0 && lastHurtHash != enemyManager.Player.GetAttackHash())
+            int curCount = enemyManager.Player.GetAttackComboCount();
+            if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
             {
+                Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
                 hp -= 10;
-                lastHurtHash = enemyManager.Player.GetAttackHash();
+                lastHurtHash = curCount;
+                
                 if (hp > 0)
                 {
                     canHurt = false;
@@ -340,8 +343,8 @@ namespace BloodBond {
                     ChangeState(hurtState);
                 }
                 else {
+                    animator.SetBool("Hurt", false);
                     animator.SetBool("Dead", true);
-                    lastHurtHash = 0;
                     ChangeState(dieState);
                 }
                 return true;
@@ -356,10 +359,13 @@ namespace BloodBond {
             Vector3 point1 = point2 + new Vector3(0, hurtAreaCollider.height, 0);
             Debug.DrawLine(point1, point2, Color.red);
             Collider[] cols = Physics.OverlapCapsule(point1, point2, hurtAreaCollider.radius, enemyManager.HunterValue.HurtAreaLayer);
-            if (cols != null && cols.Length > 0 && lastHurtHash != enemyManager.Player.GetAttackHash())
+            int curCount = enemyManager.Player.GetAttackComboCount();
+            if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
             {
+                Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
                 hp -= 10;
-                lastHurtHash = enemyManager.Player.GetAttackHash();
+                lastHurtHash = curCount;
+                
                 if (hp > 0)
                 {
                     canHurt = false;
@@ -369,7 +375,6 @@ namespace BloodBond {
                 else
                 {
                     animator.SetBool("Dead", true);
-                    lastHurtHash = 0;
                     ChangeState(dieState);
                     return true;
                 }  
@@ -385,8 +390,10 @@ namespace BloodBond {
             }
             else
             {
-
-                if(CheckGetHurtDie())return;
+                if (CheckGetHurtDie()) {
+                    stateStep = 0;
+                    return;
+                }
                 if (aniInfo.normalizedTime > 0.85f)
                 {
                     animator.SetBool("Hurt", false);
@@ -396,17 +403,16 @@ namespace BloodBond {
                     }
                     else ChangeState(idleState);
                     canHurt = true;
-                    lastHurtHash = 0;
+                    lastHurtHash = 999;
+                    stateStep = 0;
                 }
             }
         }
         public void Dead() {
-            Debug.Log("dddddddddddddiiiiiiiiiiiiiiiiie");
             if (stateStep == 0)
             {
                 AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
                 if (aniInfo.IsName("Dead")) {
-                    Debug.Log("dddddddddddddiiiiiiiiiiiiiiiiie   confirm");
                     animator.SetBool("Dead", false);
                     stateStep++;
                 } 

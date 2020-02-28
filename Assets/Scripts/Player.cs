@@ -79,7 +79,7 @@ namespace BloodBond {
             dodgeState = new PlayerDodgeState(this);
             dashState = new PlayerDashState(this);
 
-            float[] ATKColliderEnableTimes = new float[3] { 0.25f, 0.16f, 0.11f};
+            float[] ATKColliderEnableTimes = new float[3] { 0.18f, 0.16f, 0.11f};
             normalComboAtkState = new PlayerNormalComboATKState(this, 3, ATKColliderEnableTimes);
             Transform atkColliders = transform.Find("ATKColliders");
             Collider atk1 = atkColliders.GetChild(0).GetComponent<Collider>();
@@ -178,12 +178,6 @@ namespace BloodBond {
             if (stateStep == 0)
             {
                 stateStep++;
-                //Vector3 baseFWD, baseRight;
-                //baseFWD = mainCamera.transform.forward;
-                //baseRight = mainCamera.transform.right;
-                //moveForward = (new Vector3(lastDir.x * baseRight.x, 0, lastDir.x * baseRight.z)
-                //                  + new Vector3(lastDir.z * baseFWD.x, 0, lastDir.z * baseFWD.z)).normalized;
-
                 transform.rotation = Quaternion.LookRotation(inputDir);
             }
             else if (stateStep == 1)
@@ -198,9 +192,11 @@ namespace BloodBond {
                     Instantiate(PhantomCreate, selfTransform.position + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
                 }
                 float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
-                
-                Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * ModifyHitWallMove(inputDir);
+
+                Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * ModifyHitWallMoveDodge(inputDir);
                 selfTransform.position = nextPos;
+                //Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * inputDir;
+                //if(ModifyHitWallMoveDodge(inputDir)) selfTransform.position = nextPos;
 
             }
             else {
@@ -212,17 +208,16 @@ namespace BloodBond {
                 
                 if (stateTime < 0.3f)
                 {
-                    float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
-                    dodgeOffset = Mathf.Clamp(dodgeOffset - deltaTime * 5.0f, .0f, 1.0f);
-
                     
+                    dodgeOffset = Mathf.Clamp(dodgeOffset - deltaTime * 5.0f, 0.1f, 1.0f);
+                    float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
+
 
                     Debug.Log("dodge offset  " + dodgeOffset);
-                    Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * inputDir;
-                    if (!Physics.Linecast(selfTransform.position, nextPos + dSpeed * deltaTime * inputDir, 1 << LayerMask.NameToLayer("Barrier")))
-                    {
-                        selfTransform.position = nextPos;
-                    }
+                    Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * ModifyHitWallMoveDodge(inputDir);
+                    selfTransform.position = nextPos;
+                    //Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * inputDir;
+                    //if (ModifyHitWallMoveDodge(inputDir)) selfTransform.position = nextPos;
                 }
                 else {
                     inDodgeCD = true;
@@ -330,10 +325,18 @@ namespace BloodBond {
             Vector3 hitNormal = new Vector3(0,0,0);
             if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier"))){
                 hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
+                if (Vector3.Angle(hitNormal, way) > 150.0f)
+                {
+                    return new Vector3(0, 0, 0);
+                }
                 crossValue = way.x * hitNormal.z - way.z * hitNormal.x;
             }
             else if (Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier"))) {
                 hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
+                if (Vector3.Angle(hitNormal, way) > 150.0f)
+                {
+                    return new Vector3(0, 0, 0);
+                }
                 crossValue = way.x * hitNormal.z - way.z * hitNormal.x;
             }
             if (crossValue > -9999) {  //確認其中一條線有打到
@@ -383,6 +386,70 @@ namespace BloodBond {
             //return way;
 
         }
+        Vector3 ModifyHitWallMoveDodge(Vector3 way)
+        {
+
+            //Vector3 detectPos = selfTransform.position + infoValue.DodgeSpeed * Mathf.Clamp(dodgeOffset,0.5f, 1.0f) * deltaTime * way;
+            //Vector3 nextRight = detectPos + 0.35f * new Vector3(way.z, 0, -way.x);
+            //Vector3 nextLeft = detectPos + 0.35f * new Vector3(-way.z, 0, way.x);
+
+            //Debug.DrawLine(selfTransform.position, nextRight, Color.red);
+            //Debug.DrawLine(selfTransform.position, nextLeft, Color.red);
+
+            //return !(Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")) ||
+            //        Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")));
+
+
+            Vector3 detectPos = selfTransform.position + infoValue.DodgeSpeed * deltaTime * way;
+            Vector3 nextRight = detectPos + 0.35f * new Vector3(way.z, 0, -way.x);
+            Vector3 nextLeft = detectPos + 0.35f * new Vector3(-way.z, 0, way.x);
+
+            Debug.DrawLine(selfTransform.position, nextRight, Color.red);
+            Debug.DrawLine(selfTransform.position, nextLeft, Color.red);
+
+
+            float crossValue = -10000;
+            Vector3 hitNormal = new Vector3(0, 0, 0);
+            if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
+            {
+                hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
+                if (Vector3.Angle(hitNormal, way) > 150.0f)
+                {
+                    return new Vector3(0, 0, 0);
+                }
+                crossValue = way.x * hitNormal.z - way.z * hitNormal.x;
+            }
+            else if (Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
+            {
+                hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
+                if (Vector3.Angle(hitNormal, way) > 150.0f)
+                {
+                    return new Vector3(0, 0, 0);
+                }
+                crossValue = way.x * hitNormal.z - way.z * hitNormal.x;
+            }
+            if (crossValue > -9999)
+            {  //確認其中一條線有打到
+                if (Mathf.Abs(crossValue) > 0.1f)
+                {   //打中面的法向量與前進方向不能一致
+                    if (crossValue > .0f) way = new Vector3(hitNormal.z, 0, -hitNormal.x);
+                    else way = new Vector3(-hitNormal.z, 0, hitNormal.x);
+                    detectPos = selfTransform.position + infoValue.DodgeSpeed * deltaTime * way;
+                    nextRight = detectPos + 0.35f * new Vector3(way.z, 0, -way.x);
+                    nextLeft = detectPos + 0.35f * new Vector3(-way.z, 0, way.x);
+                    Debug.DrawLine(selfTransform.position, nextRight, Color.white);
+                    Debug.DrawLine(selfTransform.position, nextLeft, Color.white);
+                    if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")) ||
+                       Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
+                    {
+                        moveFix = true;
+                        return new Vector3(0, 0, 0);
+                    }
+                }
+                else return new Vector3(0, 0, 0);
+            }
+            return way;
+        }
 
         //combo相關-----------------------------------------------------
         public bool AttackCheckDodge()
@@ -415,32 +482,55 @@ namespace BloodBond {
         }
         public void NormalComboAttack(ref int comboCount, int maxCombo) {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
-            if (stateStep == 0) { 
-                if (aniInfo.IsName("Combo" + comboCount.ToString())) {
+            if (stateStep == 0)
+            {
+                if (aniInfo.IsName("Combo" + comboCount.ToString()))
+                {
+                    //如果上一段接技還沒關碰撞器，先關
+                    if (normalComboAtkState.hasEnableCollider)
+                    {
+                        normalComboAtkState.lastATKCollider.enabled = false;
+                        normalComboAtkState.hasEnableCollider = false;
+                    }
                     GetInputDir();
                     if (comboCount > 0 && inputDir.sqrMagnitude > 0.1f)  //接技的方向，第二下開始
                     {
                         selfTransform.rotation = Quaternion.LookRotation(inputDir);
                     }
-                    animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
+
+                    if (comboCount < 2 && (Physics.OverlapBox(selfTransform.position + 0.5f * transform.forward, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Enemy"))).Length == 0))
+                    {
+                        Debug.Log("combo " + comboCount + "   no wall");
+                        animator.applyRootMotion = true;
+                    }
+                    else {
+                        Debug.Log("combo " + comboCount + "   hit wall");
+                        animator.applyRootMotion = false;
+                    } 
+                    //animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
                     stateStep++;
                 }
             }
-            else if (stateStep == 1) {
-                if(animator.applyRootMotion && comboCount < 2) animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
-                if (!normalComboAtkState.hasEnableCollider && aniInfo.normalizedTime >= normalComboAtkState.currentColliderTime) {
+            else if (stateStep == 1)
+            {
+                if (animator.applyRootMotion && comboCount < 2) animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
+                if (!normalComboAtkState.hasEnableCollider && aniInfo.normalizedTime >= normalComboAtkState.currentColliderTime)
+                {
                     normalComboAtkState.hasEnableCollider = true;
                     normalComboAtkState.curATKCollider.enabled = true;
                 }
-                if (aniInfo.normalizedTime > 0.15f) {
-                    if (aniInfo.normalizedTime < 0.55f) {
-                        if (comboCount < maxCombo-1 && input.GetNormalComboATK()) {
-                            normalComboAtkState.curATKCollider.enabled = false;
-                            animator.SetTrigger("NextCombo");
-                            comboCount++;
-                            stateStep = 0;
-                            if (comboCount == 2) animator.applyRootMotion = false;
-                            normalComboAtkState.hasEnableCollider = false;
+                if (aniInfo.normalizedTime > 0.15f)
+                {
+                    if (aniInfo.normalizedTime < 0.55f)
+                    {
+                        if (comboCount < maxCombo - 1 && input.GetNormalComboATK())
+                        {
+                            stateStep = 2;
+                            //接技如果前一個碰撞器還沒打開，先打開
+                            //if (!normalComboAtkState.hasEnableCollider) {
+                            //    normalComboAtkState.hasEnableCollider = true;
+                            //    normalComboAtkState.lastATKCollider.enabled = true;
+                            //}
                         }
                     }
                     else if (aniInfo.normalizedTime >= 0.7f)
@@ -450,14 +540,24 @@ namespace BloodBond {
                         comboCount = 0;
                         animator.SetBool("NormalComboATK", false);
                         ChangeState(idleState);
-                    } 
+                    }
+                }
+            }
+            else {
+                if (aniInfo.normalizedTime >= 0.55f) {
+                    animator.SetTrigger("NextCombo");
+                    normalComboAtkState.curATKCollider.enabled = false;
+                    normalComboAtkState.hasEnableCollider = false;
+                    stateStep = 0;
+                    comboCount++;
                 }
             }
         }
 
-        public int GetAttackHash() {
-            AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
-            return aniInfo.fullPathHash;
+        public int GetAttackComboCount() {
+            return normalComboAtkState.CurComboCount;
+            //AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
+            //return aniInfo.fullPathHash;
         }
 
         //public void EnableATKCollider() {
