@@ -179,6 +179,14 @@ namespace BloodBond {
             {
                 stateStep++;
                 transform.rotation = Quaternion.LookRotation(inputDir);
+                //float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
+                
+                Vector3 fixPos = ModifyHitWallMoveDodge(inputDir);
+                Vector3 nextPos = selfTransform.position +  deltaTime * infoValue.DodgeSpeed * fixPos;
+                selfTransform.position = nextPos;
+                
+                Instantiate(PhantomCreate, selfTransform.position + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
+                Instantiate(PhantomCreate, selfTransform.position + fixPos + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
             }
             else if (stateStep == 1)
             {
@@ -191,9 +199,9 @@ namespace BloodBond {
                     karolShader.ChangeMaterial(6);
                     Instantiate(PhantomCreate, selfTransform.position + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
                 }
-                float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
+                //float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
 
-                Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * ModifyHitWallMoveDodge(inputDir);
+                Vector3 nextPos = selfTransform.position + deltaTime * infoValue.DodgeSpeed * ModifyHitWallMoveDodge(inputDir);
                 selfTransform.position = nextPos;
                 //Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * inputDir;
                 //if(ModifyHitWallMoveDodge(inputDir)) selfTransform.position = nextPos;
@@ -206,15 +214,15 @@ namespace BloodBond {
                     Instantiate(PhantomCreate, selfTransform.position + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
                 }
                 
-                if (stateTime < 0.3f)
+                if (stateTime < infoValue.DodgeTime)
                 {
                     
                     dodgeOffset = Mathf.Clamp(dodgeOffset - deltaTime * 5.0f, 0.1f, 1.0f);
-                    float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
+                    //float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
 
 
                     Debug.Log("dodge offset  " + dodgeOffset);
-                    Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * ModifyHitWallMoveDodge(inputDir);
+                    Vector3 nextPos = selfTransform.position +  deltaTime * infoValue.DodgeSpeed * ModifyHitWallMoveDodge(inputDir);
                     selfTransform.position = nextPos;
                     //Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * inputDir;
                     //if (ModifyHitWallMoveDodge(inputDir)) selfTransform.position = nextPos;
@@ -313,7 +321,7 @@ namespace BloodBond {
 
         Vector3 ModifyHitWallMove(Vector3 way) {
             
-            Vector3 detectPos = selfTransform.position + 2.5f * infoValue.MoveSpeed * deltaTime * way;
+            Vector3 detectPos = selfTransform.position + 2.8f * infoValue.MoveSpeed * deltaTime * way;
             Vector3 nextRight = detectPos + 0.35f * new Vector3(way.z, 0, -way.x);
             Vector3 nextLeft = detectPos + 0.35f * new Vector3(-way.z, 0, way.x);
 
@@ -344,8 +352,8 @@ namespace BloodBond {
                     if (crossValue > .0f) way = new Vector3(hitNormal.z, 0, -hitNormal.x);
                     else way = new Vector3(-hitNormal.z, 0, hitNormal.x);
                     detectPos = selfTransform.position + 2.5f * infoValue.MoveSpeed * deltaTime * way;
-                    nextRight = detectPos + 0.35f * new Vector3(way.z, 0, -way.x);
-                    nextLeft = detectPos + 0.35f * new Vector3(-way.z, 0, way.x);
+                    nextRight = detectPos + 0.15f * new Vector3(way.z, 0, -way.x);
+                    nextLeft = detectPos + 0.15f * new Vector3(-way.z, 0, way.x);
                     Debug.DrawLine(selfTransform.position, nextRight, Color.white);
                     Debug.DrawLine(selfTransform.position, nextLeft, Color.white);
                     if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")) ||
@@ -413,7 +421,7 @@ namespace BloodBond {
             if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
             {
                 hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
-                if (Vector3.Angle(hitNormal, way) > 150.0f)
+                if (Vector3.Angle(hitNormal, way) > 170.0f)
                 {
                     return new Vector3(0, 0, 0);
                 }
@@ -422,7 +430,7 @@ namespace BloodBond {
             else if (Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
             {
                 hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
-                if (Vector3.Angle(hitNormal, way) > 150.0f)
+                if (Vector3.Angle(hitNormal, way) > 170.0f)
                 {
                     return new Vector3(0, 0, 0);
                 }
@@ -432,8 +440,8 @@ namespace BloodBond {
             {  //確認其中一條線有打到
                 if (Mathf.Abs(crossValue) > 0.1f)
                 {   //打中面的法向量與前進方向不能一致
-                    if (crossValue > .0f) way = new Vector3(hitNormal.z, 0, -hitNormal.x);
-                    else way = new Vector3(-hitNormal.z, 0, hitNormal.x);
+                    if (crossValue > .0f) way = 0.5f*new Vector3(hitNormal.z, 0, -hitNormal.x);
+                    else way = 0.5f*new Vector3(-hitNormal.z, 0, hitNormal.x);
                     detectPos = selfTransform.position + infoValue.DodgeSpeed * deltaTime * way;
                     nextRight = detectPos + 0.35f * new Vector3(way.z, 0, -way.x);
                     nextLeft = detectPos + 0.35f * new Vector3(-way.z, 0, way.x);

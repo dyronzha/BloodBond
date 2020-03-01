@@ -61,10 +61,17 @@ public class PlayerValue : ActorValue
     }
     [SerializeField]
     float _dodgeSpeed;
+    [SerializeField]
+    float _dodgeTime;
     public float DodgeSpeed
     {
         get { return _dodgeSpeed; }
         set { _dodgeSpeed = value; }
+    }
+    public float DodgeTime
+    {
+        get { return _dodgeTime; }
+        set { _dodgeTime = value; }
     }
 }
 
