@@ -369,8 +369,9 @@ namespace BloodBond {
                 if (hp > 0)
                 {
                     canHurt = false;
-                    animator.SetBool("Hurt", true);
-                    ChangeState(hurtState);
+                    animator.SetTrigger("HurtAgain");
+                    //ChangeState(hurtState);
+                    Debug.Log("hurt time   " + animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
                 }
                 else
                 {
@@ -394,7 +395,7 @@ namespace BloodBond {
                     stateStep = 0;
                     return;
                 }
-                if (aniInfo.normalizedTime > 0.85f)
+                if (aniInfo.normalizedTime > (0.85f))
                 {
                     animator.SetBool("Hurt", false);
                     if (patrolRoute.routeType != PatrolRoute.RouteType.Rotate) {

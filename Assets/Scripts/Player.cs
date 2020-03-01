@@ -10,6 +10,7 @@ namespace BloodBond {
         float stateTime, deltaTime;
 
         bool isMoving = false;
+        int moveBlank = 0;
         float inputMoveX, inputMoveY;
         Vector3 moveForward = new Vector3(0, 0, 0), inputDir, lastFace = new Vector3(10,10,10);
         bool moveFix = false;
@@ -25,7 +26,7 @@ namespace BloodBond {
         bool showATKCollider = false;
         public Collider attackCollider;
 
-        bool canDash = true, dashHitThing = false;
+        bool canDash = true, dashHitThing = false, stillDashInput = false;
         int dashPointCount = 1;
         float dashTime = .0f, dashLength = .0f, lastDashLength = .0f;
         LineRenderer dashOrientEffect;
@@ -84,7 +85,8 @@ namespace BloodBond {
             Transform atkColliders = transform.Find("ATKColliders");
             Collider atk1 = atkColliders.GetChild(0).GetComponent<Collider>();
             Collider atk2 = atkColliders.GetChild(1).GetComponent<Collider>();
-            normalComboAtkState.ATKColliders = new Collider[3] { atk1, atk1, atk2 };
+            Collider atk3 = atkColliders.GetChild(2).GetComponent<Collider>();
+            normalComboAtkState.ATKColliders = new Collider[3] { atk1, atk2, atk3 };
             //normalComboAtkState.SetCollider(new Collider[3] { atk1, atk1, atk2});
 
             hurtState = new PlayerHurtState(this);
@@ -133,6 +135,7 @@ namespace BloodBond {
                 {
                     animator.SetBool("Run", true);
                     ChangeState(moveState);
+                    moveBlank = 0;
                 }
             }
         }
@@ -150,6 +153,7 @@ namespace BloodBond {
             {
                 Vector3 nextPos = selfTransform.position + infoValue.MoveSpeed * deltaTime * moveForward;
                 selfTransform.position = nextPos;
+                moveBlank = 0;
                 //float difAngle = Vector3.Angle(selfTransform.forward, inputDir);
                 //if (difAngle < 45.0f)
                 //{
@@ -158,14 +162,17 @@ namespace BloodBond {
 
             }
             else {
-                animator.SetBool("Run", false);
-                ChangeState(idleState);
+                moveBlank = Mathf.Clamp(moveBlank + 1, 0, 5);
+                if (moveBlank > 1) {
+                    animator.SetBool("Run", false);
+                    ChangeState(idleState);
+                } 
             }
             selfTransform.rotation = Quaternion.Lerp(selfTransform.rotation, Quaternion.LookRotation(inputDir), deltaTime * infoValue.RotateSpeed);
         }
 
         public bool MoveCheckDodge() {
-            if (input.GetDodgeInput() && !inDodgeCD && stateStep > 0) {
+            if (input.GetDodgeInput() && !inDodgeCD ) {//&& stateStep > 0
                 animator.SetBool("Dodge", true);
                 ChangeState(dodgeState);
                 return true;
@@ -576,13 +583,21 @@ namespace BloodBond {
         //}
 
         public bool CheckDashInput() {
-            if (input.GetDashInput() && stateStep >0)
+            if (!stillDashInput)
             {
-                ChangeState(dashState);
-                animator.SetBool("Dash", true);
-                return true;
+                if (input.GetDashInput() && stateStep > 0)
+                {
+                    ChangeState(dashState);
+                    animator.SetBool("Dash", true);
+                    stillDashInput = true;
+                    return true;
+                }
+                else return false;
             }
-            else return false;
+            else if (!input.GetDashInput()){
+                stillDashInput = false;
+            }
+            return false;
         }
         public void Dash()
         {
@@ -701,19 +716,53 @@ namespace BloodBond {
                 }
 
                 dashTime += Time.unscaledDeltaTime;
-                dashLength += Time.unscaledDeltaTime * 10.0f;
-                dashEffectPos = new Vector3(selfTransform.position.x + dashLength * dashDir.x, dashEffectHeight, selfTransform.position.z + dashLength * dashDir.z);
-                if (dashTime >= 0.05f)
+                if (dashPointCount <= 15)
                 {
-                    if (GetInputDir() && Vector3.Angle(inputDir, dashDir) > 1.5f) {
+                    dashLength += (dashTime>0.04f?0.04f:dashTime) * 10.0f;  //每秒距離，目前訂總長0.6s 6m  15點
+                    dashEffectPos = new Vector3(selfTransform.position.x + dashLength * dashDir.x, dashEffectHeight, selfTransform.position.z + dashLength * dashDir.z);
+                    if (dashTime >= 0.04f)   //一點間隔秒數
+                    {
+                        if (GetInputDir() && Vector3.Angle(inputDir, dashDir) > 1.5f)
+                        {
+                            dashDir = inputDir;
+                            dashHitThing = false;
+                        }
+                        dashTime = .0f;
+                        dashPointCount++;
+                        if (!dashHitThing)
+                        {
+                            CheckDash();
+                            dashOrientEffect.SetPosition(1, new Vector3(selfTransform.position.x + lastDashLength * dashDir.x, dashEffectHeight, selfTransform.position.z + lastDashLength * dashDir.z));
+                        }
+                        Debug.Log("count " + dashPointCount + "    length " + dashLength);
+                    }
+                    else
+                    {
+                        if (GetInputDir() && Vector3.Angle(inputDir, dashDir) > 1.5f)
+                        {
+                            dashDir = inputDir;
+                            dashHitThing = false;
+                            CheckDash();
+                            dashOrientEffect.SetPosition(1, new Vector3(selfTransform.position.x + lastDashLength * dashDir.x, dashEffectHeight, selfTransform.position.z + lastDashLength * dashDir.z));
+                        }
+                    }
+                    //沒打到不可穿的會一直長
+                    if (!dashHitThing)
+                    {
+                        dashOrientEffect.SetPosition(1, dashEffectPos);
+                    }
+                }
+                else {
+                    if (GetInputDir() && Vector3.Angle(inputDir, dashDir) > 1.5f)
+                    {
                         dashDir = inputDir;
                         dashHitThing = false;
-                    } 
-                    dashTime = .0f;
-                    dashPointCount++;
-                    if (dashPointCount >= 20)
-                    {  //按太久沒放開
-                        //dashPointCount = 16;
+                        CheckDash();
+                        dashOrientEffect.SetPosition(1, new Vector3(selfTransform.position.x + lastDashLength * dashDir.x, dashEffectHeight, selfTransform.position.z + lastDashLength * dashDir.z));
+                    }
+                    if (dashTime > 0.8f) //dashPointCount >= 32)//按太久沒放開
+                    {
+                        //dashPointCount = 15;
                         dashOrientEffect.enabled = false;
                         Time.timeScale = 1.0f;
                         VFX_Teleport.SetFloat("AttractDrag", 1.0f);
@@ -721,23 +770,8 @@ namespace BloodBond {
                         animator.SetBool("Dash", false);
                         ChangeState(idleState);
                     }
-                    else if(!dashHitThing)
-                    {
-                        CheckDash();
-                        dashOrientEffect.SetPosition(1, new Vector3(selfTransform.position.x + lastDashLength * dashDir.x, dashEffectHeight, selfTransform.position.z + lastDashLength * dashDir.z));
-                    }
 
                 }
-                else {
-                    if (GetInputDir() && Vector3.Angle(inputDir, dashDir) > 1.5f) {
-                        dashDir = inputDir;
-                        dashHitThing = false;
-                        CheckDash();
-                        dashOrientEffect.SetPosition(1, new Vector3(selfTransform.position.x + lastDashLength * dashDir.x, dashEffectHeight, selfTransform.position.z + lastDashLength * dashDir.z));
-                    } 
-                }
-                //沒打到不可穿的會一直長
-                if (!dashHitThing) dashOrientEffect.SetPosition(1, dashEffectPos);
             }
             else if(stateStep == 2) {
                 Debug.Log("step 2 ing ing ing");
@@ -764,8 +798,8 @@ namespace BloodBond {
 
         void CheckDash() {
             bool _dash = false;
-            int count = dashPointCount > 16 ? 16 : dashPointCount;
-            goalPoint = dashFixPos + 0.5f * count * dashDir;
+            int count = dashPointCount > 15 ? 15 : dashPointCount;
+            goalPoint = dashFixPos + 0.4f * count * dashDir;  //點間隔0.4
             goalPointObject.position = goalPoint;
             Debug.Log("new dash " + count);
             if (Physics.Linecast(dashFixPos, goalPoint + new Vector3(0,1,0), out dashHit, 1 << LayerMask.NameToLayer("Barrier")))  //橫向射線判斷
@@ -805,7 +839,7 @@ namespace BloodBond {
                     float fp = Mathf.Floor(percent);
                     float f = percent - fp;
                     int num = (f > 0.1f) ? (int)fp : (int)(fp - 1);   
-                    lastDashLength = 0.5f * num;
+                    lastDashLength = 0.4f * num;//長度點乘間隔
                     goalPoint = dashFixPos + lastDashLength * dashDir;
 
                     Debug.Log("第幾個： " + num);
@@ -841,7 +875,7 @@ namespace BloodBond {
                 else
                 {
                     Debug.Log("目的地有障礙物  " + hits[0].transform.name);
-                    lastDashLength = 0.5f*(dashPointCount-1);
+                    lastDashLength = 0.4f*(dashPointCount-1);  //長度點乘間隔
                     goalPoint = dashFixPos + lastDashLength * dashDir;
                     if (Physics.Raycast(goalPoint + new Vector3(0, 5, 0), new Vector3(0, -1, 0), out dashHit, 10.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
                     {
