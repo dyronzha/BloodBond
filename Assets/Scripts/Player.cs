@@ -84,7 +84,8 @@ namespace BloodBond {
             Transform atkColliders = transform.Find("ATKColliders");
             Collider atk1 = atkColliders.GetChild(0).GetComponent<Collider>();
             Collider atk2 = atkColliders.GetChild(1).GetComponent<Collider>();
-            normalComboAtkState.ATKColliders = new Collider[3] { atk1, atk1, atk2 };
+            Collider atk3 = atkColliders.GetChild(2).GetComponent<Collider>();
+            normalComboAtkState.ATKColliders = new Collider[3] { atk1, atk2, atk3 };
             //normalComboAtkState.SetCollider(new Collider[3] { atk1, atk1, atk2});
 
             hurtState = new PlayerHurtState(this);
