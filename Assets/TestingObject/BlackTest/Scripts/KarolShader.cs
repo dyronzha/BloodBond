@@ -20,6 +20,11 @@ public class KarolShader : MonoBehaviour{
 
     float Duration = 2.0f;
 
+    //隱蔽
+    float Hidden_Moment;
+    float HiddenRecoverProcess = 0.0f;
+    public float Hidden_Time = 0.0f;
+
     void Update(){
 
         if (ShaderMode == 1){
@@ -28,15 +33,15 @@ public class KarolShader : MonoBehaviour{
             ShaderType[4].SetFloat("Vector1_F4D760A8", DissolveValue);
             ShaderType[5].SetFloat("Vector1_F4D760A8", DissolveValue);
 
-            if (DissolveValue <= 0.0f) {
+            if (DissolveValue <= 0.0f){
                 GetComponent<MoveTest>().DissolveEnd();
                 ShaderMode = 0;
                 ChangeMaterial(ShaderMode);
             }
         }
 
-        else if (ShaderMode == 2) {
-            DodgeGlowValue = DodgeGlowValue - Time.deltaTime*1.5f;
+        else if (ShaderMode == 2){
+            DodgeGlowValue = DodgeGlowValue - Time.deltaTime * 1.5f;
             ShaderType[6].SetVector("Vector4_83C1BE40", new Vector4(DodgeGlowValue, DodgeGlowValue, DodgeGlowValue, DodgeGlowValue));
             ShaderType[7].SetVector("Vector4_83C1BE40", new Vector4(DodgeGlowValue, DodgeGlowValue, DodgeGlowValue, DodgeGlowValue));
             ShaderType[8].SetVector("Vector4_83C1BE40", new Vector4(DodgeGlowValue, DodgeGlowValue, DodgeGlowValue, DodgeGlowValue));
@@ -45,6 +50,22 @@ public class KarolShader : MonoBehaviour{
                 ChangeMaterial(ShaderMode);
             }
         }
+
+        else if (ShaderMode == 3) {
+            if (Time.time > Hidden_Moment + Hidden_Time) {
+                HiddenRecoverProcess = HiddenRecoverProcess + Time.deltaTime * 1.5f;
+                ShaderType[15].SetFloat("Vector1_B5CD4EBB", HiddenRecoverProcess);
+                ShaderType[16].SetFloat("Vector1_B5CD4EBB", HiddenRecoverProcess);
+                ShaderType[17].SetFloat("Vector1_B5CD4EBB", HiddenRecoverProcess);
+                if (HiddenRecoverProcess >=1.0f) {
+                    HiddenRecoverProcess = 1.0f;
+                    ShaderMode = 0;
+                    ChangeMaterial(ShaderMode);
+                }
+
+            }
+        }
+
     }
 
     public void ChangeMaterial(int Type) {
@@ -57,6 +78,14 @@ public class KarolShader : MonoBehaviour{
             case 6:
                 DodgeGlowValue = 1.0f;
                 ShaderMode = 2;
+                break;
+            case 15:
+                HiddenRecoverProcess = 0.0f;
+                ShaderType[15].SetFloat("Vector1_B5CD4EBB", HiddenRecoverProcess);
+                ShaderType[16].SetFloat("Vector1_B5CD4EBB", HiddenRecoverProcess);
+                ShaderType[17].SetFloat("Vector1_B5CD4EBB", HiddenRecoverProcess);
+                Hidden_Moment = Time.time;
+                ShaderMode = 3;
                 break;
         }
 
