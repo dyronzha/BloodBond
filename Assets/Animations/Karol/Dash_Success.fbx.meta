@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: c6c3af5c9aaa77f408d7b3e71d8406a6
+guid: 55269413b9b13f84080d6e778b2ab7e9
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable:
   - first:
-      74: -6836358034619004520
-    second: karol_Attack_Combo_3_Stop
+      74: -8444228808809566427
+    second: Dash_Success
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -21,12 +21,7 @@ ModelImporter:
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'karol_Attack_Combo_3_Stop' has import animation
-      warnings that might lower retargeting quality:\nNote: Activate translation DOF
-      on avatar to improve retargeting quality.\n\t'mixamorig:LeftForeArm' has translation
-      animation that will be discarded.\n\t'mixamorig:LeftLeg' has translation animation
-      that will be discarded.\n\t'mixamorig:RightLeg' has translation animation that
-      will be discarded.\n"
+    animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -40,11 +35,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: karol_Attack_Combo_3_Stop
-      takeName: karol_Attack_Combo_3_Stop
+      name: Dash_Success
+      takeName: Dash
       internalID: 0
-      firstFrame: 10
-      lastFrame: 120
+      firstFrame: 0
+      lastFrame: 3
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -63,42 +58,7 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 0
-        functionName: Phantom_ForCombo2
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0
-        functionName: Disappear_ForCombo3
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.0819325
-        functionName: PlayWhichEffect
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 3
-        messageOptions: 0
-      - time: 0.1398745
-        functionName: Disappear_ForCombo3
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 1
-        messageOptions: 0
-      - time: 0.22342679
-        functionName: PlayWhichEffect
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 2
-        messageOptions: 0
+      events: []
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -139,8 +99,7 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
-  referencedClips:
-  - 3e66c7803e8a30f4485023b373a6539d
+  referencedClips: []
   importAnimation: 1
   copyAvatar: 1
   humanDescription:

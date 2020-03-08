@@ -134,7 +134,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 1
   serializedVersion: 3
-  m_TransitionDuration: 0.1
+  m_TransitionDuration: 0.25
   m_TransitionOffset: 0
   m_ExitTime: 0.99
   m_HasExitTime: 0
@@ -215,7 +215,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 1
   serializedVersion: 3
-  m_TransitionDuration: 0.1
+  m_TransitionDuration: 0.2
   m_TransitionOffset: 0
   m_ExitTime: 0.99
   m_HasExitTime: 0
@@ -725,7 +725,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 1
   serializedVersion: 3
-  m_TransitionDuration: 0.22
+  m_TransitionDuration: 0.25
   m_TransitionOffset: 0
   m_ExitTime: 0.99
   m_HasExitTime: 0
@@ -922,7 +922,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -804556913361581091, guid: 736f369d58012464fa54e194b5bf6858,
+  m_Motion: {fileID: -8444228808809566427, guid: 55269413b9b13f84080d6e778b2ab7e9,
     type: 3}
   m_Tag: 
   m_SpeedParameter: 
@@ -1322,7 +1322,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Dodge
-  m_Speed: 0.75
+  m_Speed: 0.95
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -2188135579191344975}
