@@ -165,6 +165,12 @@ public class MoveTest : MonoBehaviour{
         else if (Input.GetKeyDown(KeyCode.T) && GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) GetComponent<Animator>().Play("Attack_Mode2");
         else if (Input.GetKeyDown(KeyCode.Y) && GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) GetComponent<Animator>().Play("Attack_Mode3");
         else if (Input.GetKeyDown(KeyCode.U) && GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) GetComponent<Animator>().Play("Attack_Mode41");
+
+        //隱蔽
+        if (Input.GetKeyDown(KeyCode.Z) && GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
+            GetComponent<KarolShader>().ChangeMaterial(15);
+        }
+
     }
 
     public void DissolveEnd() {
