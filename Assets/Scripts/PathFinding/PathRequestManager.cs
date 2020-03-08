@@ -67,12 +67,26 @@ namespace PathFinder
         {
             PathRequest newRequest = new PathRequest(pathStart, pathEnd, _successCbk, pathfinding);
 
-            if (instance.CheckProcessingRequest(oldRequest))
+            if (oldRequest == null)//當下正在找的要求或是之前已經沒有要求
+            {
+                if (!instance.isProcessingPath) //不是正在找
+                {
+                    instance.pathRequestList.Add(newRequest);
+                    instance.AreaTryProcessNext();
+                    return newRequest;
+                }
+            } 
+            else
+            {
+
+            }
+
+            if (instance.CheckProcessingRequest(oldRequest))  //確認是已經在找的回傳null，等待正在找的計算完
             {
                 return null;
             }
 
-            if (oldRequest != null && instance.pathRequestList.Contains(oldRequest))
+            if (oldRequest != null && instance.pathRequestList.Contains(oldRequest))    //如果舊的要求跟新的一樣，更新列表中舊的
             {
                 instance.pathRequestList[instance.pathRequestList.IndexOf(oldRequest)] = newRequest;
             }

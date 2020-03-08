@@ -470,7 +470,7 @@ namespace BloodBond {
         public bool AttackCheckDodge()
         {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
-            if (input.GetDodgeInput() && GetInputDir() && !inDodgeCD && aniInfo.IsTag("Attack") && aniInfo.normalizedTime > 0.15f)
+            if (input.GetDodgeInput() && GetInputDir() && !inDodgeCD && aniInfo.IsTag("Attack") && aniInfo.normalizedTime > 0.35f)
             {
                 animator.SetBool("Dodge", true);
                 ChangeState(dodgeState);

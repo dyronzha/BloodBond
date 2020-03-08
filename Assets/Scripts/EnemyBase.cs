@@ -13,7 +13,7 @@ namespace BloodBond {
         float stateTime = .0f, deltaTime = .0f;
 
         float idleTime = .0f;
-
+        float seeDelayTime = .0f;
         int lookARoundNum = 0;
 
         bool canHurt = true;
@@ -22,6 +22,7 @@ namespace BloodBond {
         Vector3 selfPos;
         Vector3 moveFwdDir = new Vector3(0, 0, 0);
         Vector3 lookDir, lookPos;
+        Vector3 targetPos;
 
         EnemyManager enemyManager;
 
@@ -30,9 +31,10 @@ namespace BloodBond {
         Transform head;
         Animator animator;
 
+        int sightStep = 0;
 
         int playerPathIndex = 0;
-        PathFinder.Path curPath, playerPath;
+        PathFinder.Path curPatrolPath, playerPath;
         PatrolRoute patrolRoute;
         PathFinder.PathRequestManager.PathRequest curPathRequest;
         PathFinder.PathFinding pathFinding;
@@ -80,13 +82,13 @@ namespace BloodBond {
             dieState = new EnemyDieState(this);
 
             routeType = _patrolRoute.routeType;
-            curPath = patrolRoute.path;
+            curPatrolPath = patrolRoute.path;
 
             if (patrolRoute.routeType == PatrolRoute.RouteType.Rotate) {
                 curState = idleState;
             } 
             else {
-                moveFwdDir = new Vector3(curPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
+                moveFwdDir = new Vector3(curPatrolPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPatrolPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
                 if (patrolRoute.LastLookAround)
                 {
                     curState = lookAroundState;
@@ -124,10 +126,16 @@ namespace BloodBond {
 
         public bool FindPlayer()
         {
-            return false;
-            if (!findingPath && Physics.Raycast(lookPos, lookDir, 5.0f, 1 << LayerMask.NameToLayer("Player")))
+            //return false;
+
+            if (PlayerInSight(lookDir, enemyManager.HunterValue.SightDistance, enemyManager.HunterValue.SightAngle)) //Physics.Raycast(lookPos, lookDir, 5.0f, 1 << LayerMask.NameToLayer("Player"))
             {
-                findingPath = true;
+                seeDelayTime += deltaTime*1.5f;
+                if (seeDelayTime > enemyManager.HunterValue.SeeConfirmTime)
+                {
+                    seeDelayTime = .0f;
+                    animator.SetTrigger("Alarm");
+                }
                 curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, enemyManager.Player.transform.position, OnPathFound);
                 ChangeState(suspectIdleState);  //先進"懷疑idle"以免尋路過久
 
@@ -135,7 +143,32 @@ namespace BloodBond {
                 //ChangeState(chaseState);
                 return true;
             }
-            else return false;
+            else {
+                if (seeDelayTime > .0f) seeDelayTime -= deltaTime;
+                return false;
+            } 
+        }
+
+        bool PlayerInSight(Vector3 dir, float distance, float angle) {
+            if (sightStep == 0)
+            {
+                Vector2 distV2 = new Vector2(enemyManager.Player.SelfTransform.position.x - transform.position.x, enemyManager.Player.SelfTransform.position.z - transform.position.z);
+                Vector2 dirV2 = new Vector2(dir.x, dir.z);
+                if (Vector2.SqrMagnitude(distV2) <= distance * distance && Vector2.Angle(dirV2, distV2) < angle)
+                {
+                    targetPos = enemyManager.Player.SelfTransform.position;
+                    sightStep++;
+                }
+                return false;
+            }
+            else {
+                sightStep = 0;
+                if (Physics.Linecast(lookPos, targetPos, 1 << LayerMask.NameToLayer("Barrier")))
+                    return false;
+                else 
+                    return true;
+            }
+           
         }
 
         public virtual void OnPathFound(Vector3[] waypoints, bool pathSuccessful)
@@ -217,14 +250,14 @@ namespace BloodBond {
                 if (aniInfo.IsName("Patrol"))
                 {
                     stateStep++;
-                    moveFwdDir = new Vector3(curPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
+                    moveFwdDir = new Vector3(curPatrolPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPatrolPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
                     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
                 }
             }
             else if (stateStep == 1)
             {
                 Vector2 pos2D = new Vector2(selfPos.x, selfPos.z);
-                if (curPath.turnBoundaries[patrolRoute.CurPointID].HasCrossedLine(pos2D))
+                if (curPatrolPath.turnBoundaries[patrolRoute.CurPointID].HasCrossedLine(pos2D))
                 {
                     if (patrolRoute.CurPointID == patrolRoute.path.finishLineIndex)
                     {
@@ -233,11 +266,11 @@ namespace BloodBond {
                         if (!patrolRoute.LastLookAround && patrolRoute.routeType == PatrolRoute.RouteType.Pingpong) {
                             if (patrolRoute.SetReversePath())
                             {
-                                curPath = patrolRoute.reversePath;
+                                curPatrolPath = patrolRoute.reversePath;
                             }
                             else
                             {
-                                curPath = patrolRoute.path;
+                                curPatrolPath = patrolRoute.path;
                             }
                             pathOver = false;
                             return;
@@ -254,7 +287,7 @@ namespace BloodBond {
                         return;
                     }
                 }
-                moveFwdDir = new Vector3(curPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
+                moveFwdDir = new Vector3(curPatrolPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPatrolPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
                 transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * transform.forward;
 
@@ -270,11 +303,11 @@ namespace BloodBond {
                     {
                         if (patrolRoute.SetReversePath())
                         {
-                            curPath = patrolRoute.reversePath;
+                            curPatrolPath = patrolRoute.reversePath;
                         }
                         else
                         {
-                            curPath = patrolRoute.path;
+                            curPatrolPath = patrolRoute.path;
                         }
                         pathOver = false;
                     }

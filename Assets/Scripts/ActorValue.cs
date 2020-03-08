@@ -43,19 +43,19 @@ public class ActorValue
         set { _hurtAreaLayer = value; }
     }
 
-    public ActorValue(int hp, int damage, float moveSpeed, float rotateSpeed, LayerMask layer) {
+    public ActorValue(int hp, int damage, float moveSpeed, float rotateSpeed, LayerMask hurtAreaLayer) {
         _health = hp;
         _damage = damage;
         _moveSpeed = moveSpeed;
         _rotateSpeed = rotateSpeed;
-        _hurtAreaLayer = layer;
+        _hurtAreaLayer = hurtAreaLayer;
     }
 }
 
 [System.Serializable]
 public class PlayerValue : ActorValue 
 {
-    public PlayerValue(int hp, int damage, float moveSpeed, float rotateSpeed, LayerMask layer) : base(hp, damage, moveSpeed, rotateSpeed, layer)
+    public PlayerValue(int hp, int damage, float moveSpeed, float rotateSpeed, LayerMask hurtAreaLayer) : base(hp, damage, moveSpeed, rotateSpeed, hurtAreaLayer)
     {
 
     }
@@ -78,9 +78,32 @@ public class PlayerValue : ActorValue
 [System.Serializable]
 public class EnemyValue : ActorValue
 {
-    public EnemyValue(int hp, int damage, float moveSpeed, float rotateSpeed, LayerMask layer) : base(hp, damage, moveSpeed, rotateSpeed, layer)
+    [SerializeField]
+    float sightDist = .0f;
+    public float SightDistance
     {
-
+        get { return sightDist; }
+        set { sightDist = value; }
+    }
+    [SerializeField]
+    float sightAngle = .0f;
+    public float SightAngle
+    {
+        get { return sightAngle; }
+        set { sightAngle = value; }
+    }
+    [SerializeField]
+    float seeConfirmTime = .0f;
+    public float SeeConfirmTime
+    {
+        get { return seeConfirmTime; }
+        set { seeConfirmTime = value; }
+    }
+    public EnemyValue(int hp, int damage, float moveSpeed, float rotateSpeed, float _sightDist, float _sightAngle, float seeTime, LayerMask hurtAreaLayer) : base(hp, damage, moveSpeed, rotateSpeed, hurtAreaLayer)
+    {
+        sightDist = _sightDist;
+        sightAngle = _sightAngle;
+        seeConfirmTime = seeTime;
     }
 }
 
