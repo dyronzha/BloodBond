@@ -75,6 +75,53 @@ namespace BloodBond {
         }
 
     }
+    public class EnemySuspectIdleState : EnemyBaseState
+    {
+        public EnemySuspectIdleState(EnemyBase enemy) : base(enemy)
+        {
+
+        }
+        public override void Update()
+        {
+            if (enemyBase.FindPlayerInSuspect())
+            {
+                return;
+            }
+            enemyBase.SuspectIdle();
+        }
+    }
+    public class EnemySuspectMoveState : EnemyBaseState
+    {
+        public EnemySuspectMoveState(EnemyBase enemy) : base(enemy)
+        {
+
+        }
+        public override void Update()
+        {
+            if (enemyBase.FindPlayerInSuspect())
+            {
+                enemyBase.SetAniBool("Patrol", false);
+                return;
+            }
+            enemyBase.SuspectMove();
+        }
+    }
+    public class EnemySuspectLookAroundState : EnemyBaseState
+    {
+        public EnemySuspectLookAroundState(EnemyBase enemy) : base(enemy)
+        {
+
+        }
+        public override void Update()
+        {
+            if (enemyBase.FindPlayerInSuspect())
+            {
+                enemyBase.SetAniBool("Patrol", false);
+                return;
+            }
+            enemyBase.SuspectMove();
+        }
+    }
     public class EnemyChaseState : EnemyBaseState
     {
         public EnemyChaseState(EnemyBase enemy) : base(enemy)
@@ -119,28 +166,7 @@ namespace BloodBond {
 
         }
     }
-    public class EnemySuspectIdleState : EnemyBaseState
-    {
-        public EnemySuspectIdleState(EnemyBase enemy) : base(enemy)
-        {
 
-        }
-        public override void Update()
-        {
-            
-        }
-    }
-    public class EnemySuspectMoveState : EnemyBaseState
-    {
-        public EnemySuspectMoveState(EnemyBase enemy) : base(enemy)
-        {
-
-        }
-        public override void Update()
-        {
-            
-        }
-    }
 
     public class EnemyDieState : EnemyBaseState
     {
