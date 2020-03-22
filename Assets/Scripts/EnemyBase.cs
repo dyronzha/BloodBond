@@ -56,7 +56,7 @@ namespace BloodBond {
         EnemyYellState yellState;
         EnemySuspectIdleState suspectIdleState;
         EnemySuspectMoveState suspectMoveState;
-        EnemySuspectLookARoundState suspectLookAround;
+        EnemySuspectLookAroundState suspectLookAround;
         EnemyDieState dieState;
 
         public Transform transform;

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4485979501356406074
+--- !u!114 &-6107233059856074983
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -37,46 +37,46 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 20000
   updateMode:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0
   updatePeriod:
     m_OverrideState: 0
     m_Value: 0
     min: 0
   includeSunInBaking:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0
   sunSize:
-    m_OverrideState: 1
-    m_Value: 0.019
+    m_OverrideState: 0
+    m_Value: 0.065
     min: 0
     max: 1
   sunSizeConvergence:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 5
     min: 1
     max: 10
   atmosphereThickness:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.5
     min: 0
     max: 5
   skyTint:
     m_OverrideState: 1
-    m_Value: {r: 0.35095578, g: 0.18983625, b: 0.509434, a: 1}
+    m_Value: {r: 0.627785, g: 0, b: 0.7075472, a: 1}
     hdr: 0
     showAlpha: 1
     showEyeDropper: 1
   groundColor:
     m_OverrideState: 1
-    m_Value: {r: 0.5188679, g: 0.5188679, b: 0.5188679, a: 1}
+    m_Value: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
     hdr: 0
     showAlpha: 1
     showEyeDropper: 1
   enableSunDisk:
     m_OverrideState: 1
     m_Value: 1
---- !u!114 &-1315718574309173611
+--- !u!114 &-2756206001464071534
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -101,12 +101,12 @@ MonoBehaviour:
     showEyeDropper: 1
   density:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.418
     min: 0
     max: 1
   maxFogDistance:
     m_OverrideState: 1
-    m_Value: 5000
+    m_Value: 700
     min: 0
   mipFogMaxMip:
     m_OverrideState: 1
@@ -127,13 +127,13 @@ MonoBehaviour:
     min: 0
   fogBaseHeight:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 500
   fogHeightAttenuation:
     m_OverrideState: 1
     m_Value: 0.2
     min: 0
     max: 1
---- !u!114 &-989068889279450257
+--- !u!114 &-1579673176719872299
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -151,7 +151,7 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 2
   skyAmbientMode:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   fogType:
     m_OverrideState: 1
@@ -166,14 +166,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
-  m_Name: Volume Profile
+  m_Name: FormalVolume
   m_EditorClassIdentifier: 
   components:
-  - {fileID: 1578434628907614085}
-  - {fileID: -4485979501356406074}
-  - {fileID: -989068889279450257}
-  - {fileID: -1315718574309173611}
---- !u!114 &1578434628907614085
+  - {fileID: 866703418777047056}
+  - {fileID: -6107233059856074983}
+  - {fileID: -1579673176719872299}
+  - {fileID: -2756206001464071534}
+--- !u!114 &866703418777047056
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
