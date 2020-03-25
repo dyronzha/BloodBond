@@ -74,7 +74,7 @@ namespace BloodBond {
             if (currentID < pointLines.Length) {
                 Vector2 dif = VCameraPoints[currentID].positionV2 - playerPosV2;
                 //判斷下一個攝影機切換點
-                Debug.Log("dif " + Vector2.SqrMagnitude(dif) + "  cross line " + pointLines[currentID].HasCrossedLine(playerPosV2));
+                //Debug.Log("dif " + Vector2.SqrMagnitude(dif) + "  cross line " + pointLines[currentID].HasCrossedLine(playerPosV2));
                 if (Vector2.SqrMagnitude(dif) < VCameraPoints[currentID].distance * VCameraPoints[currentID].distance * 0.25f && CrossLine())   //成0.25是distance要一半0.5*0.5
                 {
                     VCameraPoints[currentID].nextVCamera.SetActive(true);
@@ -86,7 +86,7 @@ namespace BloodBond {
             //判斷上一個攝影機切換點
             if (currentID > 0) {
                 Vector2 dif = VCameraPoints[currentID - 1].positionV2 - playerPosV2;
-                Debug.Log("current id" + currentID + "    dif " + Vector2.SqrMagnitude(dif) + "  cross line " + pointLines[currentID-1].HasCrossedLine(playerPosV2));
+                //Debug.Log("current id" + currentID + "    dif " + Vector2.SqrMagnitude(dif) + "  cross line " + pointLines[currentID-1].HasCrossedLine(playerPosV2));
                 if (Vector2.SqrMagnitude(dif) < VCameraPoints[currentID-1].distance * VCameraPoints[currentID-1].distance*0.25f && CrossLastLine())
                 {
                     VCameraPoints[currentID-1].nextVCamera.SetActive(false);

@@ -20,10 +20,10 @@ namespace BloodBond {
         bool canHurt = true;
         int lastHurtHash = 999;
 
-        Vector3 selfPos;
+        Vector3 selfPos, selfFwd;
         Vector3 moveFwdDir = new Vector3(0, 0, 0);
         Vector3 lookDir, lookPos;
-        Vector3 targetPos;
+        Vector3 targetPos, targetDir;
 
         EnemyManager enemyManager;
 
@@ -33,6 +33,7 @@ namespace BloodBond {
         Animator animator;
 
         int sightStep = 0;
+        int distanceCase = 0; // 1:警覺  2:攻擊
 
         int playerPathIndex = 0;
         PathFinder.Path curPatrolPath, playerPath;
@@ -51,12 +52,13 @@ namespace BloodBond {
         EnemyPatrolState patrolState;
         EnemyLookAroundState lookAroundState;
         EnemyChaseState chaseState;
-        EnemyAttackState attackState;
+        EnemyComboAttackState comboAttackState;
         EnemyHurtState hurtState;
         EnemyYellState yellState;
         EnemySuspectIdleState suspectIdleState;
         EnemySuspectMoveState suspectMoveState;
-        EnemySuspectLookAroundState suspectLookAround;
+        EnemySuspectLookAroundState suspectLookAroundState;
+        EnemyGiveUpState giveUpState;
         EnemyDieState dieState;
 
         public Transform transform;
@@ -78,10 +80,16 @@ namespace BloodBond {
             patrolState = new EnemyPatrolState(this);
             lookAroundState = new EnemyLookAroundState(this);
             chaseState = new EnemyChaseState(this);
-            attackState = new EnemyAttackState(this);
+            comboAttackState = new EnemyComboAttackState(this,3,new float[3] {0.75f,0.6f,0.3f}, new float[3] {0.92f,0.73f,0.4f});
+            Collider[] atkC = new Collider[1] { transform.Find("mixamorig:Hips").GetChild(2).GetChild(0).GetChild(0).GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(1).GetChild(1).GetComponent<Collider>() };
+            comboAttackState.ATKColliders = atkC;
             hurtState = new EnemyHurtState(this);
             yellState = new EnemyYellState(this);
             dieState = new EnemyDieState(this);
+            suspectIdleState = new EnemySuspectIdleState(this);
+            suspectMoveState = new EnemySuspectMoveState(this);
+            suspectLookAroundState = new EnemySuspectLookAroundState(this);
+            giveUpState = new EnemyGiveUpState(this);
 
             routeType = _patrolRoute.routeType;
             curPatrolPath = patrolRoute.path;
@@ -115,6 +123,7 @@ namespace BloodBond {
         public virtual void Update(float dtTime) {
             deltaTime = dtTime;
             selfPos = transform.position;
+            selfFwd = transform.forward;
             lookDir = head.forward;
             lookPos = selfPos + new Vector3(0, 1.3f, 0);
             curState.Update();
@@ -124,27 +133,32 @@ namespace BloodBond {
             stateStep = 0;
             stateTime = .0f;
             curState = state;
+            animator.speed = 1.0f;
         }
 
         public bool FindPlayer()
         {
-            return false;
+            //return false;
 
             if (PlayerInSight(lookDir, enemyManager.HunterValue.SightDistance, enemyManager.HunterValue.SightAngle)) //Physics.Raycast(lookPos, lookDir, 5.0f, 1 << LayerMask.NameToLayer("Player"))
             {
+                Debug.Log("懷疑時間 " + seeDelayTime);
                 seeDelayTime += deltaTime*1.5f;
                 if (seeDelayTime > enemyManager.HunterValue.SeeConfirmTime)
                 {
                     seeDelayTime = .0f;
                     animator.SetTrigger("Alarm");
+                    targetPos = enemyManager.Player.SelfTransform.position;
+                    targetDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z);
+                    findingPath = false;
+                    curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
+                    Debug.Log("進懷疑");
+                    ChangeState(suspectIdleState);  //先進"懷疑idle"以免尋路過久
+                    //animator.SetBool("Chase", true);
+                    //ChangeState(chaseState);
+                    return true;
                 }
-                findingPath = false;
-                curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, enemyManager.Player.SelfTransform.position, OnPathFound);
-                ChangeState(suspectIdleState);  //先進"懷疑idle"以免尋路過久
-
-                //animator.SetBool("Chase", true);
-                //ChangeState(chaseState);
-                return true;
+                return false;
             }
             else {
                 if (seeDelayTime > .0f) seeDelayTime -= deltaTime;
@@ -152,24 +166,37 @@ namespace BloodBond {
             } 
         }
         public bool FindPlayerInSuspect() {
-            return false;
-            if (PlayerInSight(lookDir, enemyManager.HunterValue.SightDistance, enemyManager.HunterValue.SightAngle)) {
-                findingPath = false;
-                curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, enemyManager.Player.SelfTransform.position, OnPathFoundInSuspect);
-                moveFwdDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z).normalized;
-                return true;
+            //return false;
+            if (PlayerInDistance(lookDir, enemyManager.HunterValue.SightDistance, enemyManager.HunterValue.SightAngle)) {
+                if (distanceCase == 1)
+                {
+                    findingPath = false;
+                    //curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, enemyManager.Player.SelfTransform.position, OnPathFoundInSuspect);
+                    ChangeState(chaseState);
+                    animator.SetBool("Chase", true);
+                    return true;
+                }
+                else if (distanceCase == 2)
+                {
+                    ChangeState(comboAttackState);
+                    animator.SetBool("Attack", true);
+                    return true;
+                }
+                else return false;
+                
             }
             return false;
         }
 
         bool PlayerInSight(Vector3 dir, float distance, float angle) {
+            Debug.DrawRay(lookPos, dir, Color.yellow, distance);
             if (sightStep == 0)
             {
                 Vector2 distV2 = new Vector2(enemyManager.Player.SelfTransform.position.x - transform.position.x, enemyManager.Player.SelfTransform.position.z - transform.position.z);
                 Vector2 dirV2 = new Vector2(dir.x, dir.z);
                 if (Vector2.SqrMagnitude(distV2) <= distance * distance && Vector2.Angle(dirV2, distV2) < angle)
                 {
-                    
+                    Debug.Log("一般狀態 距離近且角度內");
                     sightStep++;
                 }
                 return false;
@@ -178,15 +205,91 @@ namespace BloodBond {
                 sightStep = 0;
                 if (Physics.Linecast(lookPos, enemyManager.Player.SelfTransform.position, 1 << LayerMask.NameToLayer("Barrier")))
                 {
+                    Debug.Log("一般狀態 距離近且角度內 有障礙物");
                     return false;
                 }
                 else {
+                    Debug.Log("一般狀態 距離近且角度內 無障礙物 看到進懷疑時間");
                     targetPos = enemyManager.Player.SelfTransform.position;
                     return true;
                 }
-                    
             }
-           
+            
+        }
+        bool PlayerInDistance()
+        {
+            float distance = enemyManager.HunterValue.SightDistance;
+            float angle = enemyManager.HunterValue.SightAngle;
+            float atkDist = enemyManager.HunterValue.AttackDist;
+            Debug.DrawRay(lookPos, lookDir, Color.yellow, distance);
+            if (!Physics.Linecast(lookPos, enemyManager.Player.SelfTransform.position, 1 << LayerMask.NameToLayer("Barrier")))
+            {
+                Vector2 distV2 = new Vector2(enemyManager.Player.SelfTransform.position.x - transform.position.x, enemyManager.Player.SelfTransform.position.z - transform.position.z);
+                Vector2 dirV2 = new Vector2(lookDir.x, lookDir.z);
+                float dist = Vector2.SqrMagnitude(distV2);
+                if (dist <= distance * distance)
+                {
+                    //進攻擊狀態
+                    if (dist <= atkDist*atkDist)
+                    {
+                        Debug.Log("in distance  進攻擊狀態");
+                        sightStep++;
+                        distanceCase = 2;
+                        targetPos = enemyManager.Player.SelfTransform.position;
+                        return true;
+
+                    }
+                    //進追逐狀態
+                    else if (Vector2.Angle(dirV2, distV2) < angle)
+                    {
+                        Debug.Log("in distance  進追逐狀態");
+                        sightStep++;
+                        distanceCase = 1;
+                        targetPos = enemyManager.Player.SelfTransform.position;
+                        return true;
+                    }
+                }
+                Debug.Log("in distance 太遠看不到");
+            }
+            Debug.Log("in distance 有障礙物");
+            distanceCase = 0;
+            return false;
+        }
+        bool PlayerInDistance(Vector3 dir, float distance, float angle)
+        {
+            Debug.DrawRay(lookPos, lookDir, Color.yellow, distance);
+            if (!Physics.Linecast(lookPos, enemyManager.Player.SelfTransform.position, 1 << LayerMask.NameToLayer("Barrier")))
+            {
+                Vector2 distV2 = new Vector2(enemyManager.Player.SelfTransform.position.x - transform.position.x, enemyManager.Player.SelfTransform.position.z - transform.position.z);
+                Vector2 dirV2 = new Vector2(dir.x, dir.z);
+                float dist = Vector2.SqrMagnitude(distV2);
+                if (dist <= distance * distance)
+                {
+                    //進攻擊狀態
+                    if (dist <= enemyManager.HunterValue.AttackDist * enemyManager.HunterValue.AttackDist)
+                    {
+                        Debug.Log("in distance  進攻擊狀態");
+                        sightStep++;
+                        distanceCase = 2;
+                        targetPos = enemyManager.Player.SelfTransform.position;
+                        return true;
+
+                    }
+                    //進追逐狀態
+                    else if (Vector2.Angle(dirV2, distV2) < angle)
+                    {
+                        Debug.Log("in distance  進追逐狀態");
+                        sightStep++;
+                        distanceCase = 1;
+                        targetPos = enemyManager.Player.SelfTransform.position;
+                        return true;
+                    }
+                    Debug.Log("in distance 太遠看不到");
+                }
+            }
+            Debug.Log("in distance 有障礙物");
+            distanceCase = 0;
+            return false;
         }
 
         public virtual void OnPathFound(Vector3[] waypoints, bool pathSuccessful)
@@ -213,11 +316,12 @@ namespace BloodBond {
             curPathRequest = null;  //找到之後把尋路請求清除
             if (pathSuccessful)
             {
+                findingPath = true;
                 if (curState != chaseState)
                 {
                     ChangeState(chaseState);
+                    animator.SetBool("Chase", true);
                 }
-                animator.SetBool("Chase", true);
                 playerPath = new PathFinder.Path(waypoints, selfPos, 0.5f);
                 playerPathIndex = 0;
                 moveFwdDir = new Vector3(playerPath.lookPoints[playerPathIndex].x - selfPos.x, 0, playerPath.lookPoints[playerPathIndex].z - selfPos.z).normalized;
@@ -228,7 +332,7 @@ namespace BloodBond {
             }
             else
             {
-                ChangeState(suspectIdleState);  //沒找到路徑回idle
+                ChangeState(giveUpState);  //沒找到路徑放棄
             }
         }
 
@@ -262,7 +366,6 @@ namespace BloodBond {
                 if (aniInfo.IsName("LookRound")) {
                     stateStep++;
                     lookARoundNum = 1;
-                    
                 } 
             }
             else {
@@ -320,10 +423,10 @@ namespace BloodBond {
                         patrolRoute.CurPointID++;
                     }
 
-                    if (patrolRoute.LastLookAround)
+                    if (patrolRoute.LastLookAround)  
                     {
                         stateStep++;
-                        animator.speed = 0.3f;
+                        animator.speed = 0.3f;//為了讓守衛轉到指定方向，讓動畫變慢比較自然
                         return;
                     }
                 }
@@ -353,6 +456,7 @@ namespace BloodBond {
                     }
                     animator.speed = 1.0f;
                     animator.SetBool("Look", true);
+                    animator.SetBool("Patrol", false);
                     ChangeState(lookAroundState);
                 }
             }
@@ -361,6 +465,7 @@ namespace BloodBond {
         public void SuspectIdle() {
             if (stateStep == 0) {
                 suspectTime = Random.Range(0.3f, 2.0f);
+                transform.rotation = Quaternion.LookRotation(targetDir);
                 stateStep++;
             }
             else {
@@ -383,28 +488,88 @@ namespace BloodBond {
                 }
             }
             else {
-                Vector2 diff = new Vector2(selfPos.x - targetPos.x, selfPos.z - targetPos.z);
-                if (diff.sqrMagnitude < 1.0f) {
-                    animator.SetBool("Patrol", false);
-                    ChangeState(lookAroundState);//到定點查看
-                    return;
-                }
-
                 Vector2 pos2D = new Vector2(selfPos.x, selfPos.z);
-                if (curPatrolPath.turnBoundaries[patrolRoute.CurPointID].HasCrossedLine(pos2D))
+                if (playerPath.turnBoundaries[playerPathIndex].HasCrossedLine(pos2D))
                 {
-                    if (patrolRoute.CurPointID == patrolRoute.path.finishLineIndex)
+                    if (playerPathIndex == playerPath.finishLineIndex)
                     {
-
+                        animator.SetBool("Patrol", false);
+                        animator.SetBool("Look", true);
+                        ChangeState(lookAroundState);//到定點查看
+                        return;
                     }
                     else
                     {
-                        patrolRoute.CurPointID++;
+                        playerPathIndex++;
                     }
                 }
+                moveFwdDir = new Vector3(curPatrolPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPatrolPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
                 transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * moveFwdDir;
                 
+            }
+        }
+
+        public void SuspectLookAround() {
+            AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
+            if (stateStep == 0)
+            {
+                if (aniInfo.IsName("LookRound"))
+                {
+                    stateStep++;
+                    lookARoundNum = Random.Range(2, 4);
+                }
+            }
+            else
+            {
+                if (aniInfo.normalizedTime > lookARoundNum * 0.9f)
+                {
+                    lookARoundNum++;
+                    if (lookARoundNum > patrolRoute.LastLookNum)
+                    {  //巡邏點已經提前+1，所以是看上一個點的旋轉次數
+                        lookARoundNum = 0;
+                        animator.SetBool("Look", false);
+                        ChangeState(giveUpState);//走回巡邏
+
+                    }
+                }
+            }
+        }
+
+        public void GiveUp() {
+            if (stateStep == 0)
+            {
+                findingPath = false;
+                curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, curPatrolPath.lookPoints[patrolRoute.CurPointID], OnPathFound);
+                stateStep++;
+            }
+            else if (stateStep == 1)
+            {
+                if (pathFinding)
+                {
+                    animator.SetBool("Patrol", true);
+                    animator.SetBool("Look", false);
+                    stateStep++;
+                }
+            }
+            else if (stateStep == 2)
+            {
+                Vector2 pos2D = new Vector2(selfPos.x, selfPos.z);
+                if (playerPath.turnBoundaries[playerPathIndex].HasCrossedLine(pos2D))
+                {
+                    if (playerPathIndex == playerPath.finishLineIndex)
+                    {
+                        ChangeState(patrolState);
+                        return;
+                    }
+                    else
+                    {
+                        playerPathIndex++;
+                    }
+                }
+                moveFwdDir = new Vector3(curPatrolPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPatrolPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
+                transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * transform.forward;
             }
         }
 
@@ -413,77 +578,150 @@ namespace BloodBond {
             {
                 AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
                 if (aniInfo.IsName("Chase")) stateStep++;
-                Vector2 pos2D = new Vector2(selfPos.x, selfPos.z);
-                if (curPatrolPath.turnBoundaries[patrolRoute.CurPointID].HasCrossedLine(pos2D))
-                {
-                    if (patrolRoute.CurPointID == patrolRoute.path.finishLineIndex)
-                    {
-                        
-                    }
-                    else
-                    {
-                        patrolRoute.CurPointID++;
-                    }
-                }
-                moveFwdDir = new Vector3(curPatrolPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPatrolPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
-                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
-                transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * moveFwdDir;
+                moveFwdDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z).normalized;
+                //transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
+                //transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * moveFwdDir;
                 Debug.Log("chase  0");
             }
             else if (stateStep == 1)
             {
-                Debug.Log("chase  2");
-                stateTime += deltaTime;
-                if (stateTime > 0.5f)
-                {
-                    curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, enemyManager.Player.SelfTransform.position, OnPathFound);
-                }
-                if (playerPathIndex == playerPath.finishLineIndex) //|| pathIndex >= path.canAttckIndex
-                {
-                    stateStep = 3;
-                    return;
-                }
-                else
-                {
-                    playerPathIndex++;
-                    moveFwdDir = new Vector3(playerPath.lookPoints[playerPathIndex].x - selfPos.x, 0, playerPath.lookPoints[playerPathIndex].z - selfPos.z).normalized;
-                }
-                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
-                transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * 2.0f * transform.forward;
-
-
-                Vector3 diff = new Vector3(enemyManager.Player.SelfTransform.position.x - selfPos.x, 0, enemyManager.Player.SelfTransform.position.z - selfPos.z);
-                float dist = diff.sqrMagnitude;
-
-                if (!Physics.Linecast(lookPos, enemyManager.Player.SelfTransform.position, 1 << LayerMask.NameToLayer("Barrier"))) //看得到玩家
-                {
-                    if (dist > 2.0f)  //不夠近繼續追，夠近攻擊
+                Debug.Log("chase  1");
+               
+                //先判斷距離和看不看的到
+                if (PlayerInDistance(lookDir, enemyManager.HunterValue.SightDistance, enemyManager.HunterValue.SightAngle)) {
+                    //追逐
+                    if (distanceCase == 1)
                     {
+                        Debug.Log("還看的到，持續追逐");
+                        moveFwdDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z).normalized;
+                        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
+                        transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * 2.0f * transform.forward;
+                    }
+                    //攻擊
+                    else if (distanceCase == 2)
+                    {
+                        Debug.Log("夠近改攻擊");
+                        ChangeState(comboAttackState);
+                        animator.SetBool("Attack", true);
+                        animator.SetBool("Chase", false);
+                    }
+                    //看不到
+                    else {
+                        
+                        moveFwdDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z).normalized;
                         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
                         transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * 2.0f * moveFwdDir;
-                    }
-                    else
-                    {
-                        animator.SetBool("Patrol", false);
-                        animator.SetBool("Attack", true);
-                        ChangeState(attackState);
+                        float diff = new Vector2(targetPos.x - selfPos.x, targetPos.z - selfPos.z).sqrMagnitude;
+                        Debug.Log("看不到，到最後看到位置  距離" + diff);
+                        if (diff <= 2.0f)//到達最後看到玩家的位置
+                        {
+                            Debug.Log("到最後位置 進觀察");
+                            ChangeState(suspectLookAroundState);
+                            animator.SetBool("Look", true);
+                            animator.SetBool("Chase", false);
+                        }
                     }
                 }
+                //看不到
                 else
                 {
+
+                    moveFwdDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z).normalized;
                     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
                     transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * 2.0f * moveFwdDir;
-                }
-            }
-            else {
-                stateTime += deltaTime;
-                if (stateTime > 0.5f)
-                {
-                    curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, enemyManager.Player.SelfTransform.position, OnPathFound);
+                    float diff = new Vector2(targetPos.x - selfPos.x, targetPos.z - selfPos.z).sqrMagnitude;
+                    Debug.Log("看不到，到最後看到位置  距離" + diff);
+                    if (diff <= 2.0f)//到達最後看到玩家的位置
+                    {
+                        Debug.Log("到最後位置 進觀察");
+                        ChangeState(suspectLookAroundState);
+                        animator.SetBool("Look", true);
+                        animator.SetBool("Chase", false);
+                    }
                 }
             }
         }
+        public void ComboAttack(ref int comboCount, int maxCombo) {
+            AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
+            Debug.Log("攻擊動畫時間" + aniInfo.normalizedTime);
+            if (stateStep == 0)
+            {
+                Debug.Log("攻擊  combo " + comboCount);
+                if (aniInfo.IsName("Combo" + comboCount.ToString()))
+                {
+                    Debug.Log("名字一樣   " + aniInfo.normalizedTime);
+                    //如果上一段接技還沒關碰撞器，先關
+                    if (comboAttackState.hasEnableCollider)
+                    {
+                        comboAttackState.lastATKCollider.enabled = false;
+                        comboAttackState.hasEnableCollider = false;
+                    }
+                    if ((Physics.OverlapBox(selfPos + 0.5f * selfFwd, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Player"))).Length == 0))
+                    {
+                        animator.applyRootMotion = true;
+                    }
+                    else
+                    {
+                        animator.applyRootMotion = false;
+                    }
+                    stateStep++;
+                }
+            }
+            else if (stateStep == 1)
+            {
+                Debug.Log("攻擊 1");
+                if (animator.applyRootMotion) animator.applyRootMotion = (Physics.OverlapBox(selfPos + 0.5f * selfFwd, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Player"))).Length == 0);
 
+                if (aniInfo.normalizedTime >= comboAttackState.currentColliderTime) {
+                    Debug.Log("開啟碰撞器");
+                    comboAttackState.hasEnableCollider = true;
+                    comboAttackState.curATKCollider.enabled = true;
+                    stateStep++;
+                }
+            }
+            else if (stateStep == 2) {
+                if (animator.applyRootMotion) animator.applyRootMotion = (Physics.OverlapBox(selfPos + 0.5f * selfFwd, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Player"))).Length == 0);
+                if (aniInfo.normalizedTime >= comboAttackState.currentDisColliderTime)
+                {
+                    Debug.Log("關閉碰撞器");
+                    comboAttackState.hasEnableCollider = false;
+                    comboAttackState.curATKCollider.enabled = false;
+                    stateStep++;
+                }
+            }
+            else {
+                if (animator.applyRootMotion) animator.applyRootMotion = !Physics.Raycast(selfPos, selfFwd, 0.5f, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Player")));
+                if (aniInfo.normalizedTime >= 0.98f)
+                {
+                    Debug.Log("攻擊結束");
+                    if (PlayerInDistance())
+                    {
+                        if (distanceCase == 1)
+                        {
+                            comboCount = 0;
+                            animator.SetBool("Attack", false);
+                            animator.SetBool("Chase", true);
+                            ChangeState(chaseState);
+                            Debug.Log("改追逐");
+                        }
+                        else if (distanceCase == 2) {
+                            comboCount++;
+                            if (comboCount >= maxCombo) comboCount = 0;
+                            stateStep = 0;
+                            animator.SetTrigger("NextCombo");
+                            Debug.Log("繼續攻擊");
+                        } 
+                    }
+                    else {
+                        comboCount = 0;
+                        animator.SetBool("Attack", false);
+                        animator.SetBool("Look", true);
+                        ChangeState(suspectLookAroundState);
+                        Debug.Log("改觀察");
+                    }
+                }
+            }
+        }
         public bool CheckGetHurt() {
 
             Vector3 center = hurtAreaCollider.center;
@@ -497,7 +735,6 @@ namespace BloodBond {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
                 hp -= 10;
                 lastHurtHash = curCount;
-                
                 if (hp > 0)
                 {
                     canHurt = false;
@@ -527,7 +764,6 @@ namespace BloodBond {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
                 hp -= 10;
                 lastHurtHash = curCount;
-                
                 if (hp > 0)
                 {
                     canHurt = false;
@@ -560,11 +796,41 @@ namespace BloodBond {
                 if (aniInfo.normalizedTime > (0.85f))
                 {
                     animator.SetBool("Hurt", false);
-                    if (patrolRoute.routeType != PatrolRoute.RouteType.Rotate) {
-                        animator.SetBool("Patrol", true);
-                        ChangeState(patrolState);
+                    if (PlayerInDistance())
+                    {
+                        if (distanceCase == 1)
+                        {
+                            ChangeState(chaseState);
+                            animator.SetBool("Chase", true);
+                        }
+                        else if (distanceCase == 2)
+                        {
+                            ChangeState(comboAttackState);
+                            animator.SetBool("Attack", true);
+                        }
+                        else
+                        {
+                            ChangeState(suspectLookAroundState);
+                            animator.SetBool("Look", true);
+                            //float diff = new Vector2(lastPatrolPoint.x - selfPos.x, lastPatrolPoint.z - selfPos.z).sqrMagnitude;
+                            //if (diff > 0.5f)
+                            //{
+
+                            //}
+                            //else {
+                            //    if (patrolRoute.routeType != PatrolRoute.RouteType.Rotate)
+                            //    {
+                            //        animator.SetBool("Patrol", true);
+                            //        ChangeState(patrolState);
+                            //    }
+                            //    else ChangeState(idleState);
+                            //}
+                        }
                     }
-                    else ChangeState(idleState);
+                    else {
+                        ChangeState(suspectLookAroundState);
+                        animator.SetBool("Look", true);
+                    }
                     canHurt = true;
                     lastHurtHash = 999;
                     stateStep = 0;

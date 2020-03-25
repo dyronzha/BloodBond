@@ -99,7 +99,7 @@ namespace PathFinder
                 currentPathRequest = pathRequestList[0];
                 pathRequestList.RemoveAt(0);
                 isProcessingPath = true;
-                pathFinding.StartFindPath(currentPathRequest.pathStart, currentPathRequest.pathEnd);
+                currentPathRequest.pathfinding.StartFindPath(currentPathRequest.pathStart, currentPathRequest.pathEnd);
             }
         }
         void AreaTryProcessNext()
@@ -121,7 +121,7 @@ namespace PathFinder
 
         bool CheckProcessingRequest(PathRequest request)
         {  //如果要求是正在進行搜尋回傳true
-            if (isProcessingPath && currentPathRequest == request) return true;
+            if (isProcessingPath && request != null && currentPathRequest == request) return true;
             else return false;
         }
 

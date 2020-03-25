@@ -24,7 +24,6 @@ namespace BloodBond {
         float invincibleTime = .0f;
 
         bool showATKCollider = false;
-        public Collider attackCollider;
 
         bool canDash = true, dashHitThing = false, stillDashInput = false;
         int dashPointCount = 1;
@@ -528,7 +527,7 @@ namespace BloodBond {
             }
             else if (stateStep == 1)
             {
-                if (animator.applyRootMotion && comboCount < 2) animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
+                if (animator.applyRootMotion && comboCount < 2) animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, (1 << LayerMask.NameToLayer("Barrier")| 1 << LayerMask.NameToLayer("Enemy")));
                 if (!normalComboAtkState.hasEnableCollider && aniInfo.normalizedTime >= normalComboAtkState.currentColliderTime)
                 {
                     normalComboAtkState.hasEnableCollider = true;
@@ -909,6 +908,7 @@ namespace BloodBond {
         }
 
         public bool CheckGetHurt() {
+            return false;
             if (invincible) return false;
             Vector3 center = hurtAreaCollider.center;
             Vector3 point2 = selfTransform.position + center.x * selfTransform.right + center.z * selfTransform.forward;
