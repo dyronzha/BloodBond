@@ -46,7 +46,7 @@ MonoBehaviour:
     m_Value: 1000
     min: 0
   albedo:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
     hdr: 0
     showAlpha: 1
@@ -183,7 +183,7 @@ MonoBehaviour:
     m_Value: 0
   exposure:
     m_OverrideState: 1
-    m_Value: 6
+    m_Value: 1
   multiplier:
     m_OverrideState: 0
     m_Value: 1
@@ -222,13 +222,13 @@ MonoBehaviour:
     max: 5
   skyTint:
     m_OverrideState: 1
-    m_Value: {r: 0.5283019, g: 0.10983924, b: 0.08721964, a: 1}
+    m_Value: {r: 0.40005338, g: 0.5849056, b: 0.4423053, a: 1}
     hdr: 0
     showAlpha: 1
     showEyeDropper: 1
   groundColor:
     m_OverrideState: 1
-    m_Value: {r: 0.369, g: 0.349, b: 0.341, a: 1}
+    m_Value: {r: 0.009433985, g: 0.008639343, b: 0.008321486, a: 1}
     hdr: 0
     showAlpha: 1
     showEyeDropper: 1
