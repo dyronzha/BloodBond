@@ -99,11 +99,19 @@ public class EnemyValue : ActorValue
         get { return seeConfirmTime; }
         set { seeConfirmTime = value; }
     }
-    public EnemyValue(int hp, int damage, float moveSpeed, float rotateSpeed, float _sightDist, float _sightAngle, float seeTime, LayerMask hurtAreaLayer) : base(hp, damage, moveSpeed, rotateSpeed, hurtAreaLayer)
+    [SerializeField]
+    float attackDist = .0f;
+    public float AttackDist
+    {
+        get { return attackDist; }
+        set { attackDist = value; }
+    }
+    public EnemyValue(int hp, int damage, float moveSpeed, float rotateSpeed, float _sightDist, float _sightAngle, float seeTime,float atkDist, LayerMask hurtAreaLayer) : base(hp, damage, moveSpeed, rotateSpeed, hurtAreaLayer)
     {
         sightDist = _sightDist;
         sightAngle = _sightAngle;
         seeConfirmTime = seeTime;
+        attackDist = atkDist;
     }
 }
 

@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: ca39e98e79a94864c85343987aec1769
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: GenWanMin TW TTF
+  fontNames:
+  - GenWanMin TW TTF
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 5acf09e34b0c27d4b922fe1d374fa018, type: 3}
+  - {fileID: 12800000, guid: 8bff18871f094dc4c8e0820e6ddd3d3b, type: 3}
+  - {fileID: 12800000, guid: 1f204e0a652ab5d49a84e6347df524c9, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -75,6 +75,53 @@ namespace BloodBond {
         }
 
     }
+    public class EnemySuspectIdleState : EnemyBaseState
+    {
+        public EnemySuspectIdleState(EnemyBase enemy) : base(enemy)
+        {
+
+        }
+        public override void Update()
+        {
+            if (enemyBase.CheckGetHurt() || enemyBase.FindPlayerInSuspect())
+            {
+                return;
+            }
+            enemyBase.SuspectIdle();
+        }
+    }
+    public class EnemySuspectMoveState : EnemyBaseState
+    {
+        public EnemySuspectMoveState(EnemyBase enemy) : base(enemy)
+        {
+
+        }
+        public override void Update()
+        {
+            if (enemyBase.CheckGetHurt() || enemyBase.FindPlayerInSuspect())
+            {
+                enemyBase.SetAniBool("Patrol", false);
+                return;
+            }
+            enemyBase.SuspectMove();
+        }
+    }
+    public class EnemySuspectLookAroundState : EnemyBaseState
+    {
+        public EnemySuspectLookAroundState(EnemyBase enemy) : base(enemy)
+        {
+
+        }
+        public override void Update()
+        {
+            if (enemyBase.CheckGetHurt() || enemyBase.FindPlayerInSuspect())
+            {
+                enemyBase.SetAniBool("Look", false);
+                return;
+            }
+            enemyBase.SuspectLookAround();
+        }
+    }
     public class EnemyChaseState : EnemyBaseState
     {
         public EnemyChaseState(EnemyBase enemy) : base(enemy)
@@ -83,18 +130,60 @@ namespace BloodBond {
         }
         public override void Update()
         {
+            //是否看到玩家在chasing判斷
+            if (enemyBase.CheckGetHurt()) {
+                enemyBase.SetAniBool("Chase", false);
+                return;
+            }
             enemyBase.Chasing();   
         }
     }
-    public class EnemyAttackState : EnemyBaseState
+    public class EnemyComboAttackState : EnemyBaseState
     {
-        public EnemyAttackState(EnemyBase enemy) : base(enemy)
+        public bool hasEnableCollider = false;
+        int curCombo = 0;
+        public int CurComboCount { get { return curCombo; } }
+        int maxCombo;
+        float[] colliderEnableTimes;
+        public float currentColliderTime { get { return colliderEnableTimes[curCombo]; } }
+        float[] colliderDisableTimes;
+        public float currentDisColliderTime { get { return colliderDisableTimes[curCombo]; } }
+        Collider[] AtkColliders;
+        public Collider[] ATKColliders { set { AtkColliders = value; } }
+        public Collider curATKCollider { get { return AtkColliders[0]; } }
+        public Collider lastATKCollider { get { return AtkColliders[curCombo - 1]; } }
+
+        public EnemyComboAttackState(EnemyBase enemy, int _maxCombo, float[] _collEnabTimes, float[] _collDisableTimes) : base(enemy)
+        {
+            maxCombo = _maxCombo;
+            colliderEnableTimes = _collEnabTimes;
+            colliderDisableTimes = _collDisableTimes;
+        }
+        public override void Update()
+        {
+            //攻擊完再判斷與玩家距離
+            if (enemyBase.CheckGetHurt()) {
+                enemyBase.SetAniBool("Attack", false);
+                AtkColliders[curCombo].enabled = false;
+                return;
+            }
+            enemyBase.ComboAttack(ref curCombo, maxCombo);
+        }
+    }
+    public class EnemyGiveUpState : EnemyBaseState
+    {
+        public EnemyGiveUpState(EnemyBase enemy) : base(enemy)
         {
 
         }
         public override void Update()
         {
-
+            if (enemyBase.CheckGetHurt() || enemyBase.FindPlayer())
+            {
+                enemyBase.SetAniBool("Patrol", false);
+                return;
+            }
+            enemyBase.GiveUp();
         }
     }
     public class EnemyHurtState : EnemyBaseState
@@ -119,28 +208,7 @@ namespace BloodBond {
 
         }
     }
-    public class EnemySuspectIdleState : EnemyBaseState
-    {
-        public EnemySuspectIdleState(EnemyBase enemy) : base(enemy)
-        {
 
-        }
-        public override void Update()
-        {
-            
-        }
-    }
-    public class EnemySuspectMoveState : EnemyBaseState
-    {
-        public EnemySuspectMoveState(EnemyBase enemy) : base(enemy)
-        {
-
-        }
-        public override void Update()
-        {
-            
-        }
-    }
 
     public class EnemyDieState : EnemyBaseState
     {
