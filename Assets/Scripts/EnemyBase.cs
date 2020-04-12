@@ -5,7 +5,7 @@ using UnityEngine;
 namespace BloodBond {
     public class EnemyBase
     {
-        int hp;
+        protected int hp;
 
         bool findingPath = false;
 
@@ -47,19 +47,19 @@ namespace BloodBond {
         PatrolRoute.RouteType routeType;
         bool pathOver = false;
 
-        EnemyBaseState curState;
-        EnemyIdleState idleState;
-        EnemyPatrolState patrolState;
-        EnemyLookAroundState lookAroundState;
-        EnemyChaseState chaseState;
-        EnemyComboAttackState comboAttackState;
-        EnemyHurtState hurtState;
-        EnemyYellState yellState;
-        EnemySuspectIdleState suspectIdleState;
-        EnemySuspectMoveState suspectMoveState;
-        EnemySuspectLookAroundState suspectLookAroundState;
-        EnemyGiveUpState giveUpState;
-        EnemyDieState dieState;
+        protected EnemyBaseState curState;
+        protected EnemyIdleState idleState;
+        protected EnemyPatrolState patrolState;
+        protected EnemyLookAroundState lookAroundState;
+        protected EnemyChaseState chaseState;
+        protected EnemyComboAttackState comboAttackState;
+        protected EnemyHurtState hurtState;
+        protected EnemyYellState yellState;
+        protected EnemySuspectIdleState suspectIdleState;
+        protected EnemySuspectMoveState suspectMoveState;
+        protected EnemySuspectLookAroundState suspectLookAroundState;
+        protected EnemyGiveUpState giveUpState;
+        protected EnemyDieState dieState;
 
         public Transform transform;
 
@@ -129,14 +129,14 @@ namespace BloodBond {
             curState.Update();
         }
 
-        void ChangeState(EnemyBaseState state) {
+        public void ChangeState(EnemyBaseState state) {
             stateStep = 0;
             stateTime = .0f;
             curState = state;
             animator.speed = 1.0f;
         }
 
-        public bool FindPlayer()
+        public virtual bool FindPlayer()
         {
             //return false;
 
@@ -216,7 +216,7 @@ namespace BloodBond {
             }
             
         }
-        bool PlayerInDistanceAfterClose()   //在近距離接觸過後的判斷，少了角度確認
+        public virtual bool PlayerInDistanceAfterClose()   //在近距離接觸過後的判斷，少角度確認比較寬鬆
         {
             float distance = enemyManager.HunterValue.SightDistance;
             //float angle = enemyManager.HunterValue.SightAngle;
@@ -589,9 +589,15 @@ namespace BloodBond {
             else if (stateStep == 1)
             {
                 Debug.Log("chase  1");
-               
+                
+                //確認玩家有沒有超過grid，超過放棄追逐
+                if (pathFinding.CheckInGrid(targetPos)) {
+                    ChangeState(giveUpState);
+                    return;
+                }
                 //先判斷距離和看不看的到
                 if (PlayerInDistance(lookDir, enemyManager.HunterValue.SightDistance, enemyManager.HunterValue.SightAngle)) {
+
                     //追逐
                     if (distanceCase == 1)
                     {
@@ -610,7 +616,6 @@ namespace BloodBond {
                     }
                     //看不到
                     else {
-                        
                         moveFwdDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z).normalized;
                         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
                         transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * 2.0f * moveFwdDir;
@@ -628,7 +633,6 @@ namespace BloodBond {
                 //看不到
                 else
                 {
-
                     moveFwdDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z).normalized;
                     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
                     transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * 2.0f * moveFwdDir;

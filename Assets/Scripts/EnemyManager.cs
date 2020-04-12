@@ -9,8 +9,9 @@ namespace BloodBond {
         Player player;
         public Player Player { get { return player; } }
 
-        List<EnemyBase> freeHunterList = new List<EnemyBase>();
-        List<EnemyBase> usedHunterList = new List<EnemyBase>();
+        List<EnemyBase> freeBaseHunterList = new List<EnemyBase>();
+        List<EnemyBase> usedBaseHunterList = new List<EnemyBase>();
+        List<EnemyBase> freeArcherHunterList = new List<EnemyBase>();
 
         PatrolManager patrolManager;
 
@@ -23,14 +24,15 @@ namespace BloodBond {
         // Start is called before the first frame update
         private void Awake()
         {
+            patrolManager = GameObject.Find("PatrolManager").GetComponent<PatrolManager>();
             for (int i = 0; i < transform.childCount; i++)
             {
-                EnemyBase enemy = new EnemyBase(transform.GetChild(i), this);
-                freeHunterList.Add(enemy);
+                EnemyBase enemy = new EnemyBase(transform.Find("PatrolEnemy").GetChild(i), this);
+                freeBaseHunterList.Add(enemy);
                 enemy.transform.gameObject.SetActive(false);
             }
 
-            patrolManager = GameObject.Find("PatrolManager").GetComponent<PatrolManager>();
+            
 
             player = GameObject.Find("Karol").GetComponent<Player>();
         }
@@ -43,19 +45,19 @@ namespace BloodBond {
         void Update()
         {
             deltaTime = Time.deltaTime;
-            for (int i = usedHunterList.Count-1; i >= 0; i--) {
-                usedHunterList[i].Update(deltaTime);
+            for (int i = usedBaseHunterList.Count-1; i >= 0; i--) {
+                usedBaseHunterList[i].Update(deltaTime);
             }
         }
 
         public EnemyBase SpawnEnemyWithRoute(Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding)
         {
-            EnemyBase enemy = freeHunterList[0];
+            EnemyBase enemy = freeBaseHunterList[0];
             enemy.transform.position = new Vector3(loc.x, 0, loc.z);
             enemy.transform.gameObject.SetActive(true);
-            usedHunterList.Add(enemy);
+            usedBaseHunterList.Add(enemy);
             enemy.SetPatrolArea(route, finding);
-            freeHunterList.RemoveAt(0);
+            freeBaseHunterList.RemoveAt(0);
             return enemy;
         }
 
