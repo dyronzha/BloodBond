@@ -626,74 +626,15 @@ namespace BloodBond {
             }
             else if (stateStep == 1)
             {
-                //if (!GetInputDir()) //沒有方向輸入
-                //{
-                //    if (CheckGetHurt())
-                //    {
-                //        animator.SetBool("Dash", false);
-                //        Time.timeScale = 1.0f;
-                //        return;
-                //    }
-                //    if (!input.GetDashInput())
-                //    {
-                //        animator.SetBool("Dash", false);
-                //        ChangeState(idleState);
-                //        dashOrientEffect.gameObject.SetActive(false);
-                //        Time.timeScale = 1.0f;
-                //        VFX_Teleport.SetFloat("AttractDrag", 1.0f);
-                //        VFX_Teleport.SetInt("Number_of_Particles", 0);
-                //        return;
-                //    }
-                //}
-                //else
-                //{
-                //    if (CheckGetHurt())
-                //    {
-                //        animator.SetBool("Dash", false);
-                //        Time.timeScale = 1.0f;
-                //        dashOrientEffect.gameObject.SetActive(false);
-                //        return;
-                //    }
-                //    if (!input.GetDashInput())
-                //    {
-                //        RaycastHit hit;
-                //        Vector3 pos = selfTransform.position + new Vector3(0, 1, 0);
-                //        Vector3 nextPos = pos + inputDir * 5.0f;
-
-                //        if (Physics.Linecast(pos, nextPos, out hit, infoValue.HurtAreaLayer | 1 << LayerMask.NameToLayer("Barrier")))
-                //        {
-                //            if (hit.transform.tag.CompareTo("Barrier") == 0)
-                //            {
-                //                Debug.Log("hiiiiiiiiiiiiit barrier   " + new Vector3(hit.point.x, 0, hit.point.z));
-                //                selfTransform.position = new Vector3(hit.point.x, 0, hit.point.z) - inputDir;
-                //            }
-                //            else
-                //            {
-                //                selfTransform.position = new Vector3(hit.transform.position.x, 0, hit.transform.position.z);
-                //            }
-                //        }
-                //        else selfTransform.position = new Vector3(nextPos.x,0, nextPos.z);
-
-                //        selfTransform.position = nextPos - new Vector3(0, 1, 0); ;
-                //        selfTransform.rotation = Quaternion.LookRotation(inputDir);
-                //        dashOrientEffect.gameObject.SetActive(false);
-                //        animator.SetTrigger("DashOver");
-
-                //        stateStep++;
-
-                //        VFX_Teleport.SetFloat("AttractDrag", 1.0f);
-                //        VFX_Teleport.SetInt("Number_of_Particles", 0);
-                //        return;
-                //    }
-
-                //    dashOrientEffect.rotation = Quaternion.LookRotation(inputDir);
-                //}
+                //判斷中途有沒有被打
                 if (CheckGetHurt())
                 {
                     animator.SetBool("Dash", false);
                     Time.timeScale = 1.0f;
                     return;
                 }
+
+                //判斷有沒有放開瞬移鍵
                 if (!input.GetDashInput())
                 {   
                     dashOrientEffect.enabled = false;
@@ -713,6 +654,7 @@ namespace BloodBond {
                     } 
                     return;
                 }
+
 
                 dashTime += Time.unscaledDeltaTime;
                 if (dashPointCount <= 15)

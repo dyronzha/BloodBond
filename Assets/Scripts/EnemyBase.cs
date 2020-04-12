@@ -591,7 +591,7 @@ namespace BloodBond {
                 Debug.Log("chase  1");
                 
                 //確認玩家有沒有超過grid，超過放棄追逐
-                if (pathFinding.CheckInGrid(targetPos)) {
+                if (!pathFinding.CheckInGrid(targetPos)) {
                     ChangeState(giveUpState);
                     return;
                 }

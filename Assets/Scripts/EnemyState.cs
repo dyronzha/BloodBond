@@ -170,6 +170,22 @@ namespace BloodBond {
             enemyBase.ComboAttack(ref curCombo, maxCombo);
         }
     }
+    public class EnemyDistantAttackState : EnemyBaseState
+    {
+        public EnemyDistantAttackState(EnemyBase enemy) : base(enemy)
+        {
+            
+        }
+        public override void Update()
+        {
+            if (enemyBase.CheckGetHurt() || enemyBase.FindPlayer())
+            {
+                enemyBase.SetAniBool("Patrol", false);
+                return;
+            }
+            enemyBase.GiveUp();
+        }
+    }
     public class EnemyGiveUpState : EnemyBaseState
     {
         public EnemyGiveUpState(EnemyBase enemy) : base(enemy)
