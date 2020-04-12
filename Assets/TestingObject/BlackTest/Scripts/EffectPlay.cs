@@ -12,6 +12,7 @@ public class EffectPlay : MonoBehaviour{
     public GameObject FlyingDust;
     public GameObject shawl;
     int MaxCount = 0;
+    ParticleSystem.ShapeModule a;
 
     void Start(){
         _KarolSkin = GetComponentsInChildren<SkinnedMeshRenderer>();
@@ -32,6 +33,7 @@ public class EffectPlay : MonoBehaviour{
     }
 
     public void PlayWhichEffect(int num){
+
         if (EffectPool == null || EffectPool.Length <= num) Debug.Log("Wrong Number");
         EffectPool[num].SetActive(true);
 
@@ -44,10 +46,21 @@ public class EffectPlay : MonoBehaviour{
         Instantiate(Teleport_Phantom, transform.position, transform.rotation);
         Instantiate(FlyingDust, transform.position, transform.rotation);
     }
-    public void Phantom_ForTeleport(Vector3 dir)
+    public void Phantom_ForTeleport(Vector3 dir,float _length)
     {
         Instantiate(Teleport_Phantom, transform.position, Quaternion.LookRotation(dir));
         Instantiate(FlyingDust, transform.position, Quaternion.LookRotation(dir));
+
+        for (int i = 0; i < 2; i++) {
+            FlyingDust.transform.GetChild(i).GetComponent<ParticleSystem>().Stop();
+            a = FlyingDust.transform.GetChild(i).GetComponent<ParticleSystem>().shape;
+            a.length = _length;
+            FlyingDust.transform.GetChild(i).GetComponent<ParticleSystem>().Play();
+        }
+        FlyingDust.GetComponent<ParticleSystem>().Stop();
+        a = FlyingDust.GetComponent<ParticleSystem>().shape;
+        a.length = _length;
+        FlyingDust.GetComponent<ParticleSystem>().Play();
     }
 
     public void Phantom_ForCombo2() {
