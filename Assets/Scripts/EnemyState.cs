@@ -151,7 +151,7 @@ namespace BloodBond {
         Collider[] AtkColliders;
         public Collider[] ATKColliders { set { AtkColliders = value; } }
         public Collider curATKCollider { get { return AtkColliders[0]; } }
-        public Collider lastATKCollider { get { return AtkColliders[curCombo - 1]; } }
+        public Collider lastATKCollider { get { return AtkColliders[Mathf.Clamp(curCombo - 1,0, AtkColliders.Length-1)]; } }
 
         public EnemyComboAttackState(EnemyBase enemy, int _maxCombo, float[] _collEnabTimes, float[] _collDisableTimes) : base(enemy)
         {
@@ -164,7 +164,8 @@ namespace BloodBond {
             //攻擊完再判斷與玩家距離
             if (enemyBase.CheckGetHurt()) {
                 enemyBase.SetAniBool("Attack", false);
-                AtkColliders[curCombo].enabled = false;
+                AtkColliders[0].enabled = false;
+                curCombo = 0;
                 return;
             }
             enemyBase.ComboAttack(ref curCombo, maxCombo);

@@ -63,12 +63,16 @@ namespace BloodBond {
 
         public Transform transform;
 
+        Vector3 HurtDir;
+        ParticleSystem BloodSplash;
+
         public EnemyBase(Transform t, EnemyManager manager) {
             transform = t;
             enemyManager = manager;
             animator = t.GetComponent<Animator>();
             hurtAreaCollider = t.GetComponent<CapsuleCollider>();
             hp = enemyManager.HunterValue.Health;
+            BloodSplash = t.Find("BloodSplash").GetComponent<ParticleSystem>();
         }
 
 
@@ -747,8 +751,13 @@ namespace BloodBond {
             if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
             {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
-                hp -= 10;
+                hp -= 0;
                 lastHurtHash = curCount;
+
+                HurtDir = new Vector3(targetDir.x - transform.position.x, targetDir.y - transform.position.y, targetDir.z - transform.position.z);
+                BloodSplash.transform.rotation = Quaternion.LookRotation(HurtDir);
+                BloodSplash.Play();
+
                 if (hp > 0)
                 {
                     canHurt = false;
@@ -776,7 +785,7 @@ namespace BloodBond {
             if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
             {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
-                hp -= 10;
+                hp -= 0;
                 lastHurtHash = curCount;
                 if (hp > 0)
                 {
