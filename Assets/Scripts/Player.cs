@@ -701,7 +701,7 @@ namespace BloodBond {
                     if (canDash) {
                         Debug.Log("進行step 2");
                         animator.SetTrigger("DashOver");
-                        effectPlay.Phantom_ForTeleport(dashDir);
+                        effectPlay.Phantom_ForTeleport(dashDir, lastDashLength);
                         stateStep++;
                         return;
                     } 
