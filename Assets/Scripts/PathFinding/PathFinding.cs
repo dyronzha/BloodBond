@@ -23,6 +23,10 @@ namespace PathFinder {
             StartCoroutine(FindPath(startPos, targetPos));
         }
 
+        public bool CheckInGrid(Vector3 targetPos) {
+            return grid.CheckInGrid(targetPos);
+        }
+
         IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
         {
             //Debug.Log("coroutine  findpath");
