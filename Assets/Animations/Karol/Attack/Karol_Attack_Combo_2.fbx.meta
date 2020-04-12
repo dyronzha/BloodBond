@@ -44,7 +44,7 @@ ModelImporter:
       name: karol_Attack_Combo_2
       takeName: karol_Attack_Combo_2
       internalID: 0
-      firstFrame: 0
+      firstFrame: 8
       lastFrame: 90
       wrapMode: 0
       orientationOffsetY: 0
