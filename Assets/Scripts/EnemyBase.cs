@@ -7,30 +7,30 @@ namespace BloodBond {
     {
         protected int hp;
 
-        bool findingPath = false;
+        protected bool findingPath = false;
 
-        int stateStep = 0;
-        float stateTime = .0f, deltaTime = .0f;
-        float suspectTime = .0f;
+        protected int stateStep = 0;
+        protected float stateTime = .0f, deltaTime = .0f;
+        protected float suspectTime = .0f;
 
-        float idleTime = .0f;
-        float seeDelayTime = .0f;
-        int lookARoundNum = 0;
+        protected float idleTime = .0f;
+        protected float seeDelayTime = .0f;
+        protected int lookARoundNum = 0;
 
-        bool canHurt = true;
-        int lastHurtHash = 999;
+        protected bool canHurt = true;
+        protected int lastHurtHash = 999;
 
-        Vector3 selfPos, selfFwd;
-        Vector3 moveFwdDir = new Vector3(0, 0, 0);
-        Vector3 lookDir, lookPos;
-        Vector3 targetPos, targetDir;
+        protected Vector3 selfPos, selfFwd;
+        protected Vector3 moveFwdDir = new Vector3(0, 0, 0);
+        protected Vector3 lookDir, lookPos;
+        protected Vector3 targetPos, targetDir;
 
-        EnemyManager enemyManager;
+        protected EnemyManager enemyManager;
 
-        CapsuleCollider hurtAreaCollider;
+        protected CapsuleCollider hurtAreaCollider;
 
-        Transform head;
-        Animator animator;
+        protected Transform head;
+        protected Animator animator;
 
         int sightStep = 0;
         int distanceCase = 0; // 1:警覺  2:攻擊
@@ -73,8 +73,14 @@ namespace BloodBond {
             hurtAreaCollider = t.GetComponent<CapsuleCollider>();
             hp = enemyManager.HunterValue.Health;
             BloodSplash = t.Find("BloodSplash").GetComponent<ParticleSystem>();
+            head = t.Find("mixamorig:Hips").GetChild(2).GetChild(0).GetChild(0).GetChild(1).GetChild(0);
+            lookDir = head.forward;
+            lookPos = transform.position + new Vector3(0, 1.3f, 0);
         }
 
+        public virtual void Init() { 
+            
+        }
 
         public void SetPatrolArea(PatrolRoute _patrolRoute, PathFinder.PathFinding _pathFinding) {
             pathFinding = _pathFinding;
@@ -117,10 +123,6 @@ namespace BloodBond {
                 }
                 
             }
-
-            head = transform.Find("mixamorig:Hips").GetChild(2).GetChild(0).GetChild(0).GetChild(1).GetChild(0);
-            lookDir = head.forward;
-            lookPos = transform.position + new Vector3(0, 1.3f, 0);
         }
 
 
@@ -130,7 +132,12 @@ namespace BloodBond {
             selfFwd = transform.forward;
             lookDir = head.forward;
             lookPos = selfPos + new Vector3(0, 1.3f, 0);
+            Debug.Log(transform.name);
             curState.Update();
+        }
+
+        public virtual void LateUpdate(float dtTime) { 
+            
         }
 
         public void ChangeState(EnemyBaseState state) {
@@ -192,7 +199,7 @@ namespace BloodBond {
             return false;
         }
 
-        bool PlayerInSight(Vector3 dir, float distance, float angle) {
+        public virtual bool PlayerInSight(Vector3 dir, float distance, float angle) {
             Debug.DrawRay(lookPos, dir, Color.yellow, distance);
             if (sightStep == 0)
             {
@@ -362,7 +369,7 @@ namespace BloodBond {
             }
         }
 
-        public void LookAround() {
+        public virtual void LookAround() {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateStep == 0)
             {
@@ -739,6 +746,9 @@ namespace BloodBond {
                     }
                 }
             }
+        }
+        public virtual void DistantAttack() { 
+            
         }
         public bool CheckGetHurt() {
 

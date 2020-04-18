@@ -11,7 +11,8 @@ namespace BloodBond {
 
         List<EnemyBase> freeBaseHunterList = new List<EnemyBase>();
         List<EnemyBase> usedBaseHunterList = new List<EnemyBase>();
-        List<EnemyBase> freeArcherHunterList = new List<EnemyBase>();
+        List<EnemyArcher> freeArcherHunterList = new List<EnemyArcher>();
+        List<EnemyArcher> usedArcherHunterList = new List<EnemyArcher>();
 
         PatrolManager patrolManager;
 
@@ -20,15 +21,29 @@ namespace BloodBond {
         public EnemyValue HunterValue {
             get { return hunterInfo; }
         }
+        [SerializeField]
+        EnemyValue archerInfo;
+        public EnemyValue ArcherValue
+        {
+            get { return archerInfo; }
+        }
 
         // Start is called before the first frame update
         private void Awake()
         {
             patrolManager = GameObject.Find("PatrolManager").GetComponent<PatrolManager>();
-            for (int i = 0; i < transform.childCount; i++)
-            {
-                EnemyBase enemy = new EnemyBase(transform.Find("PatrolEnemy").GetChild(i), this);
+
+            Transform t = transform.Find("PatrolEnemys");
+            for (int i = 0; i < t.childCount; i++) {
+                EnemyBase enemy = new EnemyBase(t.GetChild(i), this);
                 freeBaseHunterList.Add(enemy);
+                enemy.transform.gameObject.SetActive(false);
+            }
+            t = transform.Find("ArcherEnemys");
+            for (int i = 0; i < t.childCount; i++)
+            {
+                EnemyArcher enemy = new EnemyArcher(t.GetChild(i), this);
+                freeArcherHunterList.Add(enemy);
                 enemy.transform.gameObject.SetActive(false);
             }
 
@@ -48,16 +63,35 @@ namespace BloodBond {
             for (int i = usedBaseHunterList.Count-1; i >= 0; i--) {
                 usedBaseHunterList[i].Update(deltaTime);
             }
+            for (int i = usedArcherHunterList.Count - 1; i >= 0; i--) {
+                usedArcherHunterList[i].Update(deltaTime);
+            }
+        }
+        private void LateUpdate()
+        {
+            for (int i = usedArcherHunterList.Count - 1; i >= 0; i--)
+            {
+                usedArcherHunterList[i].LateUpdate(deltaTime);
+            }
         }
 
         public EnemyBase SpawnEnemyWithRoute(Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding)
         {
             EnemyBase enemy = freeBaseHunterList[0];
-            enemy.transform.position = new Vector3(loc.x, 0, loc.z);
+            enemy.transform.position = new Vector3(loc.x, loc.y, loc.z);
             enemy.transform.gameObject.SetActive(true);
             usedBaseHunterList.Add(enemy);
             enemy.SetPatrolArea(route, finding);
             freeBaseHunterList.RemoveAt(0);
+            return enemy;
+        }
+        public EnemyArcher SpawnAcherInLoc(Vector3 loc) {
+            EnemyArcher enemy = freeArcherHunterList[0];
+            enemy.transform.position = new Vector3(loc.x, loc.y, loc.z);
+            enemy.transform.gameObject.SetActive(true);
+            usedArcherHunterList.Add(enemy);
+            freeArcherHunterList.RemoveAt(0);
+            enemy.Init();
             return enemy;
         }
 
