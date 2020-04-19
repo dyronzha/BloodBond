@@ -10,12 +10,13 @@ public class UI_Manager : MonoBehaviour{
     bool BtnWorked = false;
     int Currentbtn = 0;
     public Animator BlackPanel;
+    public RectTransform _CurBtnBG;
 
     bool SelectNewGame = false;
     float Trigger_Moment;
 
     void Start(){
-        BtnSelect(Currentbtn);
+        //BtnSelect(Currentbtn);
     }
 
     void Update(){
@@ -26,14 +27,22 @@ public class UI_Manager : MonoBehaviour{
 
         if (AlreadyPush == false && BtnWorked == false){
             if (Input.GetAxis("Vertical") > 0.0f || Input.GetAxis("Joy1Axis7") > 0.0f){
-                if (Currentbtn > 0) Currentbtn--;
+                if (Currentbtn > 0) {
+                    Currentbtn--;
+                    _CurBtnBG.anchoredPosition = new Vector2(_CurBtnBG.anchoredPosition.x, _CurBtnBG.anchoredPosition.y + 80.0f);
+                }
+
                 AlreadyPush = true;
-                BtnSelect(Currentbtn);
+                //BtnSelect(Currentbtn);
             }
             else if (Input.GetAxis("Vertical") < 0.0f || Input.GetAxis("Joy1Axis7") < 0.0f){
-                if (Currentbtn < 3) Currentbtn++;
+                if (Currentbtn < 2) {
+                    Currentbtn++;
+                    _CurBtnBG.anchoredPosition = new Vector2(_CurBtnBG.anchoredPosition.x, _CurBtnBG.anchoredPosition.y - 80.0f);
+                }
+
                 AlreadyPush = true;
-                BtnSelect(Currentbtn);
+                //BtnSelect(Currentbtn);
             }
 
             else if (Input.GetButtonDown("Fire1")) {
