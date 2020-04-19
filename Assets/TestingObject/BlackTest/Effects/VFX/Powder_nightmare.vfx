@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d4c867f6b72b714dbb5fd1780afe208, type: 3}
-  m_Name: Powder_2
+  m_Name: Powder_nightmare
   m_EditorClassIdentifier: 
   m_Parent: {fileID: 0}
   m_Children:
@@ -511,7 +511,7 @@ VisualEffectResource:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Powder_2
+  m_Name: Powder_nightmare
   m_Graph: {fileID: 114350483966674976}
   m_ShaderSources:
   - compute: 1
@@ -2261,7 +2261,7 @@ VisualEffectResource:
         - m_ExpressionIndex: 29
           m_Value: {fileID: 10307, guid: 0000000000000000f000000000000000, type: 0}
         - m_ExpressionIndex: 41
-          m_Value: {fileID: 6918954641851045129, guid: 36b18d9cd546e3c468faccbf437ca4b9,
+          m_Value: {fileID: 6918954641851045129, guid: caa9c9b46f4436740bb6302b4b5be704,
             type: 3}
         - m_ExpressionIndex: 48
           m_Value: {fileID: 2800000, guid: 276d9e395ae18fe40a9b4988549f2349, type: 3}
@@ -12051,7 +12051,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614949}
   - {fileID: 8926484042661614950}
   - {fileID: 8926484042661614951}
-  Asset: {fileID: -3256353808211938606, guid: 36b18d9cd546e3c468faccbf437ca4b9, type: 3}
+  Asset: {fileID: -3256353808211938606, guid: caa9c9b46f4436740bb6302b4b5be704, type: 3}
 --- !u!114 &8926484042661614949
 MonoBehaviour:
   m_ObjectHideFlags: 0
