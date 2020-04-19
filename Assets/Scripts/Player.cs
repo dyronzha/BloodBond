@@ -642,7 +642,13 @@ namespace BloodBond {
                     if (canDash) {
                         Debug.Log("進行step 2");
                         animator.SetTrigger("DashOver");
-                        effectPlay.Phantom_ForTeleport(dashDir, lastDashLength);
+                        float _d = Vector3.Magnitude(selfTransform.position - goalPoint);
+                        //Debug.Log("line645_SelfTransform" + SelfTransform.position);
+                        //Debug.Log("Goal = " + goalPoint);
+                        Debug.Log("line648_d = " + _d);
+                        //effectPlay.Phantom_ForTeleport(dashDir, lastDashLength);
+                        effectPlay.Phantom_ForTeleport(dashDir, _d);
+                        //Debug.Log("line646_Goal" + goalPoint);
                         stateStep++;
                         return;
                     } 
@@ -719,6 +725,7 @@ namespace BloodBond {
                 if (canDash) {
                     canDash = false;
                     selfTransform.position = goalPoint;
+                    Debug.Log("line 722 = " + goalPoint);
                     selfTransform.rotation = Quaternion.LookRotation(inputDir);
                 }
                 if (aniInfo.IsName("DashOver")) {
