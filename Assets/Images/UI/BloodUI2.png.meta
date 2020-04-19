@@ -1,0 +1,1111 @@
+fileFormatVersion: 2
+guid: 70fe5a35f6e65594999ddb168c999995
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1525774181393980160
+    second: BloodUI2_0
+  - first:
+      213: 4768992748020163381
+    second: BloodUI2_1
+  - first:
+      213: 5067839973347318943
+    second: BloodUI2_2
+  - first:
+      213: -680906971827045958
+    second: BloodUI2_3
+  - first:
+      213: 8754282278752133141
+    second: BloodUI2_4
+  - first:
+      213: -1151201356279705089
+    second: BloodUI2_5
+  - first:
+      213: 1984581470646465345
+    second: BloodUI2_6
+  - first:
+      213: -7419432092498828298
+    second: BloodUI2_7
+  - first:
+      213: 3652542072958779492
+    second: BloodUI2_8
+  - first:
+      213: -5496349002318792646
+    second: BloodUI2_9
+  - first:
+      213: -6130440180031921390
+    second: BloodUI2_10
+  - first:
+      213: -5012046622202321227
+    second: BloodUI2_11
+  - first:
+      213: -6274982272774946242
+    second: BloodUI2_12
+  - first:
+      213: 2736971047269445371
+    second: BloodUI2_13
+  - first:
+      213: 4864834021757264107
+    second: BloodUI2_14
+  - first:
+      213: 1527280716874010637
+    second: BloodUI2_15
+  - first:
+      213: 745092688549648803
+    second: BloodUI2_16
+  - first:
+      213: 7556367621223319817
+    second: BloodUI2_17
+  - first:
+      213: 1646946846038006539
+    second: BloodUI2_18
+  - first:
+      213: 7637345606821601129
+    second: BloodUI2_19
+  - first:
+      213: 2551378160040971389
+    second: BloodUI2_20
+  - first:
+      213: 1332877315130122860
+    second: BloodUI2_21
+  - first:
+      213: -6698855763197214494
+    second: BloodUI2_22
+  - first:
+      213: 6606579656988596327
+    second: BloodUI2_23
+  - first:
+      213: -1220008835632444662
+    second: BloodUI2_24
+  - first:
+      213: 1026121679023271961
+    second: BloodUI2_25
+  - first:
+      213: 6448756495724282572
+    second: BloodUI2_26
+  - first:
+      213: -5322565936365169466
+    second: BloodUI2_27
+  - first:
+      213: -8874372768835273494
+    second: BloodUI2_28
+  - first:
+      213: -9151132886990109617
+    second: BloodUI2_29
+  - first:
+      213: -208326787844144625
+    second: BloodUI2_30
+  - first:
+      213: 619968042357500555
+    second: BloodUI2_31
+  - first:
+      213: -1791745349783301026
+    second: BloodUI2_32
+  - first:
+      213: -5593542958207549174
+    second: BloodUI2_33
+  - first:
+      213: 1771665385488713456
+    second: BloodUI2_34
+  - first:
+      213: 6899753028584541905
+    second: BloodUI2_35
+  - first:
+      213: -940381719865935232
+    second: BloodUI2_36
+  - first:
+      213: 2603850588318589543
+    second: BloodUI2_37
+  - first:
+      213: -5891809389538679018
+    second: BloodUI2_38
+  - first:
+      213: 7384401101863599606
+    second: BloodUI2_39
+  - first:
+      213: -2889337131345106816
+    second: BloodUI2_40
+  - first:
+      213: -8344438520840935184
+    second: BloodUI2_41
+  externalObjects: {}
+  serializedVersion: 10
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: -1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: BloodUI2_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1440
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 859c38e849b7655419aced2fee056337
+      internalID: 1525774181393980160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_1
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 1440
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad858ce81172ddf46b8432b6167cd10a
+      internalID: 4768992748020163381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_2
+      rect:
+        serializedVersion: 2
+        x: 1306
+        y: 1440
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 69c8aa9d474d5644d88010097d76ccfd
+      internalID: 5067839973347318943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_3
+      rect:
+        serializedVersion: 2
+        x: 1959
+        y: 1440
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01057da351fd29a4f93ea98867c7529b
+      internalID: -680906971827045958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_4
+      rect:
+        serializedVersion: 2
+        x: 2612
+        y: 1440
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 047ed0fc82c6fd84e9b8c7efa50bdeaa
+      internalID: 8754282278752133141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_5
+      rect:
+        serializedVersion: 2
+        x: 3265
+        y: 1440
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4217456c812efee4b833a46975d8fea2
+      internalID: -1151201356279705089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1200
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 69c5c95a3af5a0e439b0cee77f6fd689
+      internalID: 1984581470646465345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_7
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 1200
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 968f1a11e5ce49d4dbe1532dd6a64f87
+      internalID: -7419432092498828298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_8
+      rect:
+        serializedVersion: 2
+        x: 1306
+        y: 1200
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d96edefb911c17941921869fef23537d
+      internalID: 3652542072958779492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_9
+      rect:
+        serializedVersion: 2
+        x: 1959
+        y: 1200
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f928129a46ddfc49954d898dce939ed
+      internalID: -5496349002318792646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_10
+      rect:
+        serializedVersion: 2
+        x: 2612
+        y: 1200
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d7b71ef519a2c7408fb0cad428e0896
+      internalID: -6130440180031921390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_11
+      rect:
+        serializedVersion: 2
+        x: 3265
+        y: 1200
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1cb4c3914ec734943bb64200094e6790
+      internalID: -5012046622202321227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 960
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1b654b46c162c8e48957ab6d14add2c1
+      internalID: -6274982272774946242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_13
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 960
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dba28e73c8c762e479d97cfa4f0d3e4c
+      internalID: 2736971047269445371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_14
+      rect:
+        serializedVersion: 2
+        x: 1306
+        y: 960
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40bcaf35e72865047b6ef8705444005f
+      internalID: 4864834021757264107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_15
+      rect:
+        serializedVersion: 2
+        x: 1959
+        y: 960
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0bef5507119e61140a09505b969127c5
+      internalID: 1527280716874010637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_16
+      rect:
+        serializedVersion: 2
+        x: 2612
+        y: 960
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c85eced204eaab41b8468c1625df761
+      internalID: 745092688549648803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_17
+      rect:
+        serializedVersion: 2
+        x: 3265
+        y: 960
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1962bd9817fa2e64e92d8a6bed026c9f
+      internalID: 7556367621223319817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 720
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e030c485e8fbf0449cc07bfffc841f0
+      internalID: 1646946846038006539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_19
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 720
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e8326cf416f45b46984193f89d81e52
+      internalID: 7637345606821601129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_20
+      rect:
+        serializedVersion: 2
+        x: 1306
+        y: 720
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd8c4034f6701284e82b3d6f6fec975d
+      internalID: 2551378160040971389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_21
+      rect:
+        serializedVersion: 2
+        x: 1959
+        y: 720
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e7b338a9e190d64e985521e1bb86267
+      internalID: 1332877315130122860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_22
+      rect:
+        serializedVersion: 2
+        x: 2612
+        y: 720
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e325a35c1d07c241955228b49a954cb
+      internalID: -6698855763197214494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_23
+      rect:
+        serializedVersion: 2
+        x: 3265
+        y: 720
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dba55fefcc958c346aa9b7e82ac573cf
+      internalID: 6606579656988596327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 480
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6248e27b0f7965a42b0a21d050957bb8
+      internalID: -1220008835632444662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_25
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 480
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 15d2e4f380abd404695b1784f7ad1d96
+      internalID: 1026121679023271961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_26
+      rect:
+        serializedVersion: 2
+        x: 1306
+        y: 480
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3716e82cdd88fa94486b0b2e948e594e
+      internalID: 6448756495724282572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_27
+      rect:
+        serializedVersion: 2
+        x: 1959
+        y: 480
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca7947cdc171e054ba4d67da633f801d
+      internalID: -5322565936365169466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_28
+      rect:
+        serializedVersion: 2
+        x: 2612
+        y: 480
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 315439fff3042e0438bc173d8051ded2
+      internalID: -8874372768835273494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_29
+      rect:
+        serializedVersion: 2
+        x: 3265
+        y: 480
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 280144d2ed983244cb01b36dde4bd6aa
+      internalID: -9151132886990109617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_30
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 240
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f02cc2bb8f990e8478d865ab09ace03a
+      internalID: -208326787844144625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_31
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 240
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 919d60c48a1d9ae4c8465df62165384a
+      internalID: 619968042357500555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_32
+      rect:
+        serializedVersion: 2
+        x: 1306
+        y: 240
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e612d2c0a30b0344fad27f0365385514
+      internalID: -1791745349783301026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_33
+      rect:
+        serializedVersion: 2
+        x: 1959
+        y: 240
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03e40d50f7eab8b4fb5a418c85d32a3a
+      internalID: -5593542958207549174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_34
+      rect:
+        serializedVersion: 2
+        x: 2612
+        y: 240
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e34a09b90a4954438acaf25aa1afeab
+      internalID: 1771665385488713456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_35
+      rect:
+        serializedVersion: 2
+        x: 3265
+        y: 240
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 49b256c589dfc1b41b7e1f0531b27cbd
+      internalID: 6899753028584541905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e0012373171dc24fbdf5496889707ea
+      internalID: -940381719865935232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_37
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 0
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 018d34a5559d0e747a41fca721e01cc0
+      internalID: 2603850588318589543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_38
+      rect:
+        serializedVersion: 2
+        x: 1306
+        y: 0
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33a2469bed06efc4a897dce99dfb1228
+      internalID: -5891809389538679018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_39
+      rect:
+        serializedVersion: 2
+        x: 1959
+        y: 0
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 852706c2a011b034d9517bb9a564708b
+      internalID: 7384401101863599606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_40
+      rect:
+        serializedVersion: 2
+        x: 2612
+        y: 0
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1c3eea9fe84fea74e8d89cbffeff7c80
+      internalID: -2889337131345106816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BloodUI2_41
+      rect:
+        serializedVersion: 2
+        x: 3265
+        y: 0
+        width: 653
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d87ec4518e1ce844953fc5fb1fcdc4e
+      internalID: -8344438520840935184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: f335b0c41d4d3ee42b1fa47f07265c17
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
