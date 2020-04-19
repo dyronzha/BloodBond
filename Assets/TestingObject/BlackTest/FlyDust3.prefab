@@ -728,7 +728,7 @@ ParticleSystem:
     enabled: 1
     type: 8
     angle: 0
-    length: 12.263995
+    length: 13.575785
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
     donutRadius: 0.2
@@ -5485,7 +5485,7 @@ ParticleSystem:
     enabled: 1
     type: 8
     angle: 0
-    length: 12.263995
+    length: 13.575785
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
     donutRadius: 0.2
@@ -15116,7 +15116,7 @@ ParticleSystem:
     enabled: 1
     type: 8
     angle: 0
-    length: 12.263995
+    length: 13.575785
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
     donutRadius: 0.2
