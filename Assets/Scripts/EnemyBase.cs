@@ -63,8 +63,8 @@ namespace BloodBond {
 
         public Transform transform;
 
-        Vector3 HurtDir;
-        ParticleSystem BloodSplash;
+        protected Vector3 HurtDir;
+        protected ParticleSystem BloodSplash;
 
         public EnemyBase(Transform t, EnemyManager manager) {
             transform = t;
@@ -750,7 +750,7 @@ namespace BloodBond {
         public virtual void DistantAttack() { 
             
         }
-        public bool CheckGetHurt() {
+        public virtual bool CheckGetHurt() {
 
             Vector3 center = hurtAreaCollider.center;
             Vector3 point2 = transform.position + center.x * transform.right + center.z * transform.forward;
@@ -773,6 +773,7 @@ namespace BloodBond {
                     canHurt = false;
                     animator.SetBool("Hurt", true);
                     ChangeState(hurtState);
+                    
                 }
                 else {
                     animator.SetBool("Hurt", false);
@@ -784,7 +785,7 @@ namespace BloodBond {
 
             return false;
         }
-        public bool CheckGetHurtDie()
+        public virtual bool CheckGetHurtInHurt()
         {
             Vector3 center = hurtAreaCollider.center;
             Vector3 point2 = transform.position + center.x * transform.right + center.z * transform.forward;
@@ -814,7 +815,7 @@ namespace BloodBond {
             return false;
         }
 
-        public void InHurt() {
+        public virtual void InHurt() {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateStep == 0)
             {
@@ -822,7 +823,7 @@ namespace BloodBond {
             }
             else
             {
-                if (CheckGetHurtDie()) {
+                if (CheckGetHurtInHurt()) {
                     stateStep = 0;
                     return;
                 }

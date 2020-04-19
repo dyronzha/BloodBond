@@ -179,11 +179,12 @@ namespace BloodBond {
         }
         public override void Update()
         {
-            //if (enemyBase.CheckGetHurt() || enemyBase.FindPlayer())
-            //{
-            //    enemyBase.SetAniBool("Patrol", false);
-            //    return;
-            //}
+            if (enemyBase.CheckGetHurt())
+            {
+                enemyBase.SetAniBool("Aim", false);
+                enemyBase.SetAniBool("Attack", false);
+                return;
+            }
             enemyBase.DistantAttack();
         }
     }

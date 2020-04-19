@@ -28,6 +28,16 @@ namespace BloodBond {
             get { return archerInfo; }
         }
 
+        System.Action LateUpdateAction;
+        public void SubLateAction(System.Action action) {
+            if (LateUpdateAction != null) LateUpdateAction = action;
+            else LateUpdateAction += action;
+        }
+        public void UnSubLateAction(System.Action action)
+        {
+            if(LateUpdateAction != null) LateUpdateAction -= action;
+        }
+
         // Start is called before the first frame update
         private void Awake()
         {
@@ -69,10 +79,7 @@ namespace BloodBond {
         }
         private void LateUpdate()
         {
-            for (int i = usedArcherHunterList.Count - 1; i >= 0; i--)
-            {
-                usedArcherHunterList[i].LateUpdate(deltaTime);
-            }
+            if(LateUpdateAction != null) LateUpdateAction();
         }
 
         public EnemyBase SpawnEnemyWithRoute(Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding)
