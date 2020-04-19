@@ -10,13 +10,9 @@ public class AudioManager : MonoBehaviour
 
     AudioClip nextMusic;
 
-    public AudioClip shoppingMusic;
-    public AudioClip[] battleMusic;
     public SoundClip[] soundClips;
-    public AudioClip bossMusic;
-    public AudioClip[] shootClips;
-    public AudioClip[] correctClips;
-    public AudioClip[] wrongClips;
+    public AudioClip[] hitClips;
+
 
     private static AudioManager singletonInScene;
     public static AudioManager SingletonInScene
@@ -53,18 +49,6 @@ public class AudioManager : MonoBehaviour
 
     public void ChangeBGM(bool shopping, int curRound) {
         
-        if (shopping) {
-            bgmAudio.Pause();
-            bgmAudio.clip = shoppingMusic;
-            StartCoroutine(OnChangingBGM());
-        }
-        else {
-            if (curRound < 0) bgmAudio.clip = bossMusic;  // boss 定curRound為-1
-            else if (curRound < 3) bgmAudio.clip = battleMusic[0];
-            else if (curRound < 5) bgmAudio.clip = battleMusic[1];
-            else bgmAudio.clip = battleMusic[2];
-            bgmAudio.Play();
-        }
         
     }
 
@@ -91,20 +75,11 @@ public class AudioManager : MonoBehaviour
         else Debug.Log("沒有這個音檔");
     }
 
-    public void PlayRandomShoot(float volume) {
-        int r = Random.Range(0, 100) % shootClips.Length;
-        effectAudio.PlayOneShot(shootClips[r], volume);
+    public void PlayRandomHit(float volume) {
+        int r = Random.Range(0, 100) % hitClips.Length;
+        effectAudio.PlayOneShot(hitClips[r], volume);
     }
-    public void PlayRandomCorrect(float volume)
-    {
-        int r = Random.Range(0,100) % correctClips.Length;
-        effectAudio.PlayOneShot(correctClips[r], volume);
-    }
-    public void PlayRandomWrong(float volume)
-    {
-        int r = Random.Range(0, 100) % wrongClips.Length;
-        effectAudio.PlayOneShot(wrongClips[r], volume);
-    }
+
 
     IEnumerator ReturnPitch() {
 
