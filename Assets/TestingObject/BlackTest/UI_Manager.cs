@@ -62,7 +62,7 @@ public class UI_Manager : MonoBehaviour{
     }
 
     void BtnFunction(int _btn) {
-        Menu[_btn].sprite = BtnState[_btn+8];
+        //Menu[_btn].sprite = BtnState[_btn+8]; //換UI用
         switch (_btn) {
             case 0:
                 Trigger_Moment = Time.time;
@@ -71,12 +71,9 @@ public class UI_Manager : MonoBehaviour{
                 Debug.Log("New Game");
                 break;
             case 1:
-                Debug.Log("Continue");
+                Debug.Log("Setting");
                 break;
             case 2:
-                Debug.Log("Gallery");
-                break;
-            case 3:
                 Debug.Log("Exit");
                 break;
         }
