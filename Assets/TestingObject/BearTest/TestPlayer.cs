@@ -52,7 +52,7 @@ public class TestPlayer : MonoBehaviour{
             Move();
 
             if (freeMode) {
-                if (Input.GetButtonDown("FreeMode")) {
+                if (Input.GetButtonDown("FreeMode") || Input.GetKeyDown(KeyCode.Space)) {
                     freeMode = false;
                     rigidBody.useGravity = true;
                 }
@@ -71,7 +71,7 @@ public class TestPlayer : MonoBehaviour{
             }
             else
             {
-                if (Input.GetButtonDown("FreeMode"))
+                if (Input.GetButtonDown("FreeMode") || Input.GetKeyDown(KeyCode.Space))
                 {
                     freeMode = true;
                     rigidBody.useGravity = false;
