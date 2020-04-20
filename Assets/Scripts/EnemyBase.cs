@@ -132,7 +132,6 @@ namespace BloodBond {
             selfFwd = transform.forward;
             lookDir = head.forward;
             lookPos = selfPos + new Vector3(0, 1.3f, 0);
-            Debug.Log(transform.name);
             curState.Update();
         }
 
@@ -764,7 +763,7 @@ namespace BloodBond {
                 hp -= 0;
                 lastHurtHash = curCount;
 
-                HurtDir = new Vector3(targetDir.x - transform.position.x, targetDir.y - transform.position.y, targetDir.z - transform.position.z);
+                HurtDir = new Vector3(targetPos.x - transform.position.x, 0, targetPos.z - transform.position.z); //new Vector3(targetDir.x - transform.position.x, targetDir.y - transform.position.y, targetDir.z - transform.position.z);
                 BloodSplash.transform.rotation = Quaternion.LookRotation(HurtDir);
                 BloodSplash.Play();
 

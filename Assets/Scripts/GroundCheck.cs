@@ -17,12 +17,12 @@ public class GroundCheck
             return false;
         }
     }
-    public static bool DetectGround(Vector3 goalPoint, ref Vector3 groundPos) {
+    public static bool DetectGround(ref Vector3 goalPoint) {
         Vector3 fromPoint = goalPoint + new Vector3(0, 5.0f, 0);
         RaycastHit hit;
         if (Physics.Raycast(fromPoint, new Vector3(0, -1.0f, 0), out hit, 10.0f, 1 << LayerMask.NameToLayer("Ground")))
         {
-            groundPos = hit.point + new Vector3(0,0.1f,0);
+            goalPoint = hit.point + new Vector3(0,0.1f,0);
             return true;
         }
         else {

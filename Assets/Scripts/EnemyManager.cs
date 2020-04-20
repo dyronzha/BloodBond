@@ -13,6 +13,10 @@ namespace BloodBond {
         List<EnemyBase> usedBaseHunterList = new List<EnemyBase>();
         List<EnemyArcher> freeArcherHunterList = new List<EnemyArcher>();
         List<EnemyArcher> usedArcherHunterList = new List<EnemyArcher>();
+        Dictionary<string, EnemyBase> enemyDic = new Dictionary<string, EnemyBase>();
+        List<EnemyArrow> freeEnemyArrowList = new List<EnemyArrow>();
+        List<EnemyArrow> usedEnemyArrowList = new List<EnemyArrow>();
+        Dictionary<string, EnemyArrow> arrowDic = new Dictionary<string, EnemyArrow>();
 
         PatrolManager patrolManager;
 
@@ -28,14 +32,26 @@ namespace BloodBond {
             get { return archerInfo; }
         }
 
-        System.Action LateUpdateAction;
-        public void SubLateAction(System.Action action) {
-            if (LateUpdateAction != null) LateUpdateAction = action;
-            else LateUpdateAction += action;
-        }
-        public void UnSubLateAction(System.Action action)
+        [SerializeField]
+        ObjectValue enemyArrowInfo;
+        public ObjectValue EnemyArrowValue
         {
-            if(LateUpdateAction != null) LateUpdateAction -= action;
+            get { return enemyArrowInfo; }
+        }
+
+        Dictionary<string, System.Action> actionDIcs = new Dictionary<string, System.Action>();
+        public void SubLateAction(string name, System.Action action) {
+            if (!actionDIcs.ContainsKey(name)) {
+                actionDIcs.Add(name, action);
+            }
+        }
+        public void UnSubLateAction(string name)
+        {
+            Debug.Log("remove action  " + name);
+            if (actionDIcs.ContainsKey(name)) {
+                actionDIcs.Remove(name);
+                Debug.Log("scusssssssssssss  ");
+            }
         }
 
         // Start is called before the first frame update
@@ -48,6 +64,7 @@ namespace BloodBond {
                 EnemyBase enemy = new EnemyBase(t.GetChild(i), this);
                 freeBaseHunterList.Add(enemy);
                 enemy.transform.gameObject.SetActive(false);
+                enemyDic.Add(enemy.transform.name, enemy);
             }
             t = transform.Find("ArcherEnemys");
             for (int i = 0; i < t.childCount; i++)
@@ -55,8 +72,15 @@ namespace BloodBond {
                 EnemyArcher enemy = new EnemyArcher(t.GetChild(i), this);
                 freeArcherHunterList.Add(enemy);
                 enemy.transform.gameObject.SetActive(false);
+                enemyDic.Add(enemy.transform.name, enemy);
             }
-
+            t = transform.Find("Arrows");
+            for (int i = 0; i < t.childCount; i++) {
+                EnemyArrow arrow = new EnemyArrow(t.GetChild(i), this);
+                freeEnemyArrowList.Add(arrow);
+                arrow.transform.gameObject.SetActive(false);
+                arrowDic.Add(arrow.transform.name, arrow);
+            }
             
 
             player = GameObject.Find("Karol").GetComponent<Player>();
@@ -76,10 +100,18 @@ namespace BloodBond {
             for (int i = usedArcherHunterList.Count - 1; i >= 0; i--) {
                 usedArcherHunterList[i].Update(deltaTime);
             }
+            for (int i = usedEnemyArrowList.Count - 1; i >= 0; i--)
+            {
+                usedEnemyArrowList[i].Update(deltaTime);
+            }
         }
         private void LateUpdate()
         {
-            if(LateUpdateAction != null) LateUpdateAction();
+            foreach (KeyValuePair<string, System.Action> item in actionDIcs)
+            {
+                item.Value();
+            }
+
         }
 
         public EnemyBase SpawnEnemyWithRoute(Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding)
@@ -92,9 +124,10 @@ namespace BloodBond {
             freeBaseHunterList.RemoveAt(0);
             return enemy;
         }
-        public EnemyArcher SpawnAcherInLoc(Vector3 loc) {
+        public EnemyArcher SpawnAcherInLoc(Vector3 loc, Vector3 dir) {
             EnemyArcher enemy = freeArcherHunterList[0];
             enemy.transform.position = new Vector3(loc.x, loc.y, loc.z);
+            enemy.transform.rotation = Quaternion.LookRotation(dir);
             enemy.transform.gameObject.SetActive(true);
             usedArcherHunterList.Add(enemy);
             freeArcherHunterList.RemoveAt(0);
@@ -102,7 +135,33 @@ namespace BloodBond {
             return enemy;
         }
 
+        public int GetArrowNum() {
+            return freeEnemyArrowList.Count;
+        }
+        public EnemyArrow SpawnArrow(Vector3 pos, Vector3 dir) {
+            EnemyArrow arrow = freeEnemyArrowList[0];
+            arrow.transform.position = pos;
+            arrow.SetFly(dir);
+            arrow.transform.gameObject.SetActive(true);
+            usedEnemyArrowList.Add(arrow);
+            freeEnemyArrowList.RemoveAt(0);
+            return arrow;
+        }
+        public EnemyArrow FindArrowInDic(string name) {
+            if (arrowDic.ContainsKey(name))
+            {
+                return arrowDic[name];
+            }
+            else return null;
+        }
+        public void RecycleArrow(EnemyArrow arrow) {
+            if (usedEnemyArrowList.Contains(arrow)) {
+                arrow.transform.gameObject.SetActive(false);
+                freeEnemyArrowList.Add(arrow);
+                usedEnemyArrowList.Remove(arrow);
+            }
 
+        }
     }
 }
 

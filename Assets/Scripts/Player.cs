@@ -7,12 +7,15 @@ namespace BloodBond {
     public class Player : MonoBehaviour
     {
         int stateStep = 0;
+        public int StateStep { get { return stateStep; } }
         float stateTime, deltaTime;
+        int hp;
 
         bool isMoving = false;
         int moveBlank = 0;
         float inputMoveX, inputMoveY;
-        Vector3 moveForward = new Vector3(0, 0, 0), inputDir, lastFace = new Vector3(10,10,10);
+        Vector3 nextPos;
+        Vector3 moveForward = new Vector3(0, 0, 0), inputDir, lastFace = new Vector3(10, 10, 10);
         bool moveFix = false;
         Vector3 moveFixVector;
         RaycastHit moveRayHit;
@@ -22,6 +25,8 @@ namespace BloodBond {
 
         bool invincible = false;
         float invincibleTime = .0f;
+        bool isDistantHurt = false;
+        public bool IsDistantHurt{ get { return isDistantHurt; } }
 
         bool showATKCollider = false;
 
@@ -61,6 +66,8 @@ namespace BloodBond {
         PlayerHurtState hurtState;
         InputSystem input;
 
+        EnemyManager enemyManager;
+
         public Transform goalPointObject;
         // Start is called before the first frame update
         void Awake()
@@ -92,19 +99,23 @@ namespace BloodBond {
             curState = idleState;
             karolShader = GetComponent<KarolShader>();
 
+            enemyManager = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
+
             effectPlay = GetComponent<EffectPlay>();
+
+            hp = infoValue.Health;
         }
 
         // Update is called once per frame
         void Update() {
             deltaTime = Time.deltaTime;
-
             curState.Update();
             if (inDodgeCD) CountDodgeCD();
             if (invincible) CountInvincibleTime();
 
             Vector3 groundPos = new Vector3(0,0,0);
-            if (GroundCheck.DetectGround(transform.position, ref groundPos)) transform.position = groundPos;
+            if (GroundCheck.DetectGround(nextPos)) transform.position = nextPos;
+            isDistantHurt = false;
         }
 
         public void ChangeState(PlayerState nextState) {
@@ -150,8 +161,8 @@ namespace BloodBond {
 
             if (GetMove())
             {
-                Vector3 nextPos = selfTransform.position + infoValue.MoveSpeed * deltaTime * moveForward;
-                selfTransform.position = nextPos;
+                nextPos = selfTransform.position + infoValue.MoveSpeed * deltaTime * moveForward;
+                //selfTransform.position = nextPos;
                 moveBlank = 0;
                 //float difAngle = Vector3.Angle(selfTransform.forward, inputDir);
                 //if (difAngle < 45.0f)
@@ -173,6 +184,7 @@ namespace BloodBond {
         public bool MoveCheckDodge() {
             if (input.GetDodgeInput() && !inDodgeCD ) {//&& stateStep > 0
                 animator.SetBool("Dodge", true);
+                invincible = true;
                 ChangeState(dodgeState);
                 return true;
             }
@@ -188,8 +200,8 @@ namespace BloodBond {
                 //float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
                 
                 Vector3 fixPos = ModifyHitWallMoveDodge(inputDir);
-                Vector3 nextPos = selfTransform.position +  deltaTime * infoValue.DodgeSpeed * fixPos;
-                selfTransform.position = nextPos;
+                nextPos = selfTransform.position +  deltaTime * infoValue.DodgeSpeed * fixPos;
+                //selfTransform.position = nextPos;
                 
                 Instantiate(PhantomCreate, selfTransform.position + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
                 Instantiate(PhantomCreate, selfTransform.position + fixPos + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
@@ -207,10 +219,9 @@ namespace BloodBond {
                 }
                 //float dSpeed = infoValue.DodgeSpeed * dodgeOffset;
 
-                Vector3 nextPos = selfTransform.position + deltaTime * infoValue.DodgeSpeed * ModifyHitWallMoveDodge(inputDir);
-                selfTransform.position = nextPos;
-                //Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * inputDir;
-                //if(ModifyHitWallMoveDodge(inputDir)) selfTransform.position = nextPos;
+                nextPos = selfTransform.position + deltaTime * infoValue.DodgeSpeed * ModifyHitWallMoveDodge(inputDir);
+                //selfTransform.position = nextPos;
+                
 
             }
             else {
@@ -228,15 +239,16 @@ namespace BloodBond {
 
 
                     Debug.Log("dodge offset  " + dodgeOffset);
-                    Vector3 nextPos = selfTransform.position +  deltaTime * infoValue.DodgeSpeed * ModifyHitWallMoveDodge(inputDir);
-                    selfTransform.position = nextPos;
-                    //Vector3 nextPos = selfTransform.position + dSpeed * deltaTime * inputDir;
-                    //if (ModifyHitWallMoveDodge(inputDir)) selfTransform.position = nextPos;
+                    nextPos = selfTransform.position +  deltaTime * infoValue.DodgeSpeed * ModifyHitWallMoveDodge(inputDir);
+                    //selfTransform.position = nextPos;
+                    
                 }
                 else {
                     inDodgeCD = true;
                     dodgeTime = .0f;
                     animator.SetBool("Dodge", false);
+                    invincible = false;
+                    invincibleTime = .0f;
                     if (input.GetMove())
                     {
                         animator.SetBool("Run", true);
@@ -472,6 +484,7 @@ namespace BloodBond {
             if (input.GetDodgeInput() && GetInputDir() && !inDodgeCD && aniInfo.IsTag("Attack") && aniInfo.normalizedTime > 0.35f)
             {
                 animator.SetBool("Dodge", true);
+                invincible = true;
                 ChangeState(dodgeState);
                 return true;
             }
@@ -549,6 +562,10 @@ namespace BloodBond {
                     }
                     else if (aniInfo.normalizedTime >= 0.7f)
                     {
+                        if (comboCount == maxCombo - 1) {
+                            invincible = false;
+                            invincibleTime = .0f;
+                        } 
                         normalComboAtkState.curATKCollider.enabled = false;
                         normalComboAtkState.hasEnableCollider = false;
                         comboCount = 0;
@@ -563,6 +580,7 @@ namespace BloodBond {
                     normalComboAtkState.curATKCollider.enabled = false;
                     normalComboAtkState.hasEnableCollider = false;
                     stateStep = 0;
+                    if (comboCount == 1) invincible = true; 
                     comboCount++;
                 }
             }
@@ -629,8 +647,11 @@ namespace BloodBond {
                 //判斷中途有沒有被打
                 if (CheckGetHurt())
                 {
-                    animator.SetBool("Dash", false);
+                    dashOrientEffect.enabled = false;
                     Time.timeScale = 1.0f;
+                    VFX_Teleport.SetFloat("AttractDrag", 1.0f);
+                    VFX_Teleport.SetInt("Number_of_Particles", 0);
+                    animator.SetBool("Dash", false);
                     return;
                 }
 
@@ -724,7 +745,8 @@ namespace BloodBond {
                 Debug.Log("step 2 ing ing ing");
                 if (canDash) {
                     canDash = false;
-                    selfTransform.position = goalPoint;
+                    nextPos = goalPoint;
+                    //selfTransform.position = goalPoint;
                     Debug.Log("line 722 = " + goalPoint);
                     selfTransform.rotation = Quaternion.LookRotation(inputDir);
                 }
@@ -857,19 +879,29 @@ namespace BloodBond {
         }
 
         public bool CheckGetHurt() {
-            return false;
+            //return false;
             if (invincible) return false;
+            if (isDistantHurt) //遠程判斷
+            {
+                invincible = true;
+                hp -= 1;
+                ChangeState(hurtState);
+                animator.SetBool("Hurt", true);
+                return true;
+            }
+
             Vector3 center = hurtAreaCollider.center;
             Vector3 point2 = selfTransform.position + center.x * selfTransform.right + center.z * selfTransform.forward;
             Vector3 point1 = point2 + new Vector3(0, hurtAreaCollider.height, 0);
             Debug.DrawLine(point1, point2, Color.red);
             Collider[] cols =  Physics.OverlapCapsule(point1, point2, hurtAreaCollider.radius, infoValue.HurtAreaLayer);
             if (cols != null && cols.Length > 0) {
+                invincible = true;
+                hp -= 1;
                 ChangeState(hurtState);
                 animator.SetBool("Hurt", true);
                 return true;
-            }
-                
+            } 
             return false;
         }
         public void InHurt() {
@@ -891,17 +923,24 @@ namespace BloodBond {
                         animator.SetBool("Run", false);
                         ChangeState(idleState);
                     }
-                    invincible = true;
                 }
             }
         }
 
         void CountInvincibleTime() {
             invincibleTime += deltaTime;
-            if (invincibleTime > 0.7f) {
+            if (invincibleTime > 1.0f) {
                 invincible = false;
                 invincibleTime = .0f;
             } 
+        }
+
+        public void DamageToPlayer(int value) {
+            if(!invincible)isDistantHurt = true;
+        }
+
+        public void StopEffect(int num) {
+            effectPlay.StopEffect(num);
         }
     }
 }

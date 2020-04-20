@@ -67,7 +67,7 @@ namespace BloodBond {
                 }
                 for (int j = 0; j < areaPatrolRoutes[i].archerLocs.Count; j++)
                 {
-                    enemyManager.SpawnAcherInLoc(areaPatrolRoutes[i].archerLocs[j].position);
+                    enemyManager.SpawnAcherInLoc(areaPatrolRoutes[i].archerLocs[j].position, areaPatrolRoutes[i].archerLocs[j].forward);
                 }
 
             }

@@ -14,6 +14,9 @@ namespace BloodBond {
         {
             Debug.Log("player state");
         }
+        public virtual void GetDamage() { 
+            
+        }
     }
 
     public class PlayerIdleState : PlayerState
@@ -28,6 +31,7 @@ namespace BloodBond {
             if (player.CheckNormalComboAttackInput() || player.CheckDashInput()) return;
             player.IdleCheckMove();
         }
+
     }
 
     public class PlayerMoveState : PlayerState
@@ -45,7 +49,10 @@ namespace BloodBond {
                 return;
             }
             player.Movement();
-
+        }
+        public override void GetDamage()
+        {
+            player.SetAnimatorBool("Run", false);
         }
     }
 
@@ -71,7 +78,15 @@ namespace BloodBond {
         }
         public override void Update()
         {
+            //判斷碰撞在DASH裡
             player.Dash();
+        }
+        public override void GetDamage()
+        {
+            if (player.StateStep == 1) {
+                player.SetAnimatorBool("Dash", false);
+                Time.timeScale = 1.0f;
+            }
         }
     }
 
@@ -108,16 +123,16 @@ namespace BloodBond {
         public override void Update()
         {
             if (player.CheckGetHurt() || player.AttackCheckDodge()) {
-                _curCombo = 0;
-                player.SetAnimatorBool("NormalComboATK", false);
                 curATKCollider.enabled = false;
+                player.StopEffect(_curCombo);
+                player.SetAnimatorBool("NormalComboATK", false);
                 hasEnableCollider = false;
+                _curCombo = 0;
                 return;
             }
             player.NormalComboAttack(ref _curCombo, _maxCombo);
 
         }
-        
         //用於在玩家攻擊時判斷有沒有打到敵人的overlap
         public void SetCollider(Collider[] colliders) {
             attackAreaInfo = new AttackAreaInfo[colliders.Length];
@@ -126,6 +141,13 @@ namespace BloodBond {
                 attackAreaInfo[i].pos = colliders[i].bounds.center;
                 attackAreaInfo[i].size = colliders[i].bounds.extents;
             }
+        }
+        public override void GetDamage()
+        {
+            _curCombo = 0;
+            player.SetAnimatorBool("NormalComboATK", false);
+            curATKCollider.enabled = false;
+            hasEnableCollider = false;
         }
     }
 

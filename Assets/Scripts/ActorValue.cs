@@ -115,3 +115,27 @@ public class EnemyValue : ActorValue
     }
 }
 
+[System.Serializable]
+public class ObjectValue {
+    [SerializeField]
+    float lifeTime = 0;
+    public float LifeTime
+    {
+        get { return lifeTime; }
+        set { lifeTime = value; }
+    }
+    [SerializeField]
+    float speed = .0f;
+    public float Speed
+    {
+        get { return speed; }
+        set { speed = value; }
+    }
+    [SerializeField]
+    int hurtValue = 0;
+    public int HurtValue
+    {
+        get { return hurtValue; }
+        set { hurtValue = value; }
+    }
+}
