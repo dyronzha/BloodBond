@@ -664,12 +664,11 @@ namespace BloodBond {
                         Debug.Log("進行step 2");
                         animator.SetTrigger("DashOver");
                         float _d = Vector3.Magnitude(selfTransform.position - goalPoint);
+                        Vector3 _mid = (goalPoint - selfTransform.position) / 2.0f + SelfTransform.position;
+                        //Debug.Log("line647 = " + _mid);
                         //Debug.Log("line645_SelfTransform" + SelfTransform.position);
                         //Debug.Log("Goal = " + goalPoint);
-                        Debug.Log("line648_d = " + _d);
-                        //effectPlay.Phantom_ForTeleport(dashDir, lastDashLength);
-                        effectPlay.Phantom_ForTeleport(dashDir, _d);
-                        //Debug.Log("line646_Goal" + goalPoint);
+                        effectPlay.Phantom_ForTeleport(dashDir, _d,_mid);
                         stateStep++;
                         return;
                     } 

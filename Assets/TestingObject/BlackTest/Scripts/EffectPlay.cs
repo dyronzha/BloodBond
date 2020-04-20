@@ -46,7 +46,7 @@ public class EffectPlay : MonoBehaviour{
         Instantiate(Teleport_Phantom, transform.position, transform.rotation);
         Instantiate(FlyingDust, transform.position, transform.rotation);
     }
-    public void Phantom_ForTeleport(Vector3 dir,float _length)
+    public void Phantom_ForTeleport(Vector3 dir,float _length,Vector3 _midPos)
     {
         Instantiate(Teleport_Phantom, transform.position, Quaternion.LookRotation(dir));
         GameObject fly = Instantiate(FlyingDust, transform.position, Quaternion.LookRotation(dir));
@@ -57,11 +57,19 @@ public class EffectPlay : MonoBehaviour{
             a.length = _length;
             fly.transform.GetChild(i).GetComponent<ParticleSystem>().Play();
         }
+
+        for (int i = 2; i < 4; i++) {
+            fly.transform.GetChild(i).GetComponent<ParticleSystem>().Stop();
+            a = fly.transform.GetChild(i).GetComponent<ParticleSystem>().shape;
+            a.scale = new Vector3(0.5f, _length*0.66f,0.5f);
+            fly.transform.GetChild(i).position = _midPos;
+            fly.transform.GetChild(i).GetComponent<ParticleSystem>().Play();
+        }
+
         fly.GetComponent<ParticleSystem>().Stop();
         a = fly.GetComponent<ParticleSystem>().shape;
         a.length = _length;
         fly.GetComponent<ParticleSystem>().Play();
-        Debug.Log("line64_length = " + a.length);
     }
 
     public void Phantom_ForCombo2() {
