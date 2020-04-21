@@ -1,0 +1,14 @@
+BowHunter_Shoot	遠程獵人射擊
+Enemy_Hurt	通用敵人受擊
+Hunter_Attack	進戰獵人攻擊
+Hunter_Death	進戰獵人死亡
+Karol_Attack	Karol攻擊
+Karol_Dash	Karol瞬移
+Karol_Death	Karol死亡
+Karol_DeathVoice	Karol死亡喊叫
+Karol_Dodge	Karol衝刺
+Nightmare_Attack	魘攻擊
+Nightmare_Death	魘死亡
+Nightmare_Roar	魘吼叫
+SlowMotion	順移過程慢動作
+UI_Confirm	主畫面按鈕確認
