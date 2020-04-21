@@ -87,4 +87,8 @@ public class EffectPlay : MonoBehaviour{
         }
     }
 
+    public void StopEffect(int _num) {
+
+    }
+
 }
