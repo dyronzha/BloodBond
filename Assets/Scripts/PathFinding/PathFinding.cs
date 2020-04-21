@@ -26,6 +26,9 @@ namespace PathFinder {
         public bool CheckInGrid(Vector3 targetPos) {
             return grid.CheckInGrid(targetPos);
         }
+        public bool CheckPlayerIsWalbable(Vector3 targetPos) {
+            return grid.CheckWalkable(targetPos);
+        }
 
         IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
         {

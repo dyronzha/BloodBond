@@ -213,8 +213,23 @@ namespace PathFinder
 
             int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
             int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
+            Debug.Log(gridSizeX + "," + gridSizeY + " 中有  " + x + "," + y + !(x < 0 || y < 0 || x >= gridSizeX || y >= gridSizeY));
             if (x < 0 || y < 0 || x >= gridSizeX || y >= gridSizeY) return false;
             else return true;
+        }
+        public bool CheckWalkable(Vector3 worldPosition)
+        {
+            float percentX = (worldPosition.x - offsetX + gridWorldSize.x / 2) / gridWorldSize.x;
+            float percentY = (worldPosition.z - offsetY + gridWorldSize.y / 2) / gridWorldSize.y;
+            percentX = Mathf.Clamp01(percentX);
+            percentY = Mathf.Clamp01(percentY);
+
+            int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
+            int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
+            Debug.Log("在  "+ x + "," + y);
+            if (x < 0 || y < 0 || x >= gridSizeX || y >= gridSizeY) return false;
+            return grid[x, y].walkable;
+
         }
 
         public void DisableCollider()

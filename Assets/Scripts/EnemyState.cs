@@ -196,11 +196,13 @@ namespace BloodBond {
         }
         public override void Update()
         {
+            Debug.Log("in give up");
             if (enemyBase.CheckGetHurt() || enemyBase.FindPlayer())
             {
                 enemyBase.SetAniBool("Patrol", false);
                 return;
             }
+            Debug.Log("give up update");
             enemyBase.GiveUp();
         }
     }

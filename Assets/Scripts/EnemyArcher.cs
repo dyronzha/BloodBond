@@ -156,14 +156,7 @@ namespace BloodBond {
                 {
                     attackBlankTime = .0f;
                     animator.SetBool("Attack", true);
-                    //crossBow.parent = null;
-                    crossBow.gameObject.SetActive(false);
-                    //crossBow.parent = hand;
-                    //crossBow.localPosition = crossBowPos;
-                    //crossBow.localRotation = crossBowRot;
-                    //crossBow.localScale = new Vector3(0.4f, 0.4f, 0.4f);
-                    targetPos = enemyManager.Player.SelfTransform.position;
-                    enemyManager.SpawnArrow(crossBow.position, new Vector3(targetPos.x - crossBow.position.x, targetPos.y + 2.0f - crossBow.position.y, targetPos.z - crossBow.position.z));
+                    
                     stateStep++;
                 }
             }
@@ -171,6 +164,9 @@ namespace BloodBond {
                 AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
                 if (aniInfo.IsName("Attack"))
                 {
+                    crossBow.gameObject.SetActive(false);
+                    targetPos = enemyManager.Player.SelfTransform.position;
+                    enemyManager.SpawnArrow(crossBow.position, new Vector3(targetPos.x - crossBow.position.x, targetPos.y + 2.0f - crossBow.position.y, targetPos.z - crossBow.position.z));
                     stateStep++;
                 }
             }
@@ -201,7 +197,6 @@ namespace BloodBond {
             attackBlankTime = .0f;
         }
         void Aming() {
-            Debug.Log("aiming ~~~~~~");
             Vector2 distV2 = new Vector2(enemyManager.Player.SelfTransform.position.x - transform.position.x, enemyManager.Player.SelfTransform.position.z - transform.position.z);
             moveFwdDir = (new Vector3(distV2.x, spine1.forward.y, distV2.y));
             Quaternion rot = Quaternion.LookRotation(moveFwdDir) * Quaternion.Euler(0, -65, 0);

@@ -65,24 +65,27 @@ namespace PathFinder
         //特定區域要求路徑
         public static PathRequest RequestPath(PathFinding pathfinding, PathRequest oldRequest, Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> _successCbk)
         {
-            PathRequest newRequest = new PathRequest(pathStart, pathEnd, _successCbk, pathfinding);
 
             if (instance.CheckProcessingRequest(oldRequest))   //如果目前正在搜尋且跟舊的一樣回傳null
             {
                 return null;
             }
 
-            if (oldRequest != null && instance.pathRequestList.Contains(oldRequest))   //有在排隊中更新為新的request
-            {
-                instance.pathRequestList[instance.pathRequestList.IndexOf(oldRequest)] = newRequest;
-            }
-            else
-            {
-                instance.pathRequestList.Add(newRequest);
-            }
-            instance.TryProcessNext();
+            if (oldRequest == null || (oldRequest != null && (oldRequest.pathEnd - pathEnd).sqrMagnitude > 1.0f && (oldRequest.pathStart - pathStart).sqrMagnitude > 1.0f)) {
+                PathRequest newRequest = new PathRequest(pathStart, pathEnd, _successCbk, pathfinding);
+                if (oldRequest != null && instance.pathRequestList.Contains(oldRequest))   //有在排隊中更新為新的request
+                {
+                    instance.pathRequestList[instance.pathRequestList.IndexOf(oldRequest)] = newRequest;
+                }
+                else
+                {
+                    instance.pathRequestList.Add(newRequest);
+                }
+                instance.TryProcessNext();
 
-            return newRequest;
+                return newRequest;
+            }
+            return oldRequest;
         }
 
 

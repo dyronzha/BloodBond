@@ -63,7 +63,7 @@ namespace BloodBond {
             for (int i = 0; i < areaPatrolRoutes.Length; i++) {
                 if (!transform.GetChild(i).gameObject.activeSelf) continue;
                 for (int j = 0; j < areaPatrolRoutes[i].patrolRoutes.Count; j++) {
-                    enemyManager.SpawnEnemyWithRoute(areaPatrolRoutes[i].patrolRoutes[j].StartPosition, areaPatrolRoutes[i].patrolRoutes[j], areaPatrolRoutes[i].pathFinding);
+                    enemyManager.SpawnEnemyWithRoute(areaPatrolRoutes[i].patrolRoutes[j].enemyType, areaPatrolRoutes[i].patrolRoutes[j].StartPosition, areaPatrolRoutes[i].patrolRoutes[j], areaPatrolRoutes[i].pathFinding);
                 }
                 for (int j = 0; j < areaPatrolRoutes[i].archerLocs.Count; j++)
                 {

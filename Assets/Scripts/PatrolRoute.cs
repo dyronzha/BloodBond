@@ -32,12 +32,15 @@ namespace BloodBond {
         [HideInInspector]
         public Vector3 StartPosition;
 
+        public enum EnemyType
+        {
+            Hunter, Nightmare
+        }
+        public EnemyType enemyType;
         public enum RouteType
         {
             Pingpong, Cycle, Rotate
         }
-
-
         public RouteType routeType;
 
         [HideInInspector]

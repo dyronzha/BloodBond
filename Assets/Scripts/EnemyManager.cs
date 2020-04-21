@@ -13,10 +13,12 @@ namespace BloodBond {
         List<EnemyBase> usedBaseHunterList = new List<EnemyBase>();
         List<EnemyArcher> freeArcherHunterList = new List<EnemyArcher>();
         List<EnemyArcher> usedArcherHunterList = new List<EnemyArcher>();
-        Dictionary<string, EnemyBase> enemyDic = new Dictionary<string, EnemyBase>();
         List<EnemyArrow> freeEnemyArrowList = new List<EnemyArrow>();
         List<EnemyArrow> usedEnemyArrowList = new List<EnemyArrow>();
         Dictionary<string, EnemyArrow> arrowDic = new Dictionary<string, EnemyArrow>();
+        List<EnemyNightmare> freeNightmarerList = new List<EnemyNightmare>();
+        List<EnemyNightmare> usedNightmareList = new List<EnemyNightmare>();
+        Dictionary<string, EnemyBase> enemyDic = new Dictionary<string, EnemyBase>();
 
         PatrolManager patrolManager;
 
@@ -30,6 +32,12 @@ namespace BloodBond {
         public EnemyValue ArcherValue
         {
             get { return archerInfo; }
+        }
+        [SerializeField]
+        EnemyValue nightmareInfo;
+        public EnemyValue NightmareValue
+        {
+            get { return nightmareInfo; }
         }
 
         [SerializeField]
@@ -81,7 +89,14 @@ namespace BloodBond {
                 arrow.transform.gameObject.SetActive(false);
                 arrowDic.Add(arrow.transform.name, arrow);
             }
-            
+            t = transform.Find("NightmareEnemys");
+            for (int i = 0; i < t.childCount; i++)
+            {
+                EnemyNightmare enemy = new EnemyNightmare(t.GetChild(i), this);
+                freeNightmarerList.Add(enemy);
+                enemy.transform.gameObject.SetActive(false);
+                enemyDic.Add(enemy.transform.name, enemy);
+            }
 
             player = GameObject.Find("Karol").GetComponent<Player>();
         }
@@ -96,6 +111,10 @@ namespace BloodBond {
             deltaTime = Time.deltaTime;
             for (int i = usedBaseHunterList.Count-1; i >= 0; i--) {
                 usedBaseHunterList[i].Update(deltaTime);
+            }
+            for (int i = usedNightmareList.Count - 1; i >= 0; i--)
+            {
+                usedNightmareList[i].Update(deltaTime);
             }
             for (int i = usedArcherHunterList.Count - 1; i >= 0; i--) {
                 usedArcherHunterList[i].Update(deltaTime);
@@ -114,15 +133,31 @@ namespace BloodBond {
 
         }
 
-        public EnemyBase SpawnEnemyWithRoute(Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding)
+        public EnemyBase SpawnEnemyWithRoute(PatrolRoute.EnemyType type, Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding)
         {
-            EnemyBase enemy = freeBaseHunterList[0];
-            enemy.transform.position = new Vector3(loc.x, loc.y, loc.z);
-            enemy.transform.gameObject.SetActive(true);
-            usedBaseHunterList.Add(enemy);
-            enemy.SetPatrolArea(route, finding);
-            freeBaseHunterList.RemoveAt(0);
-            return enemy;
+            
+            if (type == PatrolRoute.EnemyType.Hunter)
+            {
+                EnemyBase enemy;
+                enemy = freeBaseHunterList[0];
+                enemy.transform.position = new Vector3(loc.x, loc.y, loc.z);
+                enemy.transform.gameObject.SetActive(true);
+                usedBaseHunterList.Add(enemy);
+                enemy.SetPatrolArea(route, finding);
+                freeBaseHunterList.RemoveAt(0);
+                return enemy;
+            }
+            else {
+                EnemyNightmare enemy;
+                enemy = freeNightmarerList[0];
+                enemy.transform.position = new Vector3(loc.x, loc.y, loc.z);
+                enemy.transform.gameObject.SetActive(true);
+                usedNightmareList.Add(enemy);
+                enemy.SetPatrolArea(route, finding);
+                freeNightmarerList.RemoveAt(0);
+                return enemy;
+            } 
+            
         }
         public EnemyArcher SpawnAcherInLoc(Vector3 loc, Vector3 dir) {
             EnemyArcher enemy = freeArcherHunterList[0];
