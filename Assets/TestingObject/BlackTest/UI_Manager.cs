@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class UI_Manager : MonoBehaviour{
     public Image[] Menu;
@@ -12,6 +11,7 @@ public class UI_Manager : MonoBehaviour{
     int Currentbtn = 0;
     public Animator BlackPanel;
     public RectTransform _CurBtnBG;
+    public SceneLoader _sceneload;
 
     bool SelectNewGame = false;
     float Trigger_Moment;
@@ -22,7 +22,7 @@ public class UI_Manager : MonoBehaviour{
 
     void Update(){
         if (SelectNewGame == true && Time.time > Trigger_Moment + 3.0f) {
-            SceneManager.LoadScene(1);
+            _sceneload.LoadNextScene();
             SelectNewGame = false;
         }
 
