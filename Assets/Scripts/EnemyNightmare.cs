@@ -192,7 +192,7 @@ namespace BloodBond {
         public override bool FindPlayerInSuspect()
         {
             //return false;
-            if (PlayerInDistance(enemyManager.NightmareValue.SightDistance))
+            if (PlayerInDistance(enemyManager.NightmareValue.SightDistance*1.5f))
             {
                 Debug.Log("馴鹿空檔idle");
                 if (distanceCase == 2)
@@ -228,7 +228,20 @@ namespace BloodBond {
                 animator.SetBool("Chase",true);
                 ChangeState(chaseState);
                 
-            } 
+            }
+            else {
+                
+                stateTime += deltaTime;
+                if (stateStep == 0 && stateTime > 0.5f) //等一陣子先回idle動畫
+                {
+                    animator.SetBool("Chase", false);
+                    stateStep++;
+                }
+                else if (stateTime > 2.0f) //等太久馴鹿未回傳，放棄
+                {
+                    ChangeState(giveUpState);
+                }
+            }
         }
         public bool PlayerInDistance(float distance)
         {
@@ -291,7 +304,7 @@ namespace BloodBond {
                         if (Physics.Linecast(targetPos, selfPos + new Vector3(0, 1.0f, 0), 1 << LayerMask.NameToLayer("Barrier") | LayerMask.NameToLayer("Wall")))
                         {
                             findPathBlankTime += deltaTime;
-                            if (findPathBlankTime > 1.0f) {
+                            if (findPathBlankTime > 0.3f) {
                                 curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
                                 findPathBlankTime = .0f;
                             }
@@ -303,9 +316,9 @@ namespace BloodBond {
                                     {
                                         Debug.Log("到尋玩家終點");
                                         findingPath = false;
-                                        curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
-                                        animator.SetBool("Chase", false);
+                                        //animator.SetBool("Chase", false);
                                         ChangeState(suspectIdleState);
+                                        curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
                                         return;
                                     }
                                     else
@@ -319,34 +332,34 @@ namespace BloodBond {
                             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.NightmareValue.RotateSpeed);
                         }
                         else {
-                            findPathBlankTime += deltaTime;
-                            if (findPathBlankTime > 1.0f)
-                            {
-                                curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
-                                findPathBlankTime = .0f;
-                            }
-                            if (findingPath)
-                            {
-                                Vector2 pos2D = new Vector2(selfPos.x, selfPos.z);
-                                if (playerPath.turnBoundaries[playerPathIndex].HasCrossedLine(pos2D))
-                                {
-                                    if (playerPathIndex == playerPath.finishLineIndex)
-                                    {
-                                        Debug.Log("到尋玩家終點");
-                                        findingPath = false;
-                                        curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
-                                        animator.SetBool("Chase", false);
-                                        ChangeState(suspectIdleState);
-                                        return;
-                                    }
-                                    else
-                                    {
-                                        playerPathIndex++;
-                                    }
-                                }
-                            }
-                            moveFwdDir = new Vector3(playerPath.lookPoints[playerPathIndex].x - selfPos.x, 0, playerPath.lookPoints[playerPathIndex].z - selfPos.z).normalized;
-                            //moveFwdDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z).normalized;
+                            //findPathBlankTime += deltaTime;
+                            //if (findPathBlankTime > 0.3f)
+                            //{
+                            //    curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
+                            //    findPathBlankTime = .0f;
+                            //}
+                            //if (findingPath)
+                            //{
+                            //    Vector2 pos2D = new Vector2(selfPos.x, selfPos.z);
+                            //    if (playerPath.turnBoundaries[playerPathIndex].HasCrossedLine(pos2D))
+                            //    {
+                            //        if (playerPathIndex == playerPath.finishLineIndex)
+                            //        {
+                            //            Debug.Log("到尋玩家終點");
+                            //            //animator.SetBool("Chase", false);
+                            //            ChangeState(suspectIdleState);
+                            //            findingPath = false;
+                            //            curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
+                            //            return;
+                            //        }
+                            //        else
+                            //        {
+                            //            playerPathIndex++;
+                            //        }
+                            //    }
+                            //}
+                            //moveFwdDir = new Vector3(playerPath.lookPoints[playerPathIndex].x - selfPos.x, 0, playerPath.lookPoints[playerPathIndex].z - selfPos.z).normalized;
+                            moveFwdDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z).normalized;
                             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.NightmareValue.RotateSpeed);
                         }
                        
@@ -441,7 +454,7 @@ namespace BloodBond {
                         comboAttackState.lastATKCollider.enabled = false;
                         comboAttackState.hasEnableCollider = false;
                     }
-                    if ((Physics.OverlapBox(selfPos + 0.5f * selfFwd, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Player"))).Length == 0))
+                    if ((Physics.OverlapBox(selfPos + 0.3f * selfFwd, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Player"))).Length == 0))
                     {
                         animator.applyRootMotion = true;
                     }
@@ -455,7 +468,7 @@ namespace BloodBond {
             else if (stateStep == 1)
             {
                 Debug.Log("攻擊 1");
-                if (animator.applyRootMotion) animator.applyRootMotion = (Physics.OverlapBox(selfPos + 0.5f * selfFwd, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Player"))).Length == 0);
+                if (animator.applyRootMotion) animator.applyRootMotion = (Physics.OverlapBox(selfPos + 0.3f * selfFwd, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Player"))).Length == 0);
 
                 if (aniInfo.normalizedTime >= comboAttackState.currentColliderTime)
                 {
@@ -467,7 +480,7 @@ namespace BloodBond {
             }
             else if (stateStep == 2)
             {
-                if (animator.applyRootMotion) animator.applyRootMotion = (Physics.OverlapBox(selfPos + 0.5f * selfFwd, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Player"))).Length == 0);
+                if (animator.applyRootMotion) animator.applyRootMotion = (Physics.OverlapBox(selfPos + 0.3f * selfFwd, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Player"))).Length == 0);
                 if (aniInfo.normalizedTime >= comboAttackState.currentDisColliderTime)
                 {
                     Debug.Log("關閉碰撞器");
@@ -478,21 +491,22 @@ namespace BloodBond {
             }
             else
             {
-                if (animator.applyRootMotion) animator.applyRootMotion = !Physics.Raycast(selfPos, selfFwd, 0.5f, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Player")));
+                if (animator.applyRootMotion) animator.applyRootMotion = (Physics.OverlapBox(selfPos + 0.3f * selfFwd, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Player"))).Length == 0);
                 if (aniInfo.normalizedTime >= 0.98f)
                 {
                     Debug.Log("攻擊結束");
                     if (PlayerInDistance(enemyManager.NightmareValue.SightDistance*1.5f))
                     {
+                        animator.applyRootMotion = true;
                         if (distanceCase == 1)
                         {
                             comboCount = 0;
                             animator.SetBool("Attack", false);
-                            findingPath = false;
-                            curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
                             Vector3 dir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z);
                             transform.rotation = Quaternion.LookRotation(dir);
                             ChangeState(suspectIdleState);
+                            findingPath = false;
+                            curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
                         }
                         else if (distanceCase == 2)
                         {
@@ -530,17 +544,17 @@ namespace BloodBond {
                     stateStep = 0;
                     return;
                 }
-                bool canSee = PlayerInDistance(enemyManager.NightmareValue.SightDistance);
                 if (aniInfo.normalizedTime > (0.85f))
                 {
                     animator.SetBool("Hurt", false);
-                    if (canSee)
+                    if (PlayerInDistance(enemyManager.NightmareValue.SightDistance*1.5f))
                     {
                         if (distanceCase == 1)
                         {
                             findingPath = false;
-                            curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
                             ChangeState(suspectIdleState);
+                            curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
+                            
                         }
                         else if (distanceCase == 2)
                         {
@@ -552,15 +566,16 @@ namespace BloodBond {
                         else
                         {
                             findingPath = false;
-                            curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
                             ChangeState(suspectIdleState);
+                            curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
+                            
                         }
                     }
                     else
                     {
                         findingPath = false;
-                        curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
                         ChangeState(suspectIdleState);
+                        curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
                     }
                     canHurt = true;
                     lastHurtHash = 999;

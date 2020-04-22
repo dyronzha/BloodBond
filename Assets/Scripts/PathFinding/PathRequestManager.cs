@@ -68,10 +68,11 @@ namespace PathFinder
 
             if (instance.CheckProcessingRequest(oldRequest))   //如果目前正在搜尋且跟舊的一樣回傳null
             {
+                Debug.Log("已經有依樣要求在計算  馴鹿駁回");
                 return null;
             }
 
-            if (oldRequest == null || (oldRequest != null && (oldRequest.pathEnd - pathEnd).sqrMagnitude > 1.0f && (oldRequest.pathStart - pathStart).sqrMagnitude > 1.0f)) {
+            if (oldRequest == null || (oldRequest != null && ((oldRequest.pathEnd - pathEnd).sqrMagnitude > 1.0f || (oldRequest.pathStart - pathStart).sqrMagnitude > 1.0f))) {
                 PathRequest newRequest = new PathRequest(pathStart, pathEnd, _successCbk, pathfinding);
                 if (oldRequest != null && instance.pathRequestList.Contains(oldRequest))   //有在排隊中更新為新的request
                 {
@@ -85,6 +86,7 @@ namespace PathFinder
 
                 return newRequest;
             }
+            Debug.Log("位置不變  馴鹿駁回");
             return oldRequest;
         }
 

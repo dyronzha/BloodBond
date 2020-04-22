@@ -9,7 +9,7 @@ namespace BloodBond {
         int stateStep = 0;
         public int StateStep { get { return stateStep; } }
         float stateTime, deltaTime;
-        int hp;
+        int hp, attackNum = 0;
 
         bool isMoving = false;
         int moveBlank = 0;
@@ -533,8 +533,9 @@ namespace BloodBond {
                     else {
                         Debug.Log("combo " + comboCount + "   hit wall");
                         animator.applyRootMotion = false;
-                    } 
+                    }
                     //animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, 1 << LayerMask.NameToLayer("Barrier"));
+                    attackNum = (attackNum+1>=10)?0:attackNum+1;
                     stateStep++;
                 }
             }
@@ -587,7 +588,7 @@ namespace BloodBond {
         }
 
         public int GetAttackComboCount() {
-            return normalComboAtkState.CurComboCount;
+            return attackNum;
             //AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             //return aniInfo.fullPathHash;
         }

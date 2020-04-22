@@ -7,7 +7,7 @@ namespace BloodBond {
     {
         protected int hp;
 
-        protected bool findingPath = false;
+        protected bool findingPath = false, isSearchingPath = false;
 
         protected int stateStep = 0;
         protected float stateTime = .0f, deltaTime = .0f;
