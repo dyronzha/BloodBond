@@ -9,7 +9,7 @@ namespace BloodBond {
         float attackBlankTime = .0f;
         EnemyDistantAttackState enemyDistantATKState;
         Transform spine1, hand, crossBow;
-        Vector3 crossBowPos; 
+        Vector3 crossBowPos, oringinLoc, oringinDir; 
         Quaternion idleRot, lastAimRot, crossBowRot;
 
 
@@ -39,6 +39,8 @@ namespace BloodBond {
             crossBowPos = crossBow.localPosition;
             crossBowRot = crossBow.localRotation;
             ChangeState(idleState);
+            oringinLoc = transform.position;
+            oringinDir = transform.forward;
         }
 
         public override bool FindPlayer()
@@ -395,6 +397,35 @@ namespace BloodBond {
             }
             Debug.Log("in distance 有障礙物");
             return false;
+        }
+        public override void Reset()
+        {
+            hp = enemyManager.ArcherValue.Health;
+            transform.position = oringinLoc;
+            transform.rotation = Quaternion.LookRotation(oringinDir);
+            animator.Play("Idle");
+            animator.SetBool("Aim",false);
+            animator.SetBool("Chase", false);
+            animator.SetBool("Hurt", false);
+            animator.SetBool("Look", false);
+            animator.SetBool("Attack", false);
+            animator.SetBool("Dead", false);
+            patrolRoute.CurPointID = 0;
+            playerPathIndex = 0;
+            isAlarm = false;
+            stateStep = 0;
+            stateTime = .0f;
+            deltaTime = .0f;
+            suspectTime = .0f;
+            idleTime = .0f;
+            seeDelayTime = .0f;
+            lookARoundNum = 0;
+            sightStep = 0;
+            distanceCase = 0; // 1:警覺  2:攻擊
+            findingPath = false;
+            pathOver = false;
+            ChangeState(idleState);
+
         }
     }
 }

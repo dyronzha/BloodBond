@@ -24,7 +24,7 @@ namespace BloodBond {
         }
 
         protected bool canHurt = true, isAlarm = false;
-        protected int lastHurtHash = 999;
+        protected int lastHurtHash = -999;
 
         protected Vector3 selfPos, selfFwd;
         protected Vector3 moveFwdDir = new Vector3(0, 0, 0);
@@ -38,7 +38,7 @@ namespace BloodBond {
         protected Transform head;
         protected Animator animator;
 
-        int sightStep = 0;
+        protected int sightStep = 0;
         protected int distanceCase = 0; // 1:警覺  2:攻擊
 
         protected int playerPathIndex = 0;
@@ -938,6 +938,56 @@ namespace BloodBond {
                     stateStep++;
                 } 
             }
+        }
+        public virtual void Reset() {
+            hp = enemyManager.HunterValue.Health;
+            transform.position = new Vector3(patrolRoute.StartPosition.x, heightY, patrolRoute.StartPosition.z);
+            animator.Play("Idle");
+            animator.SetBool("Chase", false);
+            animator.SetBool("Hurt", false);
+            animator.SetBool("Attack", false);
+            animator.SetBool("Dead", false);
+            patrolRoute.CurPointID = 1;
+            patrolRoute.ResetLastPointID();
+            playerPathIndex = 0;
+            isAlarm = false;
+            stateStep = 0;
+            stateTime = .0f;
+            deltaTime = .0f;
+            suspectTime = .0f;
+            idleTime = .0f;
+            seeDelayTime = .0f;
+            lookARoundNum = 0;
+            sightStep = 0;
+            distanceCase = 0; // 1:警覺  2:攻擊
+            findingPath = false;
+            pathOver = false;
+            if (patrolRoute.routeType == PatrolRoute.RouteType.Rotate)
+            {
+                transform.rotation = Quaternion.LookRotation(patrolRoute.LastLookForward);
+                curState = idleState;
+            }
+            else
+            {
+                moveFwdDir = new Vector3(curPatrolPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPatrolPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
+                if (patrolRoute.LastLookAround)
+                {
+                    curState = lookAroundState;
+                    animator.SetBool("Look", true);
+                    animator.SetBool("Patrol", false);
+                    transform.rotation = Quaternion.LookRotation(patrolRoute.LastLookForward);
+
+                }
+                else
+                {
+                    curState = patrolState;
+                    animator.SetBool("Patrol", true);
+                    animator.SetBool("Look", false);
+                    transform.rotation = Quaternion.LookRotation(moveFwdDir);
+                }
+
+            }
+            
         }
     }
 

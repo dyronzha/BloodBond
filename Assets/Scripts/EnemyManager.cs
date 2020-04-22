@@ -133,6 +133,7 @@ namespace BloodBond {
             }
             //清除搜尋路後的權重
             curArea.pathFinding.ClearGridExtendPenalty();
+            if (Input.GetKeyDown(KeyCode.Space)) ResetEnemy();
         }
         private void LateUpdate()
         {
@@ -186,9 +187,15 @@ namespace BloodBond {
             } 
             
         }
+        public void ResetEnemy() {
+            for (int i = 0; i < currentAreaEnemy.Count; i++)
+            {
+                currentAreaEnemy[i].Reset();
+            }
+        }
         public EnemyArcher SpawnAcherInLoc(Vector3 loc, Vector3 dir, float height) {
             EnemyArcher enemy = freeArcherHunterList[0];
-            enemy.transform.position = new Vector3(loc.x, loc.y, loc.z);
+            enemy.transform.position = new Vector3(loc.x, height, loc.z);
             enemy.transform.rotation = Quaternion.LookRotation(dir);
             enemy.transform.gameObject.SetActive(true);
             enemy.HeightY = height;

@@ -23,6 +23,7 @@ namespace BloodBond {
                 curPointID = value; 
             }
         }
+
         int curIDOffset = 0;
 
         Vector3[] points;
@@ -112,7 +113,8 @@ namespace BloodBond {
         //    }
         //}
 #endif
-        
+        public void ResetLastPointID() { lastPointID = 0; }
+
         //建立路線
         public void Init()
         {

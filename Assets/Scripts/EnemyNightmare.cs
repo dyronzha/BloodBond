@@ -587,6 +587,56 @@ namespace BloodBond {
                 }
             }
         }
+        public override void Reset()
+        {
+            hp = enemyManager.NightmareValue.Health;
+            transform.position = new Vector3(patrolRoute.StartPosition.x, heightY, patrolRoute.StartPosition.z);
+            animator.Play("Idle");
+            animator.SetBool("Chase", false);
+            animator.SetBool("Hurt", false);
+            animator.SetBool("Attack", false);
+            animator.SetBool("Dead", false);
+            patrolRoute.CurPointID = 1;
+            patrolRoute.ResetLastPointID();
+            playerPathIndex = 0;
+            isAlarm = false;
+            stateStep = 0;
+            stateTime = .0f;
+            deltaTime = .0f;
+            suspectTime = .0f;
+            idleTime = .0f;
+            seeDelayTime = .0f;
+            lookARoundNum = 0;
+            sightStep = 0;
+            distanceCase = 0; // 1:警覺  2:攻擊
+            findingPath = false;
+            pathOver = false;
+            if (patrolRoute.routeType == PatrolRoute.RouteType.Rotate)
+            {
+                transform.rotation = Quaternion.LookRotation(patrolRoute.LastLookForward);
+            }
+            else
+            {
+                moveFwdDir = new Vector3(curPatrolPath.lookPoints[patrolRoute.CurPointID].x - selfPos.x, 0, curPatrolPath.lookPoints[patrolRoute.CurPointID].z - selfPos.z).normalized;
+                if (patrolRoute.LastLookAround)
+                {
+                    curState = lookAroundState;
+                    animator.SetBool("Look", true);
+                    animator.SetBool("Patrol", false);
+                    transform.rotation = Quaternion.LookRotation(patrolRoute.LastLookForward);
+
+                }
+                else
+                {
+                    curState = patrolState;
+                    animator.SetBool("Patrol", true);
+                    animator.SetBool("Look", false);
+                    transform.rotation = Quaternion.LookRotation(moveFwdDir);
+                }
+
+            }
+
+        }
     }
 }
 
