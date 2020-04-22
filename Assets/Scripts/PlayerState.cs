@@ -128,6 +128,7 @@ namespace BloodBond {
                 player.SetAnimatorBool("NormalComboATK", false);
                 hasEnableCollider = false;
                 _curCombo = 0;
+                player.CloseRootMotion();
                 return;
             }
             player.NormalComboAttack(ref _curCombo, _maxCombo);

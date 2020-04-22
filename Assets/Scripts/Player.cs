@@ -114,7 +114,7 @@ namespace BloodBond {
             if (invincible) CountInvincibleTime();
 
             Vector3 groundPos = new Vector3(0,0,0);
-            if (GroundCheck.DetectGround(nextPos)) transform.position = nextPos;
+            if (GroundCheck.DetectGround(nextPos) && !animator.applyRootMotion) transform.position = nextPos;
             isDistantHurt = false;
         }
 
@@ -222,7 +222,6 @@ namespace BloodBond {
                 nextPos = selfTransform.position + deltaTime * infoValue.DodgeSpeed * ModifyHitWallMoveDodge(inputDir);
                 //selfTransform.position = nextPos;
                 
-
             }
             else {
                 stateTime += deltaTime;
@@ -525,7 +524,7 @@ namespace BloodBond {
                         selfTransform.rotation = Quaternion.LookRotation(inputDir);
                     }
 
-                    if (comboCount < 2 && (Physics.OverlapBox(selfTransform.position + 0.5f * transform.forward, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Enemy"))).Length == 0))
+                    if (comboCount < 2 && (Physics.OverlapBox(selfTransform.position + 0.5f * selfTransform.forward, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Enemy"))).Length == 0))
                     {
                         Debug.Log("combo " + comboCount + "   no wall");
                         animator.applyRootMotion = true;
@@ -571,6 +570,7 @@ namespace BloodBond {
                         normalComboAtkState.hasEnableCollider = false;
                         comboCount = 0;
                         animator.SetBool("NormalComboATK", false);
+                        animator.applyRootMotion = false;
                         ChangeState(idleState);
                     }
                 }
@@ -581,6 +581,7 @@ namespace BloodBond {
                     normalComboAtkState.curATKCollider.enabled = false;
                     normalComboAtkState.hasEnableCollider = false;
                     stateStep = 0;
+                    nextPos = selfTransform.position;
                     if (comboCount == 1) invincible = true; 
                     comboCount++;
                 }
@@ -591,6 +592,9 @@ namespace BloodBond {
             return attackNum;
             //AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             //return aniInfo.fullPathHash;
+        }
+        public void CloseRootMotion() {
+            animator.applyRootMotion = false;
         }
 
         //public void EnableATKCollider() {
@@ -686,7 +690,7 @@ namespace BloodBond {
                 dashTime += Time.unscaledDeltaTime;
                 if (dashPointCount <= 15)
                 {
-                    dashLength += (dashTime>0.04f?0.04f:dashTime) * 10.0f;  //每秒距離，目前訂總長0.6s 6m  15點
+                    dashLength += (dashTime>0.04f?0.04f:dashTime) * 12.5f;  //7.5m 15點 //每秒距離，目前訂總長0.6s 6m  15點  0.04 per s
                     dashEffectPos = new Vector3(selfTransform.position.x + dashLength * dashDir.x, dashEffectHeight, selfTransform.position.z + dashLength * dashDir.z);
                     if (dashTime >= 0.04f)   //一點間隔秒數
                     {
@@ -745,17 +749,33 @@ namespace BloodBond {
                 Debug.Log("step 2 ing ing ing");
                 if (canDash) {
                     canDash = false;
+
+                    RaycastHit[] hits = Physics.RaycastAll(dashFixPos, dashDir, lastDashLength, 1 << LayerMask.NameToLayer("Enemy"));
+
+                    bool dashAgain = false;
+                    if (hits != null && hits.Length > 0) {
+                        for (int i = 0; i < hits.Length; i++) {
+                            dashAgain =  (enemyManager.FindEnemyInDic(hits[i].transform.name).DashGetHurt() || dashAgain);
+                        }
+                    }
                     nextPos = goalPoint;
                     //selfTransform.position = goalPoint;
                     Debug.Log("line 722 = " + goalPoint);
                     selfTransform.rotation = Quaternion.LookRotation(inputDir);
+                    if (dashAgain) {
+                        VFX_Teleport.SetFloat("AttractDrag", 1.0f);
+                        VFX_Teleport.SetInt("Number_of_Particles", 0);
+                        stateStep = 0;
+                        animator.SetTrigger("DashAgain");
+                    }
                 }
                 if (aniInfo.IsName("DashOver")) {
                     stateStep++;
                     
                 } 
             }
-            else {
+            else if (stateStep == 3)
+            {
                 if (aniInfo.normalizedTime > 0.95f) {
                     animator.SetBool("Dash", false);
                     VFX_Teleport.SetFloat("AttractDrag", 1.0f);
@@ -769,7 +789,7 @@ namespace BloodBond {
         void CheckDash() {
             bool _dash = false;
             int count = dashPointCount > 15 ? 15 : dashPointCount;
-            goalPoint = dashFixPos + 0.4f * count * dashDir;  //點間隔0.4
+            goalPoint = dashFixPos + 0.5f * count * dashDir;  //點間隔0.4
             goalPointObject.position = goalPoint;
             Debug.Log("new dash " + count);
             if (Physics.Linecast(dashFixPos, goalPoint + new Vector3(0,1,0), out dashHit, 1 << LayerMask.NameToLayer("Barrier")))  //橫向射線判斷
@@ -809,7 +829,7 @@ namespace BloodBond {
                     float fp = Mathf.Floor(percent);
                     float f = percent - fp;
                     int num = (f > 0.1f) ? (int)fp : (int)(fp - 1);   
-                    lastDashLength = 0.4f * num;//長度點乘間隔
+                    lastDashLength = 0.5f * num;//長度點乘間隔
                     goalPoint = dashFixPos + lastDashLength * dashDir;
 
                     Debug.Log("第幾個： " + num);
@@ -845,7 +865,7 @@ namespace BloodBond {
                 else
                 {
                     Debug.Log("目的地有障礙物  " + hits[0].transform.name);
-                    lastDashLength = 0.4f*(dashPointCount-1);  //長度點乘間隔
+                    lastDashLength = 0.5f*(dashPointCount-1);  //長度點乘間隔
                     goalPoint = dashFixPos + lastDashLength * dashDir;
                     if (Physics.Raycast(goalPoint + new Vector3(0, 5, 0), new Vector3(0, -1, 0), out dashHit, 10.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
                     {

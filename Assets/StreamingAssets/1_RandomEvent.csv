@@ -1,0 +1,6 @@
+﻿Type,Name,Emotion,Dialogue
+BoxEvent,卡洛,Karol_Base,到底是誰沒事會在各處擺滿箱子，又在裡面放補給品？
+,,,
+ExposureEvent_1,獵人,Hunter_Angry,是誰在那裡？
+ExposureEvent_2,獵人,Hunter_Angry,厄血族……我這就殺了你！
+ExposureEvent_3,獵人,Hunter_Angry,既然被我碰到了，你就到此為止了

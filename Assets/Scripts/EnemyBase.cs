@@ -16,8 +16,14 @@ namespace BloodBond {
         protected float idleTime = .0f;
         protected float seeDelayTime = .0f;
         protected int lookARoundNum = 0;
+        
+        protected float heightY = .0f;
+        public float HeightY {
+            get { return heightY; }
+            set { heightY = value; }
+        }
 
-        protected bool canHurt = true;
+        protected bool canHurt = true, isAlarm = false;
         protected int lastHurtHash = 999;
 
         protected Vector3 selfPos, selfFwd;
@@ -153,8 +159,8 @@ namespace BloodBond {
         public virtual bool FindPlayer()
         {
             //return false;
-
-            if (PlayerInSight(lookDir, enemyManager.NightmareValue.SightDistance, enemyManager.NightmareValue.SightAngle)) //Physics.Raycast(lookPos, lookDir, 5.0f, 1 << LayerMask.NameToLayer("Player"))
+            Debug.Log("視覺~~");
+            if (PlayerInSight(lookDir, enemyManager.HunterValue.SightDistance, enemyManager.HunterValue.SightAngle) && pathFinding.CheckInGrid(enemyManager.Player.SelfTransform.position)) //Physics.Raycast(lookPos, lookDir, 5.0f, 1 << LayerMask.NameToLayer("Player"))
             {
                 Debug.Log("懷疑時間 " + seeDelayTime);
                 seeDelayTime += deltaTime*1.5f;
@@ -168,6 +174,7 @@ namespace BloodBond {
                     curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
                     Debug.Log("進懷疑");
                     ChangeState(suspectIdleState);  //先進"懷疑idle"以免尋路過久
+                    isAlarm = true;
                     //animator.SetBool("Chase", true);
                     //ChangeState(chaseState);
                     return true;
@@ -206,8 +213,11 @@ namespace BloodBond {
             Debug.DrawRay(lookPos, dir, Color.yellow, distance);
             if (sightStep == 0)
             {
+                
                 Vector2 distV2 = new Vector2(enemyManager.Player.SelfTransform.position.x - transform.position.x, enemyManager.Player.SelfTransform.position.z - transform.position.z);
                 Vector2 dirV2 = new Vector2(dir.x, dir.z);
+
+                Debug.Log("距離 " + Vector2.SqrMagnitude(distV2) + "  角度" + Vector2.Angle(dirV2, distV2));
                 if (Vector2.SqrMagnitude(distV2) <= distance * distance && Vector2.Angle(dirV2, distV2) < angle)
                 {
                     Debug.Log("一般狀態 距離近且角度內");
@@ -520,7 +530,7 @@ namespace BloodBond {
                         playerPathIndex++;
                     }
                 }
-                moveFwdDir = new Vector3(curPatrolPath.lookPoints[playerPathIndex].x - selfPos.x, 0, curPatrolPath.lookPoints[playerPathIndex].z - selfPos.z).normalized;
+                moveFwdDir = new Vector3(playerPath.lookPoints[playerPathIndex].x - selfPos.x, 0, playerPath.lookPoints[playerPathIndex].z - selfPos.z).normalized;
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
                 transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * moveFwdDir;
                 
@@ -562,6 +572,7 @@ namespace BloodBond {
                 Vector3 goal = (patrolRoute.routeType == PatrolRoute.RouteType.Rotate) ? patrolRoute.StartPosition: curPatrolPath.lookPoints[patrolRoute.CurPointID - 1];
                 curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, goal, OnPathFound);
                 stateStep++;
+                isAlarm = false;
             }
             else if (stateStep == 1)
             {
@@ -584,11 +595,15 @@ namespace BloodBond {
                         {
                             Debug.Log("走回到原本路線點");
                             ChangeState(patrolState);
+                            
                             return;
                         }
                         else {
                             animator.SetBool("Patrol", false);
+
                             ChangeState(idleState);
+                            transform.rotation = Quaternion.LookRotation(patrolRoute.LastLookForward);
+                            return;
                         }
                     }
                     else
@@ -767,6 +782,34 @@ namespace BloodBond {
         public virtual void DistantAttack() { 
             
         }
+        public virtual bool DashGetHurt() {
+            if (!isAlarm)
+            {
+                hp = 0;
+                animator.SetBool("Hurt", false);
+                animator.SetBool("Dead", true);
+                ChangeState(dieState);
+                return true;
+            }
+            else {
+                hp -= 10;
+                BloodSplash.Play();
+                if (hp > 0)
+                {
+                    canHurt = false;
+                    animator.SetBool("Hurt", true);
+                    ChangeState(hurtState);
+
+                }
+                else
+                {
+                    animator.SetBool("Hurt", false);
+                    animator.SetBool("Dead", true);
+                    ChangeState(dieState);
+                }
+            }
+            return false;
+        }
         public virtual bool CheckGetHurt() {
 
             Vector3 center = hurtAreaCollider.center;
@@ -778,7 +821,7 @@ namespace BloodBond {
             if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
             {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
-                hp -= 0;
+                hp -= 10;
                 lastHurtHash = curCount;
 
                 HurtDir = new Vector3(targetPos.x - transform.position.x, 0, targetPos.z - transform.position.z); //new Vector3(targetDir.x - transform.position.x, targetDir.y - transform.position.y, targetDir.z - transform.position.z);
@@ -813,7 +856,7 @@ namespace BloodBond {
             if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
             {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
-                hp -= 0;
+                hp -= 10;
                 lastHurtHash = curCount;
                 if (hp > 0)
                 {

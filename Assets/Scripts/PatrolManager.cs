@@ -13,29 +13,32 @@ namespace BloodBond {
             public PathFinding pathFinding;
             public List<PatrolRoute> patrolRoutes;
             public List<Transform> archerLocs;
-            public AreaPatrol(PathFinding finding ) {
+            public float HeightY;
+            public AreaPatrol(PathFinding finding, float height) {
                 pathFinding = finding;
                 patrolRoutes = new List<PatrolRoute>();
                 archerLocs = new List<Transform>();
+                HeightY = height;
             }
         }
 
-        AreaPatrol[] areaPatrolRoutes;
+        List<AreaPatrol> areaPatrolRoutes;
 
         EnemyManager enemyManager;
-
+        AreaPatrol curArea;
 
         // Start is called before the first frame update
         private void Awake()
         {
             //subArea數量
-            areaPatrolRoutes = new AreaPatrol[transform.childCount];
-            for (int i = 0; i < areaPatrolRoutes.Length; i++)
+            areaPatrolRoutes = new List<AreaPatrol>();
+            for (int i = 0; i < transform.childCount; i++)
             {
                 //subArea
                 Transform area = transform.GetChild(i);
                 if (!area.gameObject.activeSelf) continue;
-                areaPatrolRoutes[i] = new AreaPatrol(area.GetComponent<PathFinding>());
+                areaPatrolRoutes.Add(new AreaPatrol(area.GetComponent<PathFinding>(), area.position.y));
+                //areaPatrolRoutes[i] = new AreaPatrol(area.GetComponent<PathFinding>());
 
                 //subArea內的路線或定點
                 for (int j = 0; j < area.childCount; j++)
@@ -46,11 +49,11 @@ namespace BloodBond {
                     if (c.name.Contains("PatrolRoute")) {
                         PatrolRoute route = c.GetComponent<PatrolRoute>();
                         route.Init();
-                        areaPatrolRoutes[i].patrolRoutes.Add(route);
+                        areaPatrolRoutes[areaPatrolRoutes.Count-1].patrolRoutes.Add(route);
                         //route.gameObject.SetActive(false);
                     }
                     else if (c.name.Contains("ArcherLoc")) {
-                        areaPatrolRoutes[i].archerLocs.Add(c);
+                        areaPatrolRoutes[areaPatrolRoutes.Count - 1].archerLocs.Add(c);
                     }
 
                 }
@@ -60,17 +63,19 @@ namespace BloodBond {
 
         void Start()
         {
-            for (int i = 0; i < areaPatrolRoutes.Length; i++) {
-                if (!transform.GetChild(i).gameObject.activeSelf) continue;
+            enemyManager.CreateArea(areaPatrolRoutes.Count);
+            for (int i = 0; i < areaPatrolRoutes.Count; i++) {
+                enemyManager.AddNewArea(i);
                 for (int j = 0; j < areaPatrolRoutes[i].patrolRoutes.Count; j++) {
-                    enemyManager.SpawnEnemyWithRoute(areaPatrolRoutes[i].patrolRoutes[j].enemyType, areaPatrolRoutes[i].patrolRoutes[j].StartPosition, areaPatrolRoutes[i].patrolRoutes[j], areaPatrolRoutes[i].pathFinding);
+                    enemyManager.SpawnEnemyWithRoute(areaPatrolRoutes[i].patrolRoutes[j].enemyType, areaPatrolRoutes[i].patrolRoutes[j].StartPosition, areaPatrolRoutes[i].patrolRoutes[j], areaPatrolRoutes[i].pathFinding, areaPatrolRoutes[i].HeightY);
                 }
                 for (int j = 0; j < areaPatrolRoutes[i].archerLocs.Count; j++)
                 {
-                    enemyManager.SpawnAcherInLoc(areaPatrolRoutes[i].archerLocs[j].position, areaPatrolRoutes[i].archerLocs[j].forward);
+                    enemyManager.SpawnAcherInLoc(areaPatrolRoutes[i].archerLocs[j].position, areaPatrolRoutes[i].archerLocs[j].forward, areaPatrolRoutes[i].HeightY);
                 }
-
             }
+            //將manager目前的區域變回0
+            enemyManager.SetActiveArea(0, areaPatrolRoutes[0]);
         }
 
         // Update is called once per frame

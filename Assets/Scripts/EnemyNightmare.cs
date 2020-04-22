@@ -86,6 +86,7 @@ namespace BloodBond {
 
                     Debug.Log("進懷疑");
                     ChangeState(suspectIdleState);  //先進"懷疑idle"以免尋路過久
+                    isAlarm = true;
                     return true;
                 }
                 return false;
@@ -191,10 +192,10 @@ namespace BloodBond {
         }
         public override bool FindPlayerInSuspect()
         {
+            Debug.Log("馴鹿空檔idle");
             //return false;
             if (PlayerInDistance(enemyManager.NightmareValue.SightDistance*1.5f))
             {
-                Debug.Log("馴鹿空檔idle");
                 if (distanceCase == 2)
                 {
                     animator.SetBool("Chase", false);
@@ -277,7 +278,7 @@ namespace BloodBond {
                 AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
                 if (aniInfo.IsName("Chase")) stateStep++;
                 moveFwdDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z).normalized;
-                //transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.HunterValue.RotateSpeed);
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveFwdDir), deltaTime * enemyManager.NightmareValue.RotateSpeed);
                 //transform.position += deltaTime * enemyManager.HunterValue.MoveSpeed * moveFwdDir;
                 Debug.Log("chase  0");
             }
@@ -394,6 +395,7 @@ namespace BloodBond {
             if (stateStep == 0)
             {
                 Debug.Log("放棄追逐，尋路回本來位置請求");
+                isAlarm = false;
                 findingPath = false;
                 Vector3 goal = (patrolRoute.routeType == PatrolRoute.RouteType.Rotate) ? patrolRoute.StartPosition : curPatrolPath.lookPoints[patrolRoute.CurPointID - 1];
                 curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, goal, OnPathFound);
@@ -424,7 +426,9 @@ namespace BloodBond {
                         else
                         {
                             animator.SetBool("Patrol", false);
+                            transform.rotation = Quaternion.LookRotation(patrolRoute.LastLookForward);
                             ChangeState(idleState);
+                            return;
                         }
                     }
                     else

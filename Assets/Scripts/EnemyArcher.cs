@@ -67,6 +67,7 @@ namespace BloodBond {
                     targetDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z);
 
                     Debug.Log("進遠程攻擊");
+                    isAlarm = true;
                     isAim = true;
                     ChangeState(enemyDistantATKState);
                     animator.SetBool("Aim", true);
@@ -102,6 +103,7 @@ namespace BloodBond {
                 if (aniInfo.normalizedTime >  0.9f)
                 {
                     animator.SetBool("Look", false);
+                    isAlarm = false;
                     ChangeState(idleState);
                 }
             }
@@ -124,12 +126,14 @@ namespace BloodBond {
                 if (!PlayerInDistanceAfterClose()) //檢查還看得到玩家
                 {
                     ChangeState(idleState);
+                    isAlarm = false;
                     attackBlankTime = .0f;
                     animator.SetBool("Aim", false);
                     animator.SetBool("Attack", false);
                     enemyManager.UnSubLateAction(transform.name);
                     isAim = false;
                     transform.rotation = idleRot;
+                    crossBow.gameObject.SetActive(false);
                     return;
                 }
                 AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
@@ -143,12 +147,14 @@ namespace BloodBond {
                 if (!PlayerInDistanceAfterClose())//檢查還看得到玩家
                 {
                     ChangeState(idleState);
+                    isAlarm = false;
                     attackBlankTime = .0f;
                     animator.SetBool("Aim", false);
                     animator.SetBool("Attack", false);
                     enemyManager.UnSubLateAction(transform.name);
                     isAim = false;
                     transform.rotation = idleRot;
+                    crossBow.gameObject.SetActive(false);
                     return;
                 }
                 attackBlankTime += deltaTime;
@@ -166,7 +172,7 @@ namespace BloodBond {
                 {
                     crossBow.gameObject.SetActive(false);
                     targetPos = enemyManager.Player.SelfTransform.position;
-                    enemyManager.SpawnArrow(crossBow.position, new Vector3(targetPos.x - crossBow.position.x, targetPos.y + 2.0f - crossBow.position.y, targetPos.z - crossBow.position.z));
+                    enemyManager.SpawnArrow(crossBow.position, new Vector3(targetPos.x - crossBow.position.x, targetPos.y + 2.0f - crossBow.position.y, targetPos.z - crossBow.position.z).normalized);
                     stateStep++;
                 }
             }
@@ -181,6 +187,7 @@ namespace BloodBond {
                     if (!PlayerInDistanceAfterClose())
                     {
                         ChangeState(idleState);
+                        isAlarm = false;
                         isAim = false;
                         enemyManager.UnSubLateAction(transform.name);
                         animator.SetBool("Aim", false);
@@ -204,6 +211,47 @@ namespace BloodBond {
             transform.rotation = lastAimRot;
             spine1.rotation = rot;
             
+        }
+
+        public override bool DashGetHurt()
+        {
+            if (!isAlarm)
+            {
+                hp = 0;
+                animator.SetBool("Hurt", false);
+                animator.SetBool("Dead", true);
+                ChangeState(dieState);
+                return true;
+            }
+            else
+            {
+                hp -= 10;
+                BloodSplash.Play();
+                if (hp > 0)
+                {
+                    canHurt = false;
+                    animator.SetBool("Hurt", true);
+                    ChangeState(hurtState);
+
+                }
+                else
+                {
+                    animator.SetBool("Hurt", false);
+                    animator.SetBool("Dead", true);
+                    ChangeState(dieState);
+                }
+            }
+            if (isAim)
+            {
+                isAim = false;
+                //transform.rotation = Quaternion.LookRotation(new Vector3(HurtDir.x, 0, HurtDir.z));
+                enemyManager.UnSubLateAction(transform.name);
+                crossBow.gameObject.SetActive(false);
+                crossBow.parent = hand;
+                crossBow.localPosition = crossBowPos;
+                crossBow.localRotation = crossBowRot;
+            }
+            return false;
         }
 
         public override bool CheckGetHurt()

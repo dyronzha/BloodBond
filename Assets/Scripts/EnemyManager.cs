@@ -20,6 +20,11 @@ namespace BloodBond {
         List<EnemyNightmare> usedNightmareList = new List<EnemyNightmare>();
         Dictionary<string, EnemyBase> enemyDic = new Dictionary<string, EnemyBase>();
 
+        int areaCount = 0;
+        List<EnemyBase>[] enemyArea;
+        List<EnemyBase> currentAreaEnemy;
+        PatrolManager.AreaPatrol curArea;
+
         PatrolManager patrolManager;
 
         [SerializeField]
@@ -109,20 +114,25 @@ namespace BloodBond {
         void Update()
         {
             deltaTime = Time.deltaTime;
-            for (int i = usedBaseHunterList.Count-1; i >= 0; i--) {
-                usedBaseHunterList[i].Update(deltaTime);
-            }
-            for (int i = usedNightmareList.Count - 1; i >= 0; i--)
-            {
-                usedNightmareList[i].Update(deltaTime);
-            }
-            for (int i = usedArcherHunterList.Count - 1; i >= 0; i--) {
-                usedArcherHunterList[i].Update(deltaTime);
+            //for (int i = usedBaseHunterList.Count-1; i >= 0; i--) {
+            //    usedBaseHunterList[i].Update(deltaTime);
+            //}
+            //for (int i = usedNightmareList.Count - 1; i >= 0; i--)
+            //{
+            //    usedNightmareList[i].Update(deltaTime);
+            //}
+            //for (int i = usedArcherHunterList.Count - 1; i >= 0; i--) {
+            //    usedArcherHunterList[i].Update(deltaTime);
+            //}
+            for (int i = 0; i < currentAreaEnemy.Count; i++) {
+                currentAreaEnemy[i].Update(deltaTime);
             }
             for (int i = usedEnemyArrowList.Count - 1; i >= 0; i--)
             {
                 usedEnemyArrowList[i].Update(deltaTime);
             }
+            //清除搜尋路後的權重
+            curArea.pathFinding.ClearGridExtendPenalty();
         }
         private void LateUpdate()
         {
@@ -133,16 +143,30 @@ namespace BloodBond {
 
         }
 
-        public EnemyBase SpawnEnemyWithRoute(PatrolRoute.EnemyType type, Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding)
+        public void CreateArea(int length) {
+            enemyArea = new List<EnemyBase>[length];
+        }
+        public void AddNewArea(int id) {
+            areaCount = id;
+            enemyArea[id] = new List<EnemyBase>();
+            currentAreaEnemy = enemyArea[id];
+        }
+        public void SetActiveArea(int id, PatrolManager.AreaPatrol area) {
+            currentAreaEnemy = enemyArea[id];
+            curArea = area;
+        }
+        public EnemyBase SpawnEnemyWithRoute(PatrolRoute.EnemyType type, Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding, float height)
         {
-            
             if (type == PatrolRoute.EnemyType.Hunter)
             {
                 EnemyBase enemy;
                 enemy = freeBaseHunterList[0];
-                enemy.transform.position = new Vector3(loc.x, loc.y, loc.z);
+                enemy.transform.position = new Vector3(loc.x, height, loc.z);
                 enemy.transform.gameObject.SetActive(true);
-                usedBaseHunterList.Add(enemy);
+                enemy.HeightY = height;
+                //usedBaseHunterList.Add(enemy);
+                currentAreaEnemy.Add(enemy);
+                Debug.Log("current enemy list " + currentAreaEnemy.Count);
                 enemy.SetPatrolArea(route, finding);
                 freeBaseHunterList.RemoveAt(0);
                 return enemy;
@@ -150,21 +174,27 @@ namespace BloodBond {
             else {
                 EnemyNightmare enemy;
                 enemy = freeNightmarerList[0];
-                enemy.transform.position = new Vector3(loc.x, loc.y, loc.z);
+                enemy.transform.position = new Vector3(loc.x, height, loc.z);
                 enemy.transform.gameObject.SetActive(true);
-                usedNightmareList.Add(enemy);
+                enemy.HeightY = height;
+                //usedNightmareList.Add(enemy);
+                currentAreaEnemy.Add(enemy);
+                Debug.Log("current enemy list " + currentAreaEnemy.Count);
                 enemy.SetPatrolArea(route, finding);
                 freeNightmarerList.RemoveAt(0);
                 return enemy;
             } 
             
         }
-        public EnemyArcher SpawnAcherInLoc(Vector3 loc, Vector3 dir) {
+        public EnemyArcher SpawnAcherInLoc(Vector3 loc, Vector3 dir, float height) {
             EnemyArcher enemy = freeArcherHunterList[0];
             enemy.transform.position = new Vector3(loc.x, loc.y, loc.z);
             enemy.transform.rotation = Quaternion.LookRotation(dir);
             enemy.transform.gameObject.SetActive(true);
-            usedArcherHunterList.Add(enemy);
+            enemy.HeightY = height;
+            //usedArcherHunterList.Add(enemy);
+            currentAreaEnemy.Add(enemy);
+            Debug.Log("current enemy list " + currentAreaEnemy.Count);
             freeArcherHunterList.RemoveAt(0);
             enemy.Init();
             return enemy;
@@ -181,6 +211,13 @@ namespace BloodBond {
             usedEnemyArrowList.Add(arrow);
             freeEnemyArrowList.RemoveAt(0);
             return arrow;
+        }
+        public EnemyBase FindEnemyInDic(string name) {
+            if (enemyDic.ContainsKey(name))
+            {
+                return enemyDic[name];
+            }
+            else return null;
         }
         public EnemyArrow FindArrowInDic(string name) {
             if (arrowDic.ContainsKey(name))
