@@ -5,10 +5,13 @@ using UnityEngine;
 namespace BloodBond {
     public class MapInteract : MonoBehaviour
     {
-        int currentID = 0;
+        int cameraCurrentID = 0, currentInteractID;
         Vector2 playerPosV2;
         Transform player;
-        PathFinder.Line[] pointLines;
+        PathFinder.Line[] cameraPointLines;
+        public DialogueManager _dialoguemanager;
+        public MainEventIO _maineventio;
+        public RandomEventIO _randomeventio;
 
         [HideInInspector]
         public Drink[] Drinks = new Drink[0];
@@ -43,7 +46,7 @@ namespace BloodBond {
         [System.Serializable]
         public struct interactPoint
         {
-            public Collider colliderPoint;
+            public BoxCollider colliderPoint;
             public InteractType interactType;
             public UnityEngine.Playables.PlayableDirector timeline;
             public float textShowTime;
@@ -54,11 +57,11 @@ namespace BloodBond {
         private void Awake()
         {
             player = GameObject.Find("Karol").transform;
-            pointLines = new PathFinder.Line[VCameraPoints.Length];
-            for (int i = 0; i < pointLines.Length; i++) {
+            cameraPointLines = new PathFinder.Line[VCameraPoints.Length];
+            for (int i = 0; i < cameraPointLines.Length; i++) {
                 VCameraPoints[i].positionV2 = new Vector2(VCameraPoints[i].colliderPoint.position.x, VCameraPoints[i].colliderPoint.position.z);
                 Vector2 fwdV2 = new Vector2(VCameraPoints[i].colliderPoint.forward.x, VCameraPoints[i].colliderPoint.forward.z);
-                pointLines[i] = new PathFinder.Line(VCameraPoints[i].positionV2, VCameraPoints[i].positionV2 - fwdV2);
+                cameraPointLines[i] = new PathFinder.Line(VCameraPoints[i].positionV2, VCameraPoints[i].positionV2 - fwdV2);
                 
             }
         }
@@ -70,46 +73,80 @@ namespace BloodBond {
         // Update is called once per frame
         void Update()
         {
+            Vector3 playerPos = player.position;
             playerPosV2 = new Vector2(player.position.x, player.position.z);
-            if (currentID < pointLines.Length) {
-                Vector2 dif = VCameraPoints[currentID].positionV2 - playerPosV2;
+            if (cameraCurrentID < cameraPointLines.Length) {
+                Vector2 dif = VCameraPoints[cameraCurrentID].positionV2 - playerPosV2;
                 //判斷下一個攝影機切換點
-                //Debug.Log("dif " + Vector2.SqrMagnitude(dif) + "  cross line " + pointLines[currentID].HasCrossedLine(playerPosV2));
-                if (Vector2.SqrMagnitude(dif) < VCameraPoints[currentID].distance * VCameraPoints[currentID].distance * 0.25f && CrossLine())   //成0.25是distance要一半0.5*0.5
+                //Debug.Log("dif " + Vector2.SqrMagnitude(dif) + "  cross line " + cameraPointLines[cameraCurrentID].HasCrossedLine(playerPosV2));
+                if (Vector2.SqrMagnitude(dif) < VCameraPoints[cameraCurrentID].distance * VCameraPoints[cameraCurrentID].distance * 0.25f && CrossCameraLine())   //成0.25是distance要一半0.5*0.5
                 {
-                    VCameraPoints[currentID].nextVCamera.SetActive(true);
-                    VCameraPoints[currentID].lastVCamera.SetActive(false);
-                    VCameraPoints[currentID].reverse = true;
-                    currentID++;
+                    VCameraPoints[cameraCurrentID].nextVCamera.SetActive(true);
+                    VCameraPoints[cameraCurrentID].lastVCamera.SetActive(false);
+                    VCameraPoints[cameraCurrentID].reverse = true;
+                    cameraCurrentID++;
                 }
             }
             //判斷上一個攝影機切換點
-            if (currentID > 0) {
-                Vector2 dif = VCameraPoints[currentID - 1].positionV2 - playerPosV2;
-                //Debug.Log("current id" + currentID + "    dif " + Vector2.SqrMagnitude(dif) + "  cross line " + pointLines[currentID-1].HasCrossedLine(playerPosV2));
-                if (Vector2.SqrMagnitude(dif) < VCameraPoints[currentID-1].distance * VCameraPoints[currentID-1].distance*0.25f && CrossLastLine())
+            if (cameraCurrentID > 0) {
+                Vector2 dif = VCameraPoints[cameraCurrentID - 1].positionV2 - playerPosV2;
+                //Debug.Log("current id" + cameraCurrentID + "    dif " + Vector2.SqrMagnitude(dif) + "  cross line " + cameraPointLines[cameraCurrentID-1].HasCrossedLine(playerPosV2));
+                if (Vector2.SqrMagnitude(dif) < VCameraPoints[cameraCurrentID-1].distance * VCameraPoints[cameraCurrentID-1].distance*0.25f && CrossCameraLastLine())
                 {
-                    VCameraPoints[currentID-1].nextVCamera.SetActive(false);
-                    VCameraPoints[currentID-1].lastVCamera.SetActive(true);
-                    VCameraPoints[currentID - 1].reverse = false;
-                    currentID--;
+                    VCameraPoints[cameraCurrentID-1].nextVCamera.SetActive(false);
+                    VCameraPoints[cameraCurrentID-1].lastVCamera.SetActive(true);
+                    VCameraPoints[cameraCurrentID - 1].reverse = false;
+                    cameraCurrentID--;
                 }
             }
+
+            //主要劇情(暫停操作+下方大面板)
+            if (interactPoints[currentInteractID].interactType == InteractType.InfoText && interactPoints[currentInteractID].colliderPoint != null) {
+                Vector3 point = interactPoints[currentInteractID].colliderPoint.transform.position;
+                BoxCollider collider = interactPoints[currentInteractID].colliderPoint;
+                if ((playerPos.x <= point.x + collider.size.x * 0.5f) && (playerPos.x >= point.x - collider.size.x * 0.5f) &&
+                    (playerPos.y <= point.y + collider.size.y * 0.5f) && (playerPos.y >= point.y - collider.size.y * 0.5f) &&
+                     (playerPos.z <= point.z + collider.size.z * 0.5f) && (playerPos.z >= point.z - collider.size.z * 0.5f)
+                    )
+                {
+                    //if(interactPoints[currentInteractID].interactType == InfoText)//關玩家操作
+                    _dialoguemanager.StartDialogue();
+                    collider.enabled = false;
+                    currentInteractID++;
+                }
+            }
+
+            //主要事件(可以操作+左側小面板)
+            if (interactPoints[currentInteractID].interactType == InteractType.MainText && interactPoints[currentInteractID].colliderPoint != null){
+
+                Vector3 point = interactPoints[currentInteractID].colliderPoint.transform.position;
+                BoxCollider collider = interactPoints[currentInteractID].colliderPoint;
+                if ((playerPos.x <= point.x + collider.size.x * 0.5f) && (playerPos.x >= point.x - collider.size.x * 0.5f) &&
+                    (playerPos.y <= point.y + collider.size.y * 0.5f) && (playerPos.y >= point.y - collider.size.y * 0.5f) &&
+                     (playerPos.z <= point.z + collider.size.z * 0.5f) && (playerPos.z >= point.z - collider.size.z * 0.5f)
+                    )
+                {
+                    _maineventio.TriggerMainEvent();
+                    collider.enabled = false;
+                    currentInteractID++;
+                }
+            }
+
         }
 
-        bool CrossLine() {
-            return (VCameraPoints[currentID].reverse != pointLines[currentID].HasCrossedLine(playerPosV2));
+        bool CrossCameraLine() {
+            return (VCameraPoints[cameraCurrentID].reverse != cameraPointLines[cameraCurrentID].HasCrossedLine(playerPosV2));
         }
-        bool CrossLastLine()
+        bool CrossCameraLastLine()
         {
-            return (VCameraPoints[currentID-1].reverse != pointLines[currentID-1].HasCrossedLine(playerPosV2));
+            return (VCameraPoints[cameraCurrentID-1].reverse != cameraPointLines[cameraCurrentID-1].HasCrossedLine(playerPosV2));
         }
 
     }
 
     public enum InteractType
     {
-        CameraMove, InfoText, MoveAndText
+        CameraMove, InfoText, MainText, RandomText
     }
 
 
