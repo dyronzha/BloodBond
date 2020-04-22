@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UI_Manager : MonoBehaviour{
     public Image[] Menu;
@@ -21,7 +22,7 @@ public class UI_Manager : MonoBehaviour{
 
     void Update(){
         if (SelectNewGame == true && Time.time > Trigger_Moment + 3.0f) {
-            Debug.Log("SceneTrasction");
+            SceneManager.LoadScene(1);
             SelectNewGame = false;
         }
 
@@ -29,16 +30,16 @@ public class UI_Manager : MonoBehaviour{
             if (Input.GetAxis("Vertical") > 0.0f || Input.GetAxis("Joy1Axis7") > 0.0f){
                 if (Currentbtn > 0) {
                     Currentbtn--;
-                    _CurBtnBG.anchoredPosition = new Vector2(_CurBtnBG.anchoredPosition.x, _CurBtnBG.anchoredPosition.y + 80.0f);
+                    _CurBtnBG.anchoredPosition = new Vector2(_CurBtnBG.anchoredPosition.x, _CurBtnBG.anchoredPosition.y + 100.0f);
                 }
 
                 AlreadyPush = true;
                 //BtnSelect(Currentbtn);
             }
             else if (Input.GetAxis("Vertical") < 0.0f || Input.GetAxis("Joy1Axis7") < 0.0f){
-                if (Currentbtn < 2) {
+                if (Currentbtn < 1) {
                     Currentbtn++;
-                    _CurBtnBG.anchoredPosition = new Vector2(_CurBtnBG.anchoredPosition.x, _CurBtnBG.anchoredPosition.y - 80.0f);
+                    _CurBtnBG.anchoredPosition = new Vector2(_CurBtnBG.anchoredPosition.x, _CurBtnBG.anchoredPosition.y - 100.0f);
                 }
 
                 AlreadyPush = true;
@@ -68,13 +69,9 @@ public class UI_Manager : MonoBehaviour{
                 Trigger_Moment = Time.time;
                 BlackPanel.Play("FadeIn");
                 SelectNewGame = true;
-                Debug.Log("New Game");
                 break;
             case 1:
-                Debug.Log("Setting");
-                break;
-            case 2:
-                Debug.Log("Exit");
+                Application.Quit();
                 break;
         }
     }
