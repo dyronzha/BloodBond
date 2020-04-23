@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 237050633a6218f4d857fa821015fee3
+guid: c39f1f0935bc7084d84adf8dade2bd3f
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
@@ -7,8 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: B_B01_Dec_P5
-    second: {fileID: 2100000, guid: baff3ed490e063344930d74a9a7749d4, type: 2}
+      name: Star_house
+    second: {fileID: 2100000, guid: f8c06db2c66de1545a84980c7d404ebd, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
