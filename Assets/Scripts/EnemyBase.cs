@@ -224,7 +224,7 @@ namespace BloodBond {
                 Vector2 distV2 = new Vector2(enemyManager.Player.SelfTransform.position.x - transform.position.x, enemyManager.Player.SelfTransform.position.z - transform.position.z);
                 Vector2 dirV2 = new Vector2(dir.x, dir.z);
 
-                Debug.Log("距離 " + Vector2.SqrMagnitude(distV2) + "  角度" + Vector2.Angle(dirV2, distV2));
+                //Debug.Log("距離 " + Vector2.SqrMagnitude(distV2) + "  角度" + Vector2.Angle(dirV2, distV2));
                 if (Vector2.SqrMagnitude(distV2) <= distance * distance && Vector2.Angle(dirV2, distV2) < angle)
                 {
                     Debug.Log("一般狀態 距離近且角度內");

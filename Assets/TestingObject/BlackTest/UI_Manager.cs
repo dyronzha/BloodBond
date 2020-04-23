@@ -17,7 +17,6 @@ public class UI_Manager : MonoBehaviour{
     float Trigger_Moment;
 
     void Start(){
-        //BtnSelect(Currentbtn);
     }
 
     void Update(){
@@ -34,7 +33,6 @@ public class UI_Manager : MonoBehaviour{
                 }
 
                 AlreadyPush = true;
-                //BtnSelect(Currentbtn);
             }
             else if (Input.GetAxis("Vertical") < 0.0f || Input.GetAxis("Joy1Axis7") < 0.0f){
                 if (Currentbtn < 1) {
@@ -43,7 +41,6 @@ public class UI_Manager : MonoBehaviour{
                 }
 
                 AlreadyPush = true;
-                //BtnSelect(Currentbtn);
             }
 
             else if (Input.GetButtonDown("Fire1")) {
