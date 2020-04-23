@@ -9,7 +9,7 @@ public class UI_InGame : MonoBehaviour{
     bool Modify = false;
     float CurrentHP = 100.0f;
     float AfterATKHP = 0.0f;
-    float fillAmount = 0.0f;
+    float fillAmount = 100.0f;
     float Lerping = 0.8f;
     public Image HPBar;
 
@@ -18,10 +18,10 @@ public class UI_InGame : MonoBehaviour{
     public Text txt_potion;
 
     void Update(){
-        //if (Input.GetKeyDown(KeyCode.V)) ReceiveAttack(50);
-        //if (Input.GetKeyDown(KeyCode.B)) Recovery(15);
-        //if (Input.GetKeyDown(KeyCode.K)) PotionPlus();
-        //if (Input.GetKeyDown(KeyCode.L)) PotionDecrease();
+        if (Input.GetKeyDown(KeyCode.V)) ReceiveAttack(5);
+        if (Input.GetKeyDown(KeyCode.B)) Recovery(15);
+        if (Input.GetKeyDown(KeyCode.K)) PotionPlus();
+        if (Input.GetKeyDown(KeyCode.L)) PotionDecrease();
         HPBar.fillAmount = Mathf.Lerp(HPBar.fillAmount, fillAmount,Lerping*Time.deltaTime);
     }
 
@@ -52,9 +52,11 @@ public class UI_InGame : MonoBehaviour{
     }
 
     public void PotionDecrease(){
-        if(CurrentPotionCount>0)CurrentPotionCount--;
+        if (CurrentPotionCount > 0) {
+            Recovery(20);
+            CurrentPotionCount--;
+        }
         txt_potion.text = CurrentPotionCount.ToString() + " / 5";
-        Recovery(20);
     }
 
 }
