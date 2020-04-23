@@ -162,10 +162,12 @@ namespace BloodBond {
             Debug.Log("視覺~~");
             if (PlayerInSight(lookDir, enemyManager.HunterValue.SightDistance, enemyManager.HunterValue.SightAngle) && pathFinding.CheckInGrid(enemyManager.Player.SelfTransform.position)) //Physics.Raycast(lookPos, lookDir, 5.0f, 1 << LayerMask.NameToLayer("Player"))
             {
+                if (curState == lookAroundState && animator.speed > 0.7f) animator.speed = .0f;
                 Debug.Log("懷疑時間 " + seeDelayTime);
                 seeDelayTime += deltaTime*1.5f;
                 if (seeDelayTime > enemyManager.HunterValue.SeeConfirmTime)
                 {
+                    animator.speed = 1.0f;
                     seeDelayTime = .0f;
                     animator.SetTrigger("Alarm");
                     targetPos = enemyManager.Player.SelfTransform.position;
@@ -182,7 +184,9 @@ namespace BloodBond {
                 return false;
             }
             else {
-                if (seeDelayTime > .0f) seeDelayTime -= deltaTime*0.5f;
+                seeDelayTime -= deltaTime*0.5f;
+                if (seeDelayTime < .0f) seeDelayTime = .0f;
+                animator.speed = 1.0f;
                 return false;
             } 
         }

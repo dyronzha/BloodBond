@@ -62,8 +62,10 @@ namespace BloodBond {
             {
                 Debug.Log("懷疑時間 " + seeDelayTime);
                 seeDelayTime += deltaTime;
+                if (curState == lookAroundState && animator.speed > 0.7f) animator.speed = .0f;
                 if (seeDelayTime > enemyManager.ArcherValue.SeeConfirmTime)
                 {
+                    animator.speed = 1.0f;
                     seeDelayTime = .0f;
                     targetPos = enemyManager.Player.SelfTransform.position;
                     targetDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z);
@@ -86,6 +88,7 @@ namespace BloodBond {
                 Debug.Log("沒看到減少懷疑時間");
                 seeDelayTime -= deltaTime*.5f;
                 if (seeDelayTime < .0f) seeDelayTime = .0f;
+                animator.speed = 1.0f;
                 return false;
             }
         }

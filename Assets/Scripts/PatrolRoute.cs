@@ -218,7 +218,7 @@ namespace BloodBond {
             if (!scr.drawOnce)  //初始化參照所有子物件為點
             {
                 
-                if (scr.transform.childCount > 1)
+                if (scr.transform.childCount > 0)
                 {
                     scr.patrolPoints = new PatrolPoint[scr.transform.childCount];
                     for (int i = 0; i < scr.patrolPoints.Length; i++)

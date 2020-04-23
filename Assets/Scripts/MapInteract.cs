@@ -8,22 +8,10 @@ namespace BloodBond {
         int cameraCurrentID = 0, currentInteractID;
         Vector2 playerPosV2;
         Transform player;
-        PathFinder.Line[] cameraPointLines;
+        PathFinder.Line[] cameraPointLines, progressPointLine;
         public DialogueManager _dialoguemanager;
         public MainEventIO _maineventio;
         public RandomEventIO _randomeventio;
-
-        [HideInInspector]
-        public Drink[] Drinks = new Drink[0];
-
-        [System.Serializable]
-        public struct Drink
-        {
-            public string Name;
-            public float Price;
-            public Color Color;
-            public int aaa;
-        }
 
         [HideInInspector]
         public VCameraPoint[] VCameraPoints = new VCameraPoint[0];
@@ -54,6 +42,15 @@ namespace BloodBond {
             public string infoText;
         }
 
+
+        public ProgressPoint[] ProgressPoints = new ProgressPoint[0];
+        [System.Serializable]
+        public struct ProgressPoint
+        {
+            public GameObject Point;
+            public int progressID;
+        }
+
         // Start is called before the first frame update
         private void Awake()
         {
@@ -77,6 +74,11 @@ namespace BloodBond {
         {
             Vector3 playerPos = player.position;
             playerPosV2 = new Vector2(player.position.x, player.position.z);
+
+            //進度點判斷
+
+
+
             if (cameraCurrentID < cameraPointLines.Length) {
                 Vector2 dif = VCameraPoints[cameraCurrentID].positionV2 - playerPosV2;
                 //判斷下一個攝影機切換點
