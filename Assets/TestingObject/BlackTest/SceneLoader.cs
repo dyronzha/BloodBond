@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class SceneLoader : MonoBehaviour{
 
     int index;
+    //public Animator BlackPanel;
 
     void Start(){
         index = SceneManager.GetActiveScene().buildIndex;
