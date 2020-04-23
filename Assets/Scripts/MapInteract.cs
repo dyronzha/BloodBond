@@ -37,6 +37,7 @@ namespace BloodBond {
             public GameObject nextVCamera;
             public Vector2 positionV2;
             public bool reverse;
+            public float heightY;
         }
 
 
@@ -60,6 +61,7 @@ namespace BloodBond {
             cameraPointLines = new PathFinder.Line[VCameraPoints.Length];
             for (int i = 0; i < cameraPointLines.Length; i++) {
                 VCameraPoints[i].positionV2 = new Vector2(VCameraPoints[i].colliderPoint.position.x, VCameraPoints[i].colliderPoint.position.z);
+                VCameraPoints[i].heightY = VCameraPoints[i].colliderPoint.position.y;
                 Vector2 fwdV2 = new Vector2(VCameraPoints[i].colliderPoint.forward.x, VCameraPoints[i].colliderPoint.forward.z);
                 cameraPointLines[i] = new PathFinder.Line(VCameraPoints[i].positionV2, VCameraPoints[i].positionV2 - fwdV2);
                 
@@ -79,7 +81,8 @@ namespace BloodBond {
                 Vector2 dif = VCameraPoints[cameraCurrentID].positionV2 - playerPosV2;
                 //判斷下一個攝影機切換點
                 //Debug.Log("dif " + Vector2.SqrMagnitude(dif) + "  cross line " + cameraPointLines[cameraCurrentID].HasCrossedLine(playerPosV2));
-                if (Vector2.SqrMagnitude(dif) < VCameraPoints[cameraCurrentID].distance * VCameraPoints[cameraCurrentID].distance * 0.25f && CrossCameraLine())   //成0.25是distance要一半0.5*0.5
+                if (Vector2.SqrMagnitude(dif) < VCameraPoints[cameraCurrentID].distance * VCameraPoints[cameraCurrentID].distance * 0.25f && 
+                    Mathf.Abs(playerPos.y - VCameraPoints[cameraCurrentID].heightY) < 0.5f && CrossCameraLine())   //成0.25是distance要一半0.5*0.5
                 {
                     VCameraPoints[cameraCurrentID].nextVCamera.SetActive(true);
                     VCameraPoints[cameraCurrentID].lastVCamera.SetActive(false);
@@ -91,7 +94,9 @@ namespace BloodBond {
             if (cameraCurrentID > 0) {
                 Vector2 dif = VCameraPoints[cameraCurrentID - 1].positionV2 - playerPosV2;
                 //Debug.Log("current id" + cameraCurrentID + "    dif " + Vector2.SqrMagnitude(dif) + "  cross line " + cameraPointLines[cameraCurrentID-1].HasCrossedLine(playerPosV2));
-                if (Vector2.SqrMagnitude(dif) < VCameraPoints[cameraCurrentID-1].distance * VCameraPoints[cameraCurrentID-1].distance*0.25f && CrossCameraLastLine())
+                Debug.Log("camera " + cameraCurrentID);
+                if (Vector2.SqrMagnitude(dif) < VCameraPoints[cameraCurrentID-1].distance * VCameraPoints[cameraCurrentID-1].distance*0.25f &&
+                    Mathf.Abs(playerPos.y - VCameraPoints[cameraCurrentID-1].heightY) < 0.5f && CrossCameraLastLine())
                 {
                     VCameraPoints[cameraCurrentID-1].nextVCamera.SetActive(false);
                     VCameraPoints[cameraCurrentID-1].lastVCamera.SetActive(true);
