@@ -11,11 +11,11 @@ namespace BloodBond {
         float stateTime, deltaTime;
         int hp, attackNum = 0;
 
-        bool isMoving = false, isHide = false;
+        bool isMoving = false, isHide = false, specificDash = false;
         int moveBlank = 0;
         float inputMoveX, inputMoveY;
         float hideTime = .0f;
-        Vector3 nextPos;
+        Vector3 nextPos, specificDashPoint;
         Vector3 moveForward = new Vector3(0, 0, 0), inputDir, lastFace = new Vector3(10, 10, 10);
         bool moveFix = false;
         Vector3 moveFixVector;
@@ -617,7 +617,20 @@ namespace BloodBond {
         //    attackCollider.enabled = false;
         //}
 
+        public void SpecificDash(Vector3 pos) {
+            specificDash = true;
+            specificDashPoint = pos;
+        }
+        public void CancleSpecificDash() {
+            specificDash = false;
+        }
         public bool CheckDashInput() {
+            if (specificDash && input.GetDashInput() && stateStep > 0) {
+                effectPlay.PlayWhichEffect(3);
+                nextPos = specificDashPoint;
+                stillDashInput = true;
+                return true;
+            }
             if (!stillDashInput)
             {
                 if (input.GetDashInput() && stateStep > 0)
