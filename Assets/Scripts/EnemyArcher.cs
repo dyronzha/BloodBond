@@ -72,6 +72,7 @@ namespace BloodBond {
 
                     Debug.Log("進遠程攻擊");
                     isAlarm = true;
+                    enemyManager.SetAllEnemyAlarm(this);
                     isAim = true;
                     ChangeState(enemyDistantATKState);
                     animator.SetBool("Aim", true);
@@ -175,6 +176,7 @@ namespace BloodBond {
                 AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
                 if (aniInfo.IsName("Attack"))
                 {
+                    AudioManager.SingletonInScene.PlaySound2D("BowHunter_Shoot", 0.3f);
                     crossBow.gameObject.SetActive(false);
                     targetPos = enemyManager.Player.SelfTransform.position;
                     enemyManager.SpawnArrow(crossBow.position, new Vector3(targetPos.x - crossBow.position.x, targetPos.y + 2.0f - crossBow.position.y, targetPos.z - crossBow.position.z).normalized);
@@ -220,8 +222,10 @@ namespace BloodBond {
 
         public override bool DashGetHurt()
         {
+            if (curState == dieState) return false;
             if (!isAlarm)
             {
+                AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
                 hp = 0;
                 animator.SetBool("Hurt", false);
                 animator.SetBool("Dead", true);
@@ -234,6 +238,7 @@ namespace BloodBond {
                 BloodSplash.Play();
                 if (hp > 0)
                 {
+                    AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
                     canHurt = false;
                     animator.SetBool("Hurt", true);
                     ChangeState(hurtState);
@@ -241,6 +246,7 @@ namespace BloodBond {
                 }
                 else
                 {
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
                     animator.SetBool("Hurt", false);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
@@ -271,7 +277,8 @@ namespace BloodBond {
             if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
             {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
-                hp -= 0;
+                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                hp -= 10;
                 lastHurtHash = curCount;
                 targetPos = enemyManager.Player.SelfTransform.position;
                 HurtDir = new Vector3(targetPos.x - transform.position.x, 0, targetPos.z - transform.position.z);
@@ -288,6 +295,7 @@ namespace BloodBond {
                 }
                 else
                 {
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
                     animator.SetBool("Hurt", false);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
@@ -317,7 +325,8 @@ namespace BloodBond {
             if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
             {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
-                hp -= 0;
+                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                hp -= 10;
                 lastHurtHash = curCount;
                 HurtDir = new Vector3(targetPos.x - transform.position.x, 0, targetPos.z - transform.position.z);
                 transform.rotation = Quaternion.LookRotation(new Vector3(HurtDir.x, 0, HurtDir.z));
@@ -339,6 +348,7 @@ namespace BloodBond {
                 }
                 else
                 {
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
                     return true;
@@ -377,7 +387,6 @@ namespace BloodBond {
                         enemyManager.SubLateAction(transform.name, Aming);
                     }
                     canHurt = true;
-                    lastHurtHash = 999;
                     stateStep = 0;
                 }
             }
@@ -401,6 +410,23 @@ namespace BloodBond {
             Debug.Log("in distance 有障礙物");
             return false;
         }
+
+        public override void AllAlarm()
+        {
+            //if (!isAlarm && hp > 0)
+            //{
+            //    isAlarm = true;
+            //    isAim = true;
+            //    ChangeState(enemyDistantATKState);
+            //    animator.SetBool("Aim", true);
+            //    lastAimRot = Quaternion.LookRotation(targetDir) * Quaternion.Euler(0, -60, 0);
+            //    transform.rotation = lastAimRot;
+            //    enemyManager.SubLateAction(transform.name, Aming);
+            //    crossBow.gameObject.SetActive(true);
+            //}
+
+        }
+
         public override void Reset()
         {
             hp = enemyManager.ArcherValue.Health;

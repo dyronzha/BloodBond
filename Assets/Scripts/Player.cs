@@ -11,9 +11,10 @@ namespace BloodBond {
         float stateTime, deltaTime;
         int hp, attackNum = 0;
 
-        bool isMoving = false;
+        bool isMoving = false, isHide = false;
         int moveBlank = 0;
         float inputMoveX, inputMoveY;
+        float hideTime = .0f;
         Vector3 nextPos;
         Vector3 moveForward = new Vector3(0, 0, 0), inputDir, lastFace = new Vector3(10, 10, 10);
         bool moveFix = false;
@@ -26,7 +27,7 @@ namespace BloodBond {
         bool invincible = false;
         float invincibleTime = .0f;
         bool isDistantHurt = false;
-        public bool IsDistantHurt{ get { return isDistantHurt; } }
+        public bool IsDistantHurt { get { return isDistantHurt; } }
 
         bool showATKCollider = false;
 
@@ -34,11 +35,11 @@ namespace BloodBond {
         int dashPointCount = 1;
         float dashTime = .0f, dashLength = .0f, lastDashLength = .0f;
         LineRenderer dashOrientEffect;
-        Vector3 dashFixPos, goalPoint, dashDir, lastDashDir = new Vector3(0,0,0);
+        Vector3 dashFixPos, goalPoint, dashDir, lastDashDir = new Vector3(0, 0, 0);
         Vector3 dashEffectPos;
         float dashEffectHeight;
         RaycastHit dashHit;
-        
+
 
         KarolShader karolShader;
         public GameObject PhantomCreate;
@@ -86,7 +87,7 @@ namespace BloodBond {
             dodgeState = new PlayerDodgeState(this);
             dashState = new PlayerDashState(this);
 
-            float[] ATKColliderEnableTimes = new float[3] { 0.18f, 0.16f, 0.11f};
+            float[] ATKColliderEnableTimes = new float[3] { 0.18f, 0.16f, 0.11f };
             normalComboAtkState = new PlayerNormalComboATKState(this, 3, ATKColliderEnableTimes);
             Transform atkColliders = transform.Find("ATKColliders");
             Collider atk1 = atkColliders.GetChild(0).GetComponent<Collider>();
@@ -112,8 +113,9 @@ namespace BloodBond {
             curState.Update();
             if (inDodgeCD) CountDodgeCD();
             if (invincible) CountInvincibleTime();
-
-            Vector3 groundPos = new Vector3(0,0,0);
+            if (isHide) Hide();
+            else CheckHide();
+            Vector3 groundPos = new Vector3(0, 0, 0);
             if (GroundCheck.DetectGround(ref nextPos) && !animator.applyRootMotion) transform.position = nextPos;
             isDistantHurt = false;
         }
@@ -127,10 +129,16 @@ namespace BloodBond {
             animator.SetBool(name, v);
         }
 
-        //public bool CheckAniInfoState() {
-        //    if (stateStep > 0) return true;
-        //    else return false;
-        //}
+        void Hide() {
+            hideTime += deltaTime;
+            if (hideTime >= 4.0f) isHide = false;
+        }
+        void CheckHide() {
+            if (input.GetHideInput()) {
+                isHide = true;
+                karolShader.ChangeMaterial(15);
+            }
+        }
 
         //待機相關
         public void IdleCheckMove() {
@@ -205,6 +213,7 @@ namespace BloodBond {
                 
                 Instantiate(PhantomCreate, selfTransform.position + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
                 Instantiate(PhantomCreate, selfTransform.position + fixPos + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
+                AudioManager.SingletonInScene.PlaySound2D("Karol_Dodge", 0.3f);
             }
             else if (stateStep == 1)
             {
@@ -524,7 +533,7 @@ namespace BloodBond {
                         selfTransform.rotation = Quaternion.LookRotation(inputDir);
                     }
 
-                    if (comboCount < 2 && (Physics.OverlapBox(selfTransform.position + 0.5f * selfTransform.forward, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier")
+                    if (comboCount < 2 && (Physics.OverlapBox(selfTransform.position + 0.5f * selfTransform.forward, new Vector3(0.2f, 0.2f, 0.2f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier")
                         | 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Wall"))).Length == 0))
                     {
                         Debug.Log("combo " + comboCount + "   no wall");
@@ -541,12 +550,13 @@ namespace BloodBond {
             }
             else if (stateStep == 1)
             {
-                if (animator.applyRootMotion && comboCount < 2) animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, (1 << LayerMask.NameToLayer("Barrier") 
-                    | 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Wall")));
+                if (animator.applyRootMotion && comboCount < 2) animator.applyRootMotion = (Physics.OverlapBox(selfTransform.position + 0.5f * selfTransform.forward, new Vector3(0.2f, 0.2f, 0.2f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier")
+                        | 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Wall"))).Length == 0);//!Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Wall")));
                 if (!normalComboAtkState.hasEnableCollider && aniInfo.normalizedTime >= normalComboAtkState.currentColliderTime)
                 {
                     normalComboAtkState.hasEnableCollider = true;
                     normalComboAtkState.curATKCollider.enabled = true;
+                    AudioManager.SingletonInScene.PlaySound2D("Karol_Attack_" + (comboCount+1).ToString(), 0.3f);
                 }
                 if (aniInfo.normalizedTime > 0.15f)
                 {
@@ -573,6 +583,7 @@ namespace BloodBond {
                         comboCount = 0;
                         animator.SetBool("NormalComboATK", false);
                         animator.applyRootMotion = false;
+                        nextPos = selfTransform.position;
                         ChangeState(idleState);
                     }
                 }
@@ -761,6 +772,7 @@ namespace BloodBond {
                         }
                     }
                     nextPos = goalPoint;
+                    AudioManager.SingletonInScene.PlaySound2D("Karol_Dash", 0.3f);
                     //selfTransform.position = goalPoint;
                     Debug.Log("line 722 = " + goalPoint);
                     selfTransform.rotation = Quaternion.LookRotation(inputDir);
@@ -951,7 +963,7 @@ namespace BloodBond {
 
         void CountInvincibleTime() {
             invincibleTime += deltaTime;
-            if (invincibleTime > 1.0f) {
+            if (invincibleTime > 0.7f) {
                 invincible = false;
                 invincibleTime = .0f;
             } 

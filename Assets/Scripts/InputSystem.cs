@@ -40,6 +40,9 @@ namespace BloodBond {
         public bool GetNormalComboATK() {
             return playerInput.GetButtonDown("NormalComboATK");
         }
+        public bool GetHideInput() {
+            return playerInput.GetButtonDown("Hide");
+        }
     }
 }
 

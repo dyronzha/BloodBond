@@ -97,7 +97,9 @@ namespace BloodBond {
             lookAroundState = new EnemyLookAroundState(this);
             chaseState = new EnemyChaseState(this);
             comboAttackState = new EnemyComboAttackState(this,3,new float[3] {0.75f,0.6f,0.3f}, new float[3] {0.92f,0.73f,0.4f});
-            Collider[] atkC = new Collider[1] { transform.Find("mixamorig:Hips").GetChild(2).GetChild(0).GetChild(0).GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(1).GetChild(1).GetComponent<Collider>() };
+            Transform atkColliders = transform.Find("ATKColliders");
+            Collider[] atkC = new Collider[3] { atkColliders.GetChild(0).GetComponent<Collider>(), atkColliders.GetChild(1).GetComponent<Collider>() , atkColliders.GetChild(2).GetComponent<Collider>() };
+            //transform.Find("mixamorig:Hips").GetChild(2).GetChild(0).GetChild(0).GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(1).GetChild(1).GetComponent<Collider>() 
             comboAttackState.ATKColliders = atkC;
             hurtState = new EnemyHurtState(this);
             yellState = new EnemyYellState(this);
@@ -141,7 +143,7 @@ namespace BloodBond {
             lookDir = head.forward;
             lookPos = selfPos + new Vector3(0, 1.3f, 0);
             curState.Update();
-            Debug.Log(curState);
+            Debug.Log(transform.name + "   " +  curState);
         }
 
         public virtual void LateUpdate(float dtTime) { 
@@ -177,6 +179,7 @@ namespace BloodBond {
                     Debug.Log("進懷疑");
                     ChangeState(suspectIdleState);  //先進"懷疑idle"以免尋路過久
                     isAlarm = true;
+                    enemyManager.SetAllEnemyAlarm(this);
                     //animator.SetBool("Chase", true);
                     //ChangeState(chaseState);
                     return true;
@@ -526,7 +529,7 @@ namespace BloodBond {
                     {
                         animator.SetBool("Patrol", false);
                         animator.SetBool("Look", true);
-                        ChangeState(lookAroundState);//到定點查看
+                        ChangeState(suspectLookAroundState);//到定點查看
                         return;
                     }
                     else
@@ -727,6 +730,7 @@ namespace BloodBond {
 
                 if (aniInfo.normalizedTime >= comboAttackState.currentColliderTime) {
                     Debug.Log("開啟碰撞器");
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Attack_" + (comboCount + 1).ToString(), 0.3f);
                     comboAttackState.hasEnableCollider = true;
                     comboAttackState.curATKCollider.enabled = true;
                     stateStep++;
@@ -787,8 +791,10 @@ namespace BloodBond {
             
         }
         public virtual bool DashGetHurt() {
+            if (curState == dieState) return false;
             if (!isAlarm)
             {
+                AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
                 hp = 0;
                 animator.SetBool("Hurt", false);
                 animator.SetBool("Dead", true);
@@ -800,6 +806,7 @@ namespace BloodBond {
                 BloodSplash.Play();
                 if (hp > 0)
                 {
+                    AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
                     canHurt = false;
                     animator.SetBool("Hurt", true);
                     ChangeState(hurtState);
@@ -807,6 +814,7 @@ namespace BloodBond {
                 }
                 else
                 {
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
                     animator.SetBool("Hurt", false);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
@@ -827,7 +835,7 @@ namespace BloodBond {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
                 hp -= 10;
                 lastHurtHash = curCount;
-
+                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
                 HurtDir = new Vector3(targetPos.x - transform.position.x, 0, targetPos.z - transform.position.z); //new Vector3(targetDir.x - transform.position.x, targetDir.y - transform.position.y, targetDir.z - transform.position.z);
                 BloodSplash.transform.rotation = Quaternion.LookRotation(HurtDir);
                 BloodSplash.Play();
@@ -840,6 +848,7 @@ namespace BloodBond {
                     
                 }
                 else {
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
                     animator.SetBool("Hurt", false);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
@@ -862,6 +871,7 @@ namespace BloodBond {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
                 hp -= 10;
                 lastHurtHash = curCount;
+                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
                 if (hp > 0)
                 {
                     canHurt = false;
@@ -871,6 +881,7 @@ namespace BloodBond {
                 }
                 else
                 {
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
                     return true;
@@ -883,7 +894,10 @@ namespace BloodBond {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateStep == 0)
             {
-                if (aniInfo.IsName("Hurt")) stateStep++;
+
+                if (aniInfo.IsName("Hurt")) {
+                    stateStep++;
+                } 
             }
             else
             {
@@ -928,7 +942,6 @@ namespace BloodBond {
                         //animator.SetBool("Look", true);
                     }
                     canHurt = true;
-                    lastHurtHash = 999;
                     stateStep = 0;
                 }
             }
@@ -942,6 +955,22 @@ namespace BloodBond {
                     stateStep++;
                 } 
             }
+        }
+        public virtual void AllAlarm() {
+            //Debug.Log(transform.name + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~goooo alarm " + isAlarm + "   ");
+            if (!isAlarm && hp >0) {
+                curState.GoAlarm();
+                seeDelayTime = .0f;
+                animator.SetTrigger("Alarm");
+                targetPos = enemyManager.Player.SelfTransform.position;
+                targetDir = new Vector3(targetPos.x - selfPos.x, 0, targetPos.z - selfPos.z);
+                findingPath = false;
+                curPathRequest = PathFinder.PathRequestManager.RequestPath(pathFinding, curPathRequest, selfPos, targetPos, OnPathFound);
+                Debug.Log("進懷疑");
+                ChangeState(suspectIdleState);  //先進"懷疑idle"以免尋路過久
+                isAlarm = true;
+            }
+            
         }
         public virtual void Reset() {
             hp = enemyManager.HunterValue.Health;

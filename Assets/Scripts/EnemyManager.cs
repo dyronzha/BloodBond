@@ -27,6 +27,9 @@ namespace BloodBond {
 
         PatrolManager patrolManager;
 
+        bool allAlarm = false;
+        int enemyDeadNum = 0;
+
         [SerializeField]
         EnemyValue hunterInfo;
         public EnemyValue HunterValue {
@@ -160,6 +163,16 @@ namespace BloodBond {
             currentAreaEnemy = enemyArea[id];
             curArea = area;
         }
+        public void EnemyDead(EnemyBase enemy) {
+            if (currentAreaEnemy.Contains(enemy))
+            {
+                enemyDeadNum++;
+                if (enemyDeadNum >= currentAreaEnemy.Count - 1) { 
+                    //區域結束
+                }
+            }
+        }
+
         public EnemyBase SpawnEnemyWithRoute(PatrolRoute.EnemyType type, Vector3 loc, PatrolRoute route, PathFinder.PathFinding finding, float height)
         {
             if (type == PatrolRoute.EnemyType.Hunter)
@@ -209,6 +222,20 @@ namespace BloodBond {
             freeArcherHunterList.RemoveAt(0);
             enemy.Init();
             return enemy;
+        }
+
+        public void SetAllEnemyAlarm(EnemyBase enemy) {
+            
+            if (currentAreaEnemy.Contains(enemy)) {
+                for (int i = 0; i < currentAreaEnemy.Count; i++)
+                {
+                    if (enemy.transform.name.CompareTo(currentAreaEnemy[i].transform.name) != 0)
+                    {
+                        currentAreaEnemy[i].AllAlarm();
+                    }
+                }
+            }
+
         }
 
         public int GetArrowNum() {

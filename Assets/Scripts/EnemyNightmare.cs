@@ -75,6 +75,7 @@ namespace BloodBond {
                 seeDelayTime += deltaTime * 1.5f;
                 if (seeDelayTime > enemyManager.NightmareValue.SeeConfirmTime)
                 {
+                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Roar_2", 0.3f);
                     seeDelayTime = .0f;
                     animator.SetTrigger("Alarm");
                     targetPos = enemyManager.Player.SelfTransform.position;
@@ -466,6 +467,7 @@ namespace BloodBond {
                     {
                         animator.applyRootMotion = false;
                     }
+                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Attack", 0.3f);
                     stateStep++;
                 }
             }
@@ -533,7 +535,109 @@ namespace BloodBond {
                 }
             }
         }
+        public override bool DashGetHurt()
+        {
+            if (curState == dieState) return false;
+            if (!isAlarm)
+            {
+                AudioManager.SingletonInScene.PlaySound2D("Nightmare_Death", 0.3f);
+                hp = 0;
+                animator.SetBool("Hurt", false);
+                animator.SetBool("Dead", true);
+                ChangeState(dieState);
+                return true;
+            }
+            else
+            {
+                hp -= 10;
+                BloodSplash.Play();
+                if (hp > 0)
+                {
+                    AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                    canHurt = false;
+                    animator.SetBool("Hurt", true);
+                    ChangeState(hurtState);
 
+                }
+                else
+                {
+                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Death", 0.3f);
+                    animator.SetBool("Hurt", false);
+                    animator.SetBool("Dead", true);
+                    ChangeState(dieState);
+                }
+            }
+            return false;
+        }
+        public override bool CheckGetHurt()
+        {
+
+            Vector3 center = hurtAreaCollider.center;
+            Vector3 point2 = transform.position + center.x * transform.right + center.z * transform.forward;
+            Vector3 point1 = point2 + new Vector3(0, hurtAreaCollider.height, 0);
+            Debug.DrawLine(point1, point2, Color.red);
+            Collider[] cols = Physics.OverlapCapsule(point1, point2, hurtAreaCollider.radius, enemyManager.HunterValue.HurtAreaLayer);
+            int curCount = enemyManager.Player.GetAttackComboCount();
+            if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
+            {
+                Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
+                hp -= 10;
+                lastHurtHash = curCount;
+                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                HurtDir = new Vector3(targetPos.x - transform.position.x, 0, targetPos.z - transform.position.z); //new Vector3(targetDir.x - transform.position.x, targetDir.y - transform.position.y, targetDir.z - transform.position.z);
+                BloodSplash.transform.rotation = Quaternion.LookRotation(HurtDir);
+                BloodSplash.Play();
+
+                if (hp > 0)
+                {
+                    canHurt = false;
+                    animator.SetBool("Hurt", true);
+                    ChangeState(hurtState);
+
+                }
+                else
+                {
+                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Death", 0.3f);
+                    animator.SetBool("Hurt", false);
+                    animator.SetBool("Dead", true);
+                    ChangeState(dieState);
+                }
+                return true;
+            }
+
+            return false;
+        }
+        public override bool CheckGetHurtInHurt()
+        {
+            Vector3 center = hurtAreaCollider.center;
+            Vector3 point2 = transform.position + center.x * transform.right + center.z * transform.forward;
+            Vector3 point1 = point2 + new Vector3(0, hurtAreaCollider.height, 0);
+            Debug.DrawLine(point1, point2, Color.red);
+            Collider[] cols = Physics.OverlapCapsule(point1, point2, hurtAreaCollider.radius, enemyManager.HunterValue.HurtAreaLayer);
+            int curCount = enemyManager.Player.GetAttackComboCount();
+            if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
+            {
+                Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
+                hp -= 10;
+                lastHurtHash = curCount;
+                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                if (hp > 0)
+                {
+                    canHurt = false;
+                    animator.SetTrigger("HurtAgain");
+                    //ChangeState(hurtState);
+                    Debug.Log("hurt time   " + animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+                }
+                else
+                {
+                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Death", 0.3f);
+                    animator.SetBool("Dead", true);
+                    ChangeState(dieState);
+                    return true;
+                }
+            }
+            return false;
+        }
         public override void InHurt()
         {
             AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
@@ -587,6 +691,10 @@ namespace BloodBond {
                 }
             }
         }
+        public override void AllAlarm()
+        {
+        }
+
         public override void Reset()
         {
             hp = enemyManager.NightmareValue.Health;
