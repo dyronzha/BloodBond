@@ -63,19 +63,24 @@ namespace BloodBond {
 
         void Start()
         {
-            enemyManager.CreateArea(areaPatrolRoutes.Count);
-            for (int i = 0; i < areaPatrolRoutes.Count; i++) {
-                enemyManager.AddNewArea(i);
-                for (int j = 0; j < areaPatrolRoutes[i].patrolRoutes.Count; j++) {
-                    enemyManager.SpawnEnemyWithRoute(areaPatrolRoutes[i].patrolRoutes[j].enemyType, areaPatrolRoutes[i].patrolRoutes[j].StartPosition, areaPatrolRoutes[i].patrolRoutes[j], areaPatrolRoutes[i].pathFinding, areaPatrolRoutes[i].HeightY);
-                }
-                for (int j = 0; j < areaPatrolRoutes[i].archerLocs.Count; j++)
+            if (areaPatrolRoutes.Count > 0) {
+                enemyManager.CreateArea(areaPatrolRoutes.Count);
+                for (int i = 0; i < areaPatrolRoutes.Count; i++)
                 {
-                    enemyManager.SpawnAcherInLoc(areaPatrolRoutes[i].archerLocs[j].position, areaPatrolRoutes[i].archerLocs[j].forward, areaPatrolRoutes[i].HeightY);
+                    enemyManager.AddNewArea(i);
+                    for (int j = 0; j < areaPatrolRoutes[i].patrolRoutes.Count; j++)
+                    {
+                        enemyManager.SpawnEnemyWithRoute(areaPatrolRoutes[i].patrolRoutes[j].enemyType, areaPatrolRoutes[i].patrolRoutes[j].StartPosition, areaPatrolRoutes[i].patrolRoutes[j], areaPatrolRoutes[i].pathFinding, areaPatrolRoutes[i].HeightY);
+                    }
+                    for (int j = 0; j < areaPatrolRoutes[i].archerLocs.Count; j++)
+                    {
+                        enemyManager.SpawnAcherInLoc(areaPatrolRoutes[i].archerLocs[j].position, areaPatrolRoutes[i].archerLocs[j].forward, areaPatrolRoutes[i].HeightY);
+                    }
                 }
+                //將manager目前的區域變回0
+                enemyManager.SetActiveArea(0, areaPatrolRoutes[0]);
             }
-            //將manager目前的區域變回0
-            enemyManager.SetActiveArea(0, areaPatrolRoutes[0]);
+           
         }
 
         // Update is called once per frame

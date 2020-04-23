@@ -68,7 +68,7 @@ namespace BloodBond {
 
         EnemyManager enemyManager;
 
-        public Transform goalPointObject;
+        //public Transform goalPointObject;
         // Start is called before the first frame update
         void Awake()
         {
@@ -114,7 +114,7 @@ namespace BloodBond {
             if (invincible) CountInvincibleTime();
 
             Vector3 groundPos = new Vector3(0,0,0);
-            if (GroundCheck.DetectGround(nextPos) && !animator.applyRootMotion) transform.position = nextPos;
+            if (GroundCheck.DetectGround(ref nextPos) && !animator.applyRootMotion) transform.position = nextPos;
             isDistantHurt = false;
         }
 
@@ -348,7 +348,7 @@ namespace BloodBond {
 
             float crossValue = -10000;
             Vector3 hitNormal = new Vector3(0,0,0);
-            if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier"))){
+            if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Wall"))){
                 hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
                 if (Vector3.Angle(hitNormal, way) > 150.0f)
                 {
@@ -356,7 +356,7 @@ namespace BloodBond {
                 }
                 crossValue = way.x * hitNormal.z - way.z * hitNormal.x;
             }
-            else if (Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier"))) {
+            else if (Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Wall"))) {
                 hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
                 if (Vector3.Angle(hitNormal, way) > 150.0f)
                 {
@@ -373,8 +373,8 @@ namespace BloodBond {
                     nextLeft = detectPos + 0.15f * new Vector3(-way.z, 0, way.x);
                     Debug.DrawLine(selfTransform.position, nextRight, Color.white);
                     Debug.DrawLine(selfTransform.position, nextLeft, Color.white);
-                    if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")) ||
-                       Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
+                    if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Wall")) ||
+                       Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Wall")))
                     {
                         moveFix = true;
                         return new Vector3(0, 0, 0);
@@ -435,7 +435,7 @@ namespace BloodBond {
 
             float crossValue = -10000;
             Vector3 hitNormal = new Vector3(0, 0, 0);
-            if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
+            if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Wall")))
             {
                 hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
                 if (Vector3.Angle(hitNormal, way) > 170.0f)
@@ -444,7 +444,7 @@ namespace BloodBond {
                 }
                 crossValue = way.x * hitNormal.z - way.z * hitNormal.x;
             }
-            else if (Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
+            else if (Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Wall")))
             {
                 hitNormal = new Vector3(moveRayHit.normal.x, 0, moveRayHit.normal.z);
                 if (Vector3.Angle(hitNormal, way) > 170.0f)
@@ -464,8 +464,8 @@ namespace BloodBond {
                     nextLeft = detectPos + 0.35f * new Vector3(-way.z, 0, way.x);
                     Debug.DrawLine(selfTransform.position, nextRight, Color.white);
                     Debug.DrawLine(selfTransform.position, nextLeft, Color.white);
-                    if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")) ||
-                       Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier")))
+                    if (Physics.Linecast(selfTransform.position, nextRight, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Wall")) ||
+                       Physics.Linecast(selfTransform.position, nextLeft, out moveRayHit, 1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Wall")))
                     {
                         moveFix = true;
                         return new Vector3(0, 0, 0);
@@ -524,7 +524,8 @@ namespace BloodBond {
                         selfTransform.rotation = Quaternion.LookRotation(inputDir);
                     }
 
-                    if (comboCount < 2 && (Physics.OverlapBox(selfTransform.position + 0.5f * selfTransform.forward, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Enemy"))).Length == 0))
+                    if (comboCount < 2 && (Physics.OverlapBox(selfTransform.position + 0.5f * selfTransform.forward, new Vector3(0.5f, 0.5f, 0.5f), transform.rotation, (1 << LayerMask.NameToLayer("Barrier")
+                        | 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Wall"))).Length == 0))
                     {
                         Debug.Log("combo " + comboCount + "   no wall");
                         animator.applyRootMotion = true;
@@ -540,7 +541,8 @@ namespace BloodBond {
             }
             else if (stateStep == 1)
             {
-                if (animator.applyRootMotion && comboCount < 2) animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, (1 << LayerMask.NameToLayer("Barrier")| 1 << LayerMask.NameToLayer("Enemy")));
+                if (animator.applyRootMotion && comboCount < 2) animator.applyRootMotion = !Physics.Raycast(selfTransform.position, selfTransform.forward, 0.5f, (1 << LayerMask.NameToLayer("Barrier") 
+                    | 1 << LayerMask.NameToLayer("Enemy") | 1 << LayerMask.NameToLayer("Wall")));
                 if (!normalComboAtkState.hasEnableCollider && aniInfo.normalizedTime >= normalComboAtkState.currentColliderTime)
                 {
                     normalComboAtkState.hasEnableCollider = true;
@@ -790,20 +792,20 @@ namespace BloodBond {
             bool _dash = false;
             int count = dashPointCount > 15 ? 15 : dashPointCount;
             goalPoint = dashFixPos + 0.5f * count * dashDir;  //點間隔0.4
-            goalPointObject.position = goalPoint;
+            //goalPointObject.position = goalPoint;
             Debug.Log("new dash " + count);
-            if (Physics.Linecast(dashFixPos, goalPoint + new Vector3(0,1,0), out dashHit, 1 << LayerMask.NameToLayer("Barrier")))  //橫向射線判斷
+            if (Physics.Linecast(dashFixPos, goalPoint + new Vector3(0,1,0), out dashHit, 1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Wall")))  //橫向射線判斷
             {
                 Debug.Log("打中障礙物");
                 if (dashHit.transform.tag.CompareTo("Through") == 0)  //判斷是不是可穿透物體
                 {
                     Debug.Log("打中可以穿的障礙物");
-                    Collider[] hits = Physics.OverlapSphere(goalPoint, 0.15f, 1 << LayerMask.NameToLayer("Barrier"));   //判斷落點位置碰撞
+                    Collider[] hits = Physics.OverlapSphere(goalPoint, 0.15f, 1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Wall"));   //判斷落點位置碰撞
                     Debug.DrawRay(goalPoint + 0.15f*new Vector3(-dashDir.z,0,dashDir.x).normalized, new Vector3(dashDir.z, 0, -dashDir.x), Color.blue, 0.3f);
                     if (hits == null || hits.Length <= 0)
                     {
                         Debug.Log("目的地沒障礙物");
-                        if (Physics.Raycast(goalPoint + new Vector3(0, 5, 0), new Vector3(0, -1, 0), out dashHit, 10.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
+                        if (Physics.Raycast(goalPoint + new Vector3(0, 1, 0), new Vector3(0, -1, 0), out dashHit, 10.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
                         {
                             Debug.Log("目的地有地板");
                             _dash = true;
@@ -833,7 +835,7 @@ namespace BloodBond {
                     goalPoint = dashFixPos + lastDashLength * dashDir;
 
                     Debug.Log("第幾個： " + num);
-                    if (Physics.Raycast(goalPoint + new Vector3(0, 5, 0), new Vector3(0, -1, 0), out dashHit, 10.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
+                    if (Physics.Raycast(goalPoint + new Vector3(0, 10, 0), new Vector3(0, -1, 0), out dashHit, 12.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
                     {
                         Debug.Log("目的地有地板");
                         _dash = true;
@@ -845,12 +847,12 @@ namespace BloodBond {
             }
             else {
                 Debug.Log("沒打中障礙物");
-                Collider[] hits = Physics.OverlapSphere(goalPoint, 0.15f, 1 << LayerMask.NameToLayer("Barrier"));   //判斷落點位置碰撞
+                Collider[] hits = Physics.OverlapSphere(goalPoint, 0.15f, 1 << LayerMask.NameToLayer("Barrier") | 1 << LayerMask.NameToLayer("Wall"));   //判斷落點位置碰撞
                 Debug.DrawRay(goalPoint + 0.15f * new Vector3(-dashDir.z, 0, dashDir.x).normalized, new Vector3(dashDir.z, 0, -dashDir.x), Color.blue, 0.3f);
                 if (hits == null || hits.Length <= 0)
                 {
                     Debug.Log("目的地沒障礙物");
-                    if (Physics.Raycast(goalPoint + new Vector3(0, 5, 0), new Vector3(0, -1, 0), out dashHit, 10.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
+                    if (Physics.Raycast(goalPoint + new Vector3(0, 10, 0), new Vector3(0, -1, 0), out dashHit, 12.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
                     {
                         Debug.Log("目的地有地板");
                         _dash = true;
@@ -867,7 +869,7 @@ namespace BloodBond {
                     Debug.Log("目的地有障礙物  " + hits[0].transform.name);
                     lastDashLength = 0.5f*(dashPointCount-1);  //長度點乘間隔
                     goalPoint = dashFixPos + lastDashLength * dashDir;
-                    if (Physics.Raycast(goalPoint + new Vector3(0, 5, 0), new Vector3(0, -1, 0), out dashHit, 10.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
+                    if (Physics.Raycast(goalPoint + new Vector3(0, 10, 0), new Vector3(0, -1, 0), out dashHit, 12.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
                     {
                         Debug.Log("目的地有地板");
                         _dash = true;

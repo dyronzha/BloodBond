@@ -124,15 +124,19 @@ namespace BloodBond {
             //for (int i = usedArcherHunterList.Count - 1; i >= 0; i--) {
             //    usedArcherHunterList[i].Update(deltaTime);
             //}
-            for (int i = 0; i < currentAreaEnemy.Count; i++) {
-                currentAreaEnemy[i].Update(deltaTime);
+            if (currentAreaEnemy != null) {
+                for (int i = 0; i < currentAreaEnemy.Count; i++)
+                {
+                    currentAreaEnemy[i].Update(deltaTime);
+                }
+                for (int i = usedEnemyArrowList.Count - 1; i >= 0; i--)
+                {
+                    usedEnemyArrowList[i].Update(deltaTime);
+                }
+                //清除搜尋路後的權重
+                curArea.pathFinding.ClearGridExtendPenalty();
             }
-            for (int i = usedEnemyArrowList.Count - 1; i >= 0; i--)
-            {
-                usedEnemyArrowList[i].Update(deltaTime);
-            }
-            //清除搜尋路後的權重
-            curArea.pathFinding.ClearGridExtendPenalty();
+
             if (Input.GetKeyDown(KeyCode.Space)) ResetEnemy();
         }
         private void LateUpdate()
