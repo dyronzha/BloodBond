@@ -952,9 +952,10 @@ namespace BloodBond {
             if (isDistantHurt) //遠程判斷
             {
                 invincible = true;
-
-                hp -= 20;
-                uiInterface.ReceiveAttack(20);
+                if (hp > 20) {
+                    hp -= 20;
+                    uiInterface.ReceiveAttack(20);
+                }
                 ChangeState(hurtState);
                 animator.SetBool("Hurt", true);
                 return true;
@@ -967,7 +968,11 @@ namespace BloodBond {
             Collider[] cols =  Physics.OverlapCapsule(point1, point2, hurtAreaCollider.radius, infoValue.HurtAreaLayer);
             if (cols != null && cols.Length > 0) {
                 invincible = true;
-                hp -= 20;
+                if (hp > 20)
+                {
+                    hp -= 20;
+                    uiInterface.ReceiveAttack(20);
+                }
                 uiInterface.ReceiveAttack(20);
                 ChangeState(hurtState);
                 animator.SetBool("Hurt", true);

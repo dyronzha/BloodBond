@@ -94,8 +94,11 @@ namespace BloodBond {
                 {
                     Debug.Log(ProgressPoints[progressID].Point.name);
                     enemyManager.SetActiveArea(ProgressPoints[progressID].progressID);
-                    if(progressID == 1)
+                    
                     progressID++;
+                    if (progressID == 1) AudioManager.SingletonInScene.ChangeBGM(1);
+                    else if (progressID == 2) AudioManager.SingletonInScene.ChangeBGM(2);
+                    else if (progressID == 3) AudioManager.SingletonInScene.ChangeBGM(3);
                 }
             }
 

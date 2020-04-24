@@ -77,14 +77,20 @@ public class AudioManager : MonoBehaviour
     public void ChangeBGM(int id) {
         switch (id) {
             case 0:
+                bgmAudio.Stop();
+                bgmAudio.clip = BGMClips[0];
+                bgmAudio.Play();
                 break;
+                
             case 1:
+                bgmAudio.Stop();
+                bgmAudio.clip = BGMClips[1];
+                bgmAudio.Play();
                 break;
             case 2:
-                break;
-            case 3:
-                break;
-            case 4:
+                bgmAudio.Stop();
+                bgmAudio.clip = BGMClips[2];
+                bgmAudio.Play();
                 break;
         }
     }
