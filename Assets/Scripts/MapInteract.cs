@@ -5,7 +5,7 @@ using UnityEngine;
 namespace BloodBond {
     public class MapInteract : MonoBehaviour
     {
-        int cameraCurrentID = 0, currentInteractID;
+        int cameraCurrentID = 0, currentInteractID, progressID = 0;
         Vector2 playerPosV2;
         Transform player;
         PathFinder.Line[] cameraPointLines, progressPointLine;
@@ -47,9 +47,12 @@ namespace BloodBond {
         [System.Serializable]
         public struct ProgressPoint
         {
-            public GameObject Point;
+            public Transform Point;
             public int progressID;
+            public float distance;
         }
+
+        EnemyManager enemyManager;
 
         // Start is called before the first frame update
         private void Awake()
@@ -63,6 +66,15 @@ namespace BloodBond {
                 cameraPointLines[i] = new PathFinder.Line(VCameraPoints[i].positionV2, VCameraPoints[i].positionV2 - fwdV2);
                 
             }
+
+            progressPointLine = new PathFinder.Line[ProgressPoints.Length];
+            for (int i = 0; i < progressPointLine.Length; i++) {
+                Vector2 v2 = new Vector2(ProgressPoints[i].Point.position.x, ProgressPoints[i].Point.position.z);
+                Vector2 fwdV2 = new Vector2(ProgressPoints[i].Point.forward.x, ProgressPoints[i].Point.forward.z);
+                progressPointLine[i] = new PathFinder.Line(v2, (v2 - fwdV2));
+            }
+            enemyManager = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
+
         }
         void Start()
         {
@@ -76,6 +88,16 @@ namespace BloodBond {
             playerPosV2 = new Vector2(player.position.x, player.position.z);
 
             //進度點判斷
+            if (progressID < ProgressPoints.Length){
+                Vector2 diffProgress = new Vector2(ProgressPoints[progressID].Point.position.x - playerPosV2.x, ProgressPoints[progressID].Point.position.z - playerPosV2.y);
+                if (diffProgress.sqrMagnitude < 12.0f && progressPointLine[progressID].HasCrossedLine(playerPosV2) && Mathf.Abs(playerPos.y - ProgressPoints[progressID].Point.position.y) < 2.0f)
+                {
+                    Debug.Log(ProgressPoints[progressID].Point.name);
+                    enemyManager.SetActiveArea(ProgressPoints[progressID].progressID);
+                    if(progressID == 1)
+                    progressID++;
+                }
+            }
 
 
 
@@ -96,7 +118,6 @@ namespace BloodBond {
             if (cameraCurrentID > 0) {
                 Vector2 dif = VCameraPoints[cameraCurrentID - 1].positionV2 - playerPosV2;
                 //Debug.Log("current id" + cameraCurrentID + "    dif " + Vector2.SqrMagnitude(dif) + "  cross line " + cameraPointLines[cameraCurrentID-1].HasCrossedLine(playerPosV2));
-                Debug.Log("camera " + cameraCurrentID);
                 if (Vector2.SqrMagnitude(dif) < VCameraPoints[cameraCurrentID-1].distance * VCameraPoints[cameraCurrentID-1].distance*0.25f &&
                     Mathf.Abs(playerPos.y - VCameraPoints[cameraCurrentID-1].heightY) < 0.5f && CrossCameraLastLine())
                 {
@@ -173,6 +194,19 @@ namespace BloodBond {
                         Gizmos.color = Color.red;
                         Transform point = scr.VCameraPoints[i].colliderPoint;
                         Gizmos.DrawLine(point.position + 0.5f * scr.VCameraPoints[i].distance * point.right, point.position - 0.5f * scr.VCameraPoints[i].distance * point.right);
+                    }
+                }
+            }
+
+            if (scr.ProgressPoints != null && scr.ProgressPoints.Length > 0)
+            {
+                for (int i = 0; i < scr.ProgressPoints.Length; i++)
+                {
+                    if (scr.ProgressPoints[i].Point!= null)
+                    {
+                        Gizmos.color = Color.red;
+                        Transform point = scr.ProgressPoints[i].Point;
+                        Gizmos.DrawLine(point.position + 0.5f * 10.0f * point.right, point.position - 0.5f * 10.0f * point.right);
                     }
                 }
             }

@@ -49,6 +49,7 @@ namespace BloodBond {
         public PatrolRoute PatrolRoute {
             get { return patrolRoute; }
         }
+        public string AreaNmae;
         int curPointID = 1;
         protected PatrolRoute.RouteType routeType;
         protected bool pathOver = false;
@@ -143,7 +144,6 @@ namespace BloodBond {
             lookDir = head.forward;
             lookPos = selfPos + new Vector3(0, 1.3f, 0);
             curState.Update();
-            Debug.Log(transform.name + "   " +  curState);
         }
 
         public virtual void LateUpdate(float dtTime) { 
@@ -155,17 +155,14 @@ namespace BloodBond {
             stateTime = .0f;
             curState = state;
             animator.speed = 1.0f;
-            Debug.Log("change " + curState);
         }
 
         public virtual bool FindPlayer()
         {
             //return false;
-            Debug.Log("視覺~~");
             if (PlayerInSight(lookDir, enemyManager.HunterValue.SightDistance, enemyManager.HunterValue.SightAngle) && pathFinding.CheckInGrid(enemyManager.Player.SelfTransform.position)) //Physics.Raycast(lookPos, lookDir, 5.0f, 1 << LayerMask.NameToLayer("Player"))
             {
                 if (curState == lookAroundState && animator.speed > 0.7f) animator.speed = .0f;
-                Debug.Log("懷疑時間 " + seeDelayTime);
                 seeDelayTime += deltaTime*1.5f;
                 if (seeDelayTime > enemyManager.HunterValue.SeeConfirmTime)
                 {
@@ -594,6 +591,11 @@ namespace BloodBond {
             else if (stateStep == 2)
             {
                 Vector2 pos2D = new Vector2(selfPos.x, selfPos.z);
+                if (playerPath == null) {
+                    animator.SetBool("Patrol", false);
+                    stateStep = 0;
+                    return;
+                }
                 if (playerPath.turnBoundaries[playerPathIndex].HasCrossedLine(pos2D))
                 {
                     if (playerPathIndex == playerPath.finishLineIndex)

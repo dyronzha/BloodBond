@@ -100,11 +100,9 @@ namespace BloodBond {
         }
         public override void Idle()
         {
-            Debug.Log("idle");
             if (idleTime > .0f) {
                 stateTime += deltaTime;
                 if (stateTime >= idleTime) {
-                    Debug.Log("to patrol");
                     idleTime = -1.0f;
                     animator.SetBool("Patrol", true);
                     ChangeState(patrolState);

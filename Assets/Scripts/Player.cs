@@ -6,11 +6,13 @@ using UnityEngine;
 namespace BloodBond {
     public class Player : MonoBehaviour
     {
+        UI_InGame uiInterface;
+
         int stateStep = 0;
         public int StateStep { get { return stateStep; } }
         float stateTime, deltaTime;
-        int hp, attackNum = 0;
-
+        int hp = 100, attackNum = 0;
+        int potion = 5;
         bool isMoving = false, isHide = false, specificDash = false;
         int moveBlank = 0;
         float inputMoveX, inputMoveY;
@@ -20,7 +22,6 @@ namespace BloodBond {
         bool moveFix = false;
         Vector3 moveFixVector;
         RaycastHit moveRayHit;
-
         bool inDodgeCD = false;
         float dodgeOffset, dodgeCD, dodgeTime;
 
@@ -40,6 +41,7 @@ namespace BloodBond {
         float dashEffectHeight;
         RaycastHit dashHit;
 
+        System.Action dashCBK;
 
         KarolShader karolShader;
         public GameObject PhantomCreate;
@@ -73,6 +75,8 @@ namespace BloodBond {
         // Start is called before the first frame update
         void Awake()
         {
+            uiInterface = GameObject.Find("Canvas").GetComponent<UI_InGame>();
+
             selfTransform = transform;
             mainCamera = Camera.main;
             hurtAreaCollider = GetComponent<CapsuleCollider>();
@@ -617,22 +621,39 @@ namespace BloodBond {
         //    attackCollider.enabled = false;
         //}
 
-        public void SpecificDash(Vector3 pos) {
+        public void SpecificDash(Vector3 pos, System.Action cbk) {
             specificDash = true;
             specificDashPoint = pos;
+            dashCBK = cbk;
         }
         public void CancleSpecificDash() {
             specificDash = false;
+            dashCBK = null;
         }
         public bool CheckDashInput() {
-            if (specificDash && input.GetDashInput() && stateStep > 0) {
-                effectPlay.PlayWhichEffect(3);
-                nextPos = specificDashPoint;
-                stillDashInput = true;
-                return true;
-            }
             if (!stillDashInput)
             {
+                //特定點瞬移
+                if (specificDash && input.GetDashInput() && stateStep > 0 && dashCBK != null)
+                {
+                    effectPlay.PlayWhichEffect(3);
+                    nextPos = specificDashPoint;
+                    stillDashInput = true;
+                    dashCBK();
+                    if (input.GetMove())
+                    {
+                        animator.SetBool("Run", true);
+                        ChangeState(moveState);
+                    }
+                    else
+                    {
+                        animator.SetBool("Run", false);
+                        ChangeState(idleState);
+                    }
+                    return true;
+                }
+
+                //普通瞬移
                 if (input.GetDashInput() && stateStep > 0)
                 {
                     ChangeState(dashState);
@@ -830,7 +851,7 @@ namespace BloodBond {
                     if (hits == null || hits.Length <= 0)
                     {
                         Debug.Log("目的地沒障礙物");
-                        if (Physics.Raycast(goalPoint + new Vector3(0, 1, 0), new Vector3(0, -1, 0), out dashHit, 10.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
+                        if (Physics.Raycast(goalPoint, new Vector3(0, -1, 0), out dashHit, 2.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
                         {
                             Debug.Log("目的地有地板");
                             _dash = true;
@@ -860,7 +881,7 @@ namespace BloodBond {
                     goalPoint = dashFixPos + lastDashLength * dashDir;
 
                     Debug.Log("第幾個： " + num);
-                    if (Physics.Raycast(goalPoint + new Vector3(0, 10, 0), new Vector3(0, -1, 0), out dashHit, 12.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
+                    if (Physics.Raycast(goalPoint, new Vector3(0, -1, 0), out dashHit, 2.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
                     {
                         Debug.Log("目的地有地板");
                         _dash = true;
@@ -877,7 +898,7 @@ namespace BloodBond {
                 if (hits == null || hits.Length <= 0)
                 {
                     Debug.Log("目的地沒障礙物");
-                    if (Physics.Raycast(goalPoint + new Vector3(0, 10, 0), new Vector3(0, -1, 0), out dashHit, 12.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
+                    if (Physics.Raycast(goalPoint, new Vector3(0, -1, 0), out dashHit, 2.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
                     {
                         Debug.Log("目的地有地板");
                         _dash = true;
@@ -894,7 +915,7 @@ namespace BloodBond {
                     Debug.Log("目的地有障礙物  " + hits[0].transform.name);
                     lastDashLength = 0.5f*(dashPointCount-1);  //長度點乘間隔
                     goalPoint = dashFixPos + lastDashLength * dashDir;
-                    if (Physics.Raycast(goalPoint + new Vector3(0, 10, 0), new Vector3(0, -1, 0), out dashHit, 12.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
+                    if (Physics.Raycast(goalPoint, new Vector3(0, -1, 0), out dashHit, 2.0f, 1 << LayerMask.NameToLayer("Ground")))  //判斷地板
                     {
                         Debug.Log("目的地有地板");
                         _dash = true;
@@ -931,7 +952,9 @@ namespace BloodBond {
             if (isDistantHurt) //遠程判斷
             {
                 invincible = true;
-                hp -= 1;
+
+                hp -= 20;
+                uiInterface.ReceiveAttack(20);
                 ChangeState(hurtState);
                 animator.SetBool("Hurt", true);
                 return true;
@@ -944,7 +967,8 @@ namespace BloodBond {
             Collider[] cols =  Physics.OverlapCapsule(point1, point2, hurtAreaCollider.radius, infoValue.HurtAreaLayer);
             if (cols != null && cols.Length > 0) {
                 invincible = true;
-                hp -= 1;
+                hp -= 20;
+                uiInterface.ReceiveAttack(20);
                 ChangeState(hurtState);
                 animator.SetBool("Hurt", true);
                 return true;
@@ -972,6 +996,11 @@ namespace BloodBond {
                     }
                 }
             }
+        }
+
+        public void ResetHP() {
+            hp = 100;
+            potion = 5;
         }
 
         void CountInvincibleTime() {
