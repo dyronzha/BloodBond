@@ -60,7 +60,6 @@ namespace BloodBond {
                 
             if (PlayerInSight(lookDir, enemyManager.ArcherValue.SightDistance, enemyManager.ArcherValue.SightAngle)) //Physics.Raycast(lookPos, lookDir, 5.0f, 1 << LayerMask.NameToLayer("Player"))
             {
-                Debug.Log("懷疑時間 " + seeDelayTime);
                 seeDelayTime += deltaTime;
                 if (curState == lookAroundState && animator.speed > 0.7f) animator.speed = .0f;
                 if (seeDelayTime > enemyManager.ArcherValue.SeeConfirmTime)
@@ -86,7 +85,6 @@ namespace BloodBond {
             }
             else
             {
-                Debug.Log("沒看到減少懷疑時間");
                 seeDelayTime -= deltaTime*.5f;
                 if (seeDelayTime < .0f) seeDelayTime = .0f;
                 animator.speed = 1.0f;
@@ -276,17 +274,14 @@ namespace BloodBond {
             int curCount = enemyManager.Player.GetAttackComboCount();
             if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
             {
-                Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
                 AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
                 hp -= 10;
                 lastHurtHash = curCount;
                 targetPos = enemyManager.Player.SelfTransform.position;
                 HurtDir = new Vector3(targetPos.x - transform.position.x, 0, targetPos.z - transform.position.z);
                 transform.rotation = Quaternion.LookRotation(HurtDir);
-                Debug.Log("hurtttt face  " + HurtDir);
                 BloodSplash.transform.rotation = Quaternion.LookRotation(HurtDir);
                 BloodSplash.Play();
-                Debug.Log("gettttttttttttttttt   hurt  " + isAim);
                 if (hp > 0)
                 {
                     canHurt = false;
@@ -324,7 +319,6 @@ namespace BloodBond {
             int curCount = enemyManager.Player.GetAttackComboCount();
             if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
             {
-                Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
                 AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
                 hp -= 10;
                 lastHurtHash = curCount;
@@ -344,7 +338,6 @@ namespace BloodBond {
                     canHurt = false;
                     animator.SetTrigger("HurtAgain");
                     //ChangeState(hurtState);
-                    Debug.Log("hurt time   " + animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
                 }
                 else
                 {
@@ -405,9 +398,7 @@ namespace BloodBond {
                     targetPos = enemyManager.Player.SelfTransform.position;
                     return true;
                 }
-                Debug.Log("in distance 太遠看不到");
             }
-            Debug.Log("in distance 有障礙物");
             return false;
         }
 

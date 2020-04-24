@@ -10,15 +10,17 @@ namespace BloodBond {
         //List<PatrolRoute> patrolRoutes = new List<PatrolRoute>();
 
         public struct AreaPatrol {
+            public string name;
             public PathFinding pathFinding;
             public List<PatrolRoute> patrolRoutes;
             public List<Transform> archerLocs;
             public float HeightY;
-            public AreaPatrol(PathFinding finding, float height) {
+            public AreaPatrol(PathFinding finding, float height, string n) {
                 pathFinding = finding;
                 patrolRoutes = new List<PatrolRoute>();
                 archerLocs = new List<Transform>();
                 HeightY = height;
+                name = n;
             }
         }
 
@@ -37,7 +39,7 @@ namespace BloodBond {
                 //subArea
                 Transform area = transform.GetChild(i);
                 if (!area.gameObject.activeSelf) continue;
-                areaPatrolRoutes.Add(new AreaPatrol(area.GetComponent<PathFinding>(), area.position.y));
+                areaPatrolRoutes.Add(new AreaPatrol(area.GetComponent<PathFinding>(), area.position.y, area.name));
                 //areaPatrolRoutes[i] = new AreaPatrol(area.GetComponent<PathFinding>());
 
                 //subArea內的路線或定點
@@ -64,21 +66,34 @@ namespace BloodBond {
         void Start()
         {
             if (areaPatrolRoutes.Count > 0) {
-                enemyManager.CreateArea(areaPatrolRoutes.Count);
+
+                List<EnemyBase> enemyArea = new List<EnemyBase>();
+                List<AreaPatrol> patrolArea = new List<AreaPatrol>();
                 for (int i = 0; i < areaPatrolRoutes.Count; i++)
                 {
-                    enemyManager.AddNewArea(i);
+                    patrolArea.Add(areaPatrolRoutes[i]);   
                     for (int j = 0; j < areaPatrolRoutes[i].patrolRoutes.Count; j++)
                     {
-                        enemyManager.SpawnEnemyWithRoute(areaPatrolRoutes[i].patrolRoutes[j].enemyType, areaPatrolRoutes[i].patrolRoutes[j].StartPosition, areaPatrolRoutes[i].patrolRoutes[j], areaPatrolRoutes[i].pathFinding, areaPatrolRoutes[i].HeightY);
+                        EnemyBase enemy = enemyManager.SpawnEnemyWithRoute(areaPatrolRoutes[i].patrolRoutes[j].enemyType, areaPatrolRoutes[i].patrolRoutes[j].StartPosition, areaPatrolRoutes[i].patrolRoutes[j], areaPatrolRoutes[i].pathFinding, areaPatrolRoutes[i].HeightY);
+                        enemy.AreaNmae = areaPatrolRoutes[i].name;
+                        enemyArea.Add(enemy);
                     }
                     for (int j = 0; j < areaPatrolRoutes[i].archerLocs.Count; j++)
                     {
-                        enemyManager.SpawnAcherInLoc(areaPatrolRoutes[i].archerLocs[j].position, areaPatrolRoutes[i].archerLocs[j].forward, areaPatrolRoutes[i].HeightY);
+                        EnemyBase enemy = enemyManager.SpawnAcherInLoc(areaPatrolRoutes[i].archerLocs[j].position, areaPatrolRoutes[i].archerLocs[j].forward, areaPatrolRoutes[i].HeightY);
+                        enemy.AreaNmae = areaPatrolRoutes[i].name;
+                        enemyArea.Add(enemy);
                     }
+
+                    if (i == 2 || i == 3)   
+                    {
+                        enemyManager.CreateArea(enemyArea, patrolArea);
+                        enemyArea = new List<EnemyBase>();
+                        patrolArea = new List<AreaPatrol>();
+                    } 
                 }
                 //將manager目前的區域變回0
-                enemyManager.SetActiveArea(0, areaPatrolRoutes[0]);
+                enemyManager.SetActiveArea(0);
             }
            
         }

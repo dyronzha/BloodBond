@@ -21,9 +21,10 @@ namespace BloodBond {
         Dictionary<string, EnemyBase> enemyDic = new Dictionary<string, EnemyBase>();
 
         int areaCount = 0;
-        List<EnemyBase>[] enemyArea;
+        List<List<EnemyBase>> enemyAreas = new List<List<EnemyBase>>();
         List<EnemyBase> currentAreaEnemy;
-        PatrolManager.AreaPatrol curArea;
+        List<List<PatrolManager.AreaPatrol>> allPatrolArea = new List<List<PatrolManager.AreaPatrol>>();
+        List<PatrolManager.AreaPatrol> curArea = new List<PatrolManager.AreaPatrol>();
 
         PatrolManager patrolManager;
 
@@ -117,28 +118,41 @@ namespace BloodBond {
         void Update()
         {
             deltaTime = Time.deltaTime;
-            //for (int i = usedBaseHunterList.Count-1; i >= 0; i--) {
-            //    usedBaseHunterList[i].Update(deltaTime);
-            //}
-            //for (int i = usedNightmareList.Count - 1; i >= 0; i--)
-            //{
-            //    usedNightmareList[i].Update(deltaTime);
-            //}
-            //for (int i = usedArcherHunterList.Count - 1; i >= 0; i--) {
-            //    usedArcherHunterList[i].Update(deltaTime);
-            //}
-            if (currentAreaEnemy != null) {
-                for (int i = 0; i < currentAreaEnemy.Count; i++)
-                {
-                    currentAreaEnemy[i].Update(deltaTime);
-                }
-                for (int i = usedEnemyArrowList.Count - 1; i >= 0; i--)
-                {
-                    usedEnemyArrowList[i].Update(deltaTime);
-                }
-                //清除搜尋路後的權重
-                curArea.pathFinding.ClearGridExtendPenalty();
+            for (int i = usedBaseHunterList.Count - 1; i >= 0; i--)
+            {
+                usedBaseHunterList[i].Update(deltaTime);
             }
+            for (int i = usedNightmareList.Count - 1; i >= 0; i--)
+            {
+                usedNightmareList[i].Update(deltaTime);
+            }
+            for (int i = usedArcherHunterList.Count - 1; i >= 0; i--)
+            {
+                usedArcherHunterList[i].Update(deltaTime);
+            }
+            for (int i = usedEnemyArrowList.Count - 1; i >= 0; i--)
+            {
+                usedEnemyArrowList[i].Update(deltaTime);
+            }
+
+            //if (currentAreaEnemy != null) {
+            //    for (int i = 0; i < currentAreaEnemy.Count; i++)
+            //    {
+            //        currentAreaEnemy[i].Update(deltaTime);
+            //    }
+            //    for (int i = usedEnemyArrowList.Count - 1; i >= 0; i--)
+            //    {
+            //        usedEnemyArrowList[i].Update(deltaTime);
+            //    }
+            //    //清除搜尋路後的權重
+            //    //curArea.pathFinding.ClearGridExtendPenalty();
+            //    for (int i = 0; i < curArea.Count; i++) {
+            //        if (curArea[i].pathFinding.CheckInGrid(player.transform.position)) {
+            //            curArea[i].pathFinding.ClearGridExtendPenalty();
+            //            break;
+            //        } 
+            //    }
+            //}
 
             if (Input.GetKeyDown(KeyCode.Space)) ResetEnemy();
         }
@@ -151,17 +165,18 @@ namespace BloodBond {
 
         }
 
-        public void CreateArea(int length) {
-            enemyArea = new List<EnemyBase>[length];
+        public void CreateArea(List<EnemyBase> area, List<PatrolManager.AreaPatrol> patrolArea) {
+            enemyAreas.Add(area);
+            allPatrolArea.Add(patrolArea);
         }
-        public void AddNewArea(int id) {
-            areaCount = id;
-            enemyArea[id] = new List<EnemyBase>();
-            currentAreaEnemy = enemyArea[id];
-        }
-        public void SetActiveArea(int id, PatrolManager.AreaPatrol area) {
-            currentAreaEnemy = enemyArea[id];
-            curArea = area;
+        public void SetActiveArea(int id) {
+            Debug.Log("next arrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrea  " + id);
+            if (id < enemyAreas.Count) {
+                currentAreaEnemy = enemyAreas[id];
+                Debug.Log(currentAreaEnemy[0].transform.name);
+                curArea = allPatrolArea[id];
+            }
+
         }
         public void EnemyDead(EnemyBase enemy) {
             if (currentAreaEnemy.Contains(enemy))
@@ -182,9 +197,8 @@ namespace BloodBond {
                 enemy.transform.position = new Vector3(loc.x, height, loc.z);
                 enemy.transform.gameObject.SetActive(true);
                 enemy.HeightY = height;
-                //usedBaseHunterList.Add(enemy);
-                currentAreaEnemy.Add(enemy);
-                Debug.Log("current enemy list " + currentAreaEnemy.Count);
+                usedBaseHunterList.Add(enemy);
+
                 enemy.SetPatrolArea(route, finding);
                 freeBaseHunterList.RemoveAt(0);
                 return enemy;
@@ -195,9 +209,8 @@ namespace BloodBond {
                 enemy.transform.position = new Vector3(loc.x, height, loc.z);
                 enemy.transform.gameObject.SetActive(true);
                 enemy.HeightY = height;
-                //usedNightmareList.Add(enemy);
-                currentAreaEnemy.Add(enemy);
-                Debug.Log("current enemy list " + currentAreaEnemy.Count);
+                usedNightmareList.Add(enemy);
+
                 enemy.SetPatrolArea(route, finding);
                 freeNightmarerList.RemoveAt(0);
                 return enemy;
@@ -216,26 +229,22 @@ namespace BloodBond {
             enemy.transform.rotation = Quaternion.LookRotation(dir);
             enemy.transform.gameObject.SetActive(true);
             enemy.HeightY = height;
-            //usedArcherHunterList.Add(enemy);
-            currentAreaEnemy.Add(enemy);
-            Debug.Log("current enemy list " + currentAreaEnemy.Count);
+            usedArcherHunterList.Add(enemy);
+
             freeArcherHunterList.RemoveAt(0);
             enemy.Init();
             return enemy;
         }
 
         public void SetAllEnemyAlarm(EnemyBase enemy) {
-            
-            if (currentAreaEnemy.Contains(enemy)) {
-                for (int i = 0; i < currentAreaEnemy.Count; i++)
+            return;
+            for (int i = 0; i < currentAreaEnemy.Count; i++)
+            {
+                if (enemy.transform.name.CompareTo(currentAreaEnemy[i].transform.name) != 0 && currentAreaEnemy[i].AreaNmae.CompareTo(enemy.AreaNmae) == 0)
                 {
-                    if (enemy.transform.name.CompareTo(currentAreaEnemy[i].transform.name) != 0)
-                    {
-                        currentAreaEnemy[i].AllAlarm();
-                    }
+                    currentAreaEnemy[i].AllAlarm();
                 }
             }
-
         }
 
         public int GetArrowNum() {

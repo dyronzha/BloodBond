@@ -19,6 +19,10 @@ namespace BloodBond {
         {
 
         }
+
+        public void ReStart() { 
+            
+        }
     }
 }
 

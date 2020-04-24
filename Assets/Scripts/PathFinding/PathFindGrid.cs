@@ -13,6 +13,7 @@ namespace PathFinder
         public float nodeRadius;
         public TerrainType[] walkableRegions;
         public int obstacleProximityPenalty = 10;
+        public int blurSize = 3;
         Dictionary<int, int> walkableRegionsDictionary = new Dictionary<int, int>();
         LayerMask walkableMask;
 
@@ -74,7 +75,10 @@ namespace PathFinder
                             disappearBarrier.Add(new Vector2(x, y));
                         }
                     }
-
+                    else {
+                        Collider[] ground = Physics.OverlapSphere(worldPoint, nodeRadius, 1 << LayerMask.NameToLayer("Ground"));
+                        if (ground == null || ground.Length <= 0) walkable = false;
+                    }
                     int movementPenalty = 0;
 
 
@@ -95,7 +99,7 @@ namespace PathFinder
                 }
             }
 
-            BlurPenaltyMap(3);
+            BlurPenaltyMap(blurSize);
 
         }
 
@@ -210,7 +214,7 @@ namespace PathFinder
             float percentY = (worldPosition.z - offsetY + gridWorldSize.y / 2) / gridWorldSize.y;
             //percentX = Mathf.Clamp01(percentX);
             //percentY = Mathf.Clamp01(percentY);
-            Debug.Log(" 中有  " + percentX + "," + percentY + !(percentX < .0f || percentX > 1.0f || percentY < .0f || percentY > 1.0f));
+            //Debug.Log(" 中有  " + percentX + "," + percentY + !(percentX < .0f || percentX > 1.0f || percentY < .0f || percentY > 1.0f));
             if (percentX < .0f || percentX > 1.0f || percentY < .0f || percentY > 1.0f) return false;
             else return true;
             int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
@@ -223,7 +227,7 @@ namespace PathFinder
         {
             float percentX = (worldPosition.x - offsetX + gridWorldSize.x / 2) / gridWorldSize.x;
             float percentY = (worldPosition.z - offsetY + gridWorldSize.y / 2) / gridWorldSize.y;
-            Debug.Log(" 中有  " + percentX + "," + percentY + !(percentX < .0f || percentX > 1.0f || percentY < .0f || percentY > 1.0f));
+            //Debug.Log(" 中有  " + percentX + "," + percentY + !(percentX < .0f || percentX > 1.0f || percentY < .0f || percentY > 1.0f));
             if (percentX < .0f || percentX > 1.0f || percentY < .0f || percentY > 1.0f) return false;
             else {
                 percentX = Mathf.Clamp01(percentX);

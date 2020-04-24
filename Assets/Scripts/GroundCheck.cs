@@ -20,7 +20,7 @@ public class GroundCheck
     public static bool DetectGround(ref Vector3 goalPoint) {
         Vector3 fromPoint = goalPoint + new Vector3(0, 2.0f, 0);
         RaycastHit hit;
-        if (Physics.Raycast(fromPoint, new Vector3(0, -1.0f, 0), out hit, 8.0f, 1 << LayerMask.NameToLayer("Ground")))
+        if (Physics.Raycast(fromPoint, new Vector3(0, -1.0f, 0), out hit, 2.5f, 1 << LayerMask.NameToLayer("Ground")))
         {
             goalPoint = hit.point + new Vector3(0,0.1f,0);
             return true;

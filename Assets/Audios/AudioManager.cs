@@ -12,7 +12,7 @@ public class AudioManager : MonoBehaviour
 
     public SoundClip[] soundClips;
     public AudioClip[] hitClips;
-
+    public AudioClip[] BGMClips;
 
     private static AudioManager singletonInScene;
     public static AudioManager SingletonInScene
@@ -73,6 +73,20 @@ public class AudioManager : MonoBehaviour
             effectAudio.PlayOneShot(soundDictionary[_name], volume);
         }
         else Debug.Log("沒有這個音檔");
+    }
+    public void ChangeBGM(int id) {
+        switch (id) {
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+        }
     }
 
     public void PlayRandomHit(float volume) {
