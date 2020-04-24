@@ -16,6 +16,9 @@ public class UI_Manager : MonoBehaviour{
     bool SelectNewGame = false;
     float Trigger_Moment;
 
+
+    Rewired.Player playerInput;
+
     void Start(){
     }
 
