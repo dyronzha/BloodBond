@@ -732,7 +732,7 @@ namespace BloodBond {
 
                 if (aniInfo.normalizedTime >= comboAttackState.currentColliderTime) {
                     Debug.Log("開啟碰撞器");
-                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Attack_" + (comboCount + 1).ToString(), 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Attack_" + (comboCount + 1).ToString(), 0.22f);
                     comboAttackState.hasEnableCollider = true;
                     comboAttackState.curATKCollider.enabled = true;
                     stateStep++;
@@ -796,7 +796,7 @@ namespace BloodBond {
             if (curState == dieState) return false;
             if (!isAlarm)
             {
-                AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
+                AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.22f);
                 hp = 0;
                 animator.SetBool("Hurt", false);
                 animator.SetBool("Dead", true);
@@ -808,7 +808,7 @@ namespace BloodBond {
                 BloodSplash.Play();
                 if (hp > 0)
                 {
-                    AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.5f);
                     canHurt = false;
                     animator.SetBool("Hurt", true);
                     ChangeState(hurtState);
@@ -816,7 +816,7 @@ namespace BloodBond {
                 }
                 else
                 {
-                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.22f);
                     animator.SetBool("Hurt", false);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
@@ -837,7 +837,7 @@ namespace BloodBond {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
                 hp -= 10;
                 lastHurtHash = curCount;
-                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.5f);
                 HurtDir = new Vector3(targetPos.x - transform.position.x, 0, targetPos.z - transform.position.z); //new Vector3(targetDir.x - transform.position.x, targetDir.y - transform.position.y, targetDir.z - transform.position.z);
                 BloodSplash.transform.rotation = Quaternion.LookRotation(HurtDir);
                 BloodSplash.Play();
@@ -850,7 +850,7 @@ namespace BloodBond {
                     
                 }
                 else {
-                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.22f);
                     animator.SetBool("Hurt", false);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
@@ -873,7 +873,7 @@ namespace BloodBond {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
                 hp -= 10;
                 lastHurtHash = curCount;
-                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.5f);
                 if (hp > 0)
                 {
                     canHurt = false;
@@ -883,7 +883,7 @@ namespace BloodBond {
                 }
                 else
                 {
-                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.22f);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
                     return true;
@@ -948,7 +948,7 @@ namespace BloodBond {
                 }
             }
         }
-        public void Dead() {
+        public virtual void Dead() {
             if (stateStep == 0)
             {
                 AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);

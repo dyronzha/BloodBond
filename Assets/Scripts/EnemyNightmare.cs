@@ -75,7 +75,7 @@ namespace BloodBond {
                 seeDelayTime += deltaTime * 1.5f;
                 if (seeDelayTime > enemyManager.NightmareValue.SeeConfirmTime)
                 {
-                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Roar_2", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Roar_2", 0.06f);
                     seeDelayTime = .0f;
                     animator.SetTrigger("Alarm");
                     targetPos = enemyManager.Player.SelfTransform.position;
@@ -465,7 +465,7 @@ namespace BloodBond {
                     {
                         animator.applyRootMotion = false;
                     }
-                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Attack", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Attack", 0.07f);
                     stateStep++;
                 }
             }
@@ -538,7 +538,7 @@ namespace BloodBond {
             if (curState == dieState) return false;
             if (!isAlarm)
             {
-                AudioManager.SingletonInScene.PlaySound2D("Nightmare_Death", 0.3f);
+                AudioManager.SingletonInScene.PlaySound2D("Nightmare_Death", 0.17f);
                 hp = 0;
                 animator.SetBool("Hurt", false);
                 animator.SetBool("Dead", true);
@@ -551,7 +551,7 @@ namespace BloodBond {
                 BloodSplash.Play();
                 if (hp > 0)
                 {
-                    AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.5f);
                     canHurt = false;
                     animator.SetBool("Hurt", true);
                     ChangeState(hurtState);
@@ -559,7 +559,7 @@ namespace BloodBond {
                 }
                 else
                 {
-                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Death", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Death", 0.17f);
                     animator.SetBool("Hurt", false);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
@@ -581,7 +581,7 @@ namespace BloodBond {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
                 hp -= 10;
                 lastHurtHash = curCount;
-                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.5f);
                 HurtDir = new Vector3(targetPos.x - transform.position.x, 0, targetPos.z - transform.position.z); //new Vector3(targetDir.x - transform.position.x, targetDir.y - transform.position.y, targetDir.z - transform.position.z);
                 BloodSplash.transform.rotation = Quaternion.LookRotation(HurtDir);
                 BloodSplash.Play();
@@ -595,7 +595,7 @@ namespace BloodBond {
                 }
                 else
                 {
-                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Death", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Death", 0.17f);
                     animator.SetBool("Hurt", false);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
@@ -618,7 +618,7 @@ namespace BloodBond {
                 Debug.Log("get hurt  last" + lastHurtHash + "  cur" + curCount + "  hp:" + hp);
                 hp -= 10;
                 lastHurtHash = curCount;
-                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.5f);
                 if (hp > 0)
                 {
                     canHurt = false;
@@ -628,7 +628,7 @@ namespace BloodBond {
                 }
                 else
                 {
-                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Death", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Nightmare_Death", 0.17f);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
                     return true;
@@ -691,6 +691,20 @@ namespace BloodBond {
         }
         public override void AllAlarm()
         {
+        }
+
+        public override void Dead()
+        {
+            if (stateStep == 0)
+            {
+                AnimatorStateInfo aniInfo = animator.GetCurrentAnimatorStateInfo(0);
+                if (aniInfo.IsName("Dead"))
+                {
+                    GameManager.SingletonInScene.CountNightmareDead();
+                    animator.SetBool("Dead", false);
+                    stateStep++;
+                }
+            }
         }
 
         public override void Reset()

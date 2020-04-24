@@ -6,6 +6,9 @@ using UnityEngine;
 namespace BloodBond {
     public class Player : MonoBehaviour
     {
+        public static bool canControl = true;
+        int blankFrame = 0;
+
         UI_InGame uiInterface;
 
         int stateStep = 0;
@@ -113,6 +116,14 @@ namespace BloodBond {
 
         // Update is called once per frame
         void Update() {
+            if (!canControl) {
+                blankFrame = 1;
+                return;
+            }
+            if (canControl && blankFrame == 1) {
+                blankFrame = 0;
+                return;
+            }
             deltaTime = Time.deltaTime;
             curState.Update();
             if (inDodgeCD) CountDodgeCD();
@@ -217,7 +228,7 @@ namespace BloodBond {
                 
                 Instantiate(PhantomCreate, selfTransform.position + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
                 Instantiate(PhantomCreate, selfTransform.position + fixPos + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
-                AudioManager.SingletonInScene.PlaySound2D("Karol_Dodge", 0.3f);
+                AudioManager.SingletonInScene.PlaySound2D("Karol_Dodge", 0.1f);
             }
             else if (stateStep == 1)
             {
@@ -560,7 +571,7 @@ namespace BloodBond {
                 {
                     normalComboAtkState.hasEnableCollider = true;
                     normalComboAtkState.curATKCollider.enabled = true;
-                    AudioManager.SingletonInScene.PlaySound2D("Karol_Attack_" + (comboCount+1).ToString(), 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Karol_Attack_" + (comboCount+1).ToString(), 0.27f);
                 }
                 if (aniInfo.normalizedTime > 0.15f)
                 {
@@ -806,7 +817,7 @@ namespace BloodBond {
                         }
                     }
                     nextPos = goalPoint;
-                    AudioManager.SingletonInScene.PlaySound2D("Karol_Dash", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Karol_Dash", 0.17f);
                     //selfTransform.position = goalPoint;
                     Debug.Log("line 722 = " + goalPoint);
                     selfTransform.rotation = Quaternion.LookRotation(inputDir);

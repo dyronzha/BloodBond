@@ -98,7 +98,7 @@ namespace BloodBond {
                     progressID++;
                     if (progressID == 1) AudioManager.SingletonInScene.ChangeBGM(1);
                     else if (progressID == 2) AudioManager.SingletonInScene.ChangeBGM(2);
-                    else if (progressID == 3) AudioManager.SingletonInScene.ChangeBGM(3);
+                    //else if (progressID == 3) AudioManager.SingletonInScene.ChangeBGM(3);
                 }
             }
 
@@ -115,6 +115,11 @@ namespace BloodBond {
                     VCameraPoints[cameraCurrentID].lastVCamera.SetActive(false);
                     VCameraPoints[cameraCurrentID].reverse = true;
                     cameraCurrentID++;
+                    if (cameraCurrentID == cameraPointLines.Length) {
+                        AudioManager.SingletonInScene.ChangeBGM(3);
+                        GameManager.SingletonInScene.GameOver();
+                        Player.canControl = false;
+                    } 
                 }
             }
             //判斷上一個攝影機切換點
@@ -141,6 +146,7 @@ namespace BloodBond {
                     )
                 {
                     //if(interactPoints[currentInteractID].interactType == InfoText)//關玩家操作
+                    Player.canControl = false;
                     _dialoguemanager.StartDialogue();
                     collider.enabled = false;
                     currentInteractID++;
