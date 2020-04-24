@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using BloodBond;
 
 public class UI_Manager : MonoBehaviour{
     public Image[] Menu;
@@ -16,10 +17,10 @@ public class UI_Manager : MonoBehaviour{
     bool SelectNewGame = false;
     float Trigger_Moment;
 
-
-    Rewired.Player playerInput;
+    InputSystem input;
 
     void Start(){
+        input = new InputSystem();
     }
 
     void Update(){
@@ -29,24 +30,44 @@ public class UI_Manager : MonoBehaviour{
         }
 
         if (AlreadyPush == false && BtnWorked == false){
-            if (Input.GetAxis("Vertical") > 0.0f || Input.GetAxis("Joy1Axis7") > 0.0f){
-                if (Currentbtn > 0) {
+            //if (Input.GetAxis("Vertical") > 0.0f || Input.GetAxis("Joy1Axis7") > 0.0f){
+            //    if (Currentbtn > 0) {
+            //        Currentbtn--;
+            //        _CurBtnBG.anchoredPosition = new Vector2(_CurBtnBG.anchoredPosition.x, _CurBtnBG.anchoredPosition.y + 100.0f);
+            //    }
+
+            //    AlreadyPush = true;
+            //}
+            //else if (Input.GetAxis("Vertical") < 0.0f || Input.GetAxis("Joy1Axis7") < 0.0f){
+            //    if (Currentbtn < 1) {
+            //        Currentbtn++;
+            //        _CurBtnBG.anchoredPosition = new Vector2(_CurBtnBG.anchoredPosition.x, _CurBtnBG.anchoredPosition.y - 100.0f);
+            //    }
+
+            //    AlreadyPush = true;
+            //}
+            if (input.GetVMoveAxis() > 0.0f || input.GetPadVAxis() > 0.0f)
+            {
+                if (Currentbtn > 0)
+                {
                     Currentbtn--;
                     _CurBtnBG.anchoredPosition = new Vector2(_CurBtnBG.anchoredPosition.x, _CurBtnBG.anchoredPosition.y + 100.0f);
                 }
 
                 AlreadyPush = true;
             }
-            else if (Input.GetAxis("Vertical") < 0.0f || Input.GetAxis("Joy1Axis7") < 0.0f){
-                if (Currentbtn < 1) {
+            else if (input.GetVMoveAxis() < 0.0f || input.GetPadVAxis() < 0.0f)
+            {
+                if (Currentbtn < 1)
+                {
                     Currentbtn++;
                     _CurBtnBG.anchoredPosition = new Vector2(_CurBtnBG.anchoredPosition.x, _CurBtnBG.anchoredPosition.y - 100.0f);
                 }
 
                 AlreadyPush = true;
             }
-
-            else if (Input.GetButtonDown("Fire1")) {
+            else if (Input.GetButtonDown("Fire1"))
+            {
                 BtnWorked = true;
                 BtnFunction(Currentbtn);
             }

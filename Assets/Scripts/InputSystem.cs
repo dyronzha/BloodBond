@@ -43,6 +43,10 @@ namespace BloodBond {
         public bool GetHideInput() {
             return playerInput.GetButtonDown("Hide");
         }
+        public float GetPadVAxis() {
+            return playerInput.GetAxis("PadVertical");
+        }
+
     }
 }
 
