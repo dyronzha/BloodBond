@@ -61,6 +61,8 @@ public class DialogueManager : MonoBehaviour{
             DuringDialogue = false;
             //animator.SetBool("IsOpen", false);
             animator.Play("DialogueComeOut");
+            BloodBond.Player.canControl = true;
+            _emotionpack.CharacterLeave("All");
             return;
         }
 
@@ -73,6 +75,7 @@ public class DialogueManager : MonoBehaviour{
             AllEmotions.Dequeue();
             AllDialogueSentences.Dequeue();
             _emotionpack.CharacterLeave("All");
+            BloodBond.Player.canControl = true;
             return;
         }
 

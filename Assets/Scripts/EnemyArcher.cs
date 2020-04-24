@@ -223,7 +223,7 @@ namespace BloodBond {
             if (curState == dieState) return false;
             if (!isAlarm)
             {
-                AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
+                AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.22f);
                 hp = 0;
                 animator.SetBool("Hurt", false);
                 animator.SetBool("Dead", true);
@@ -236,7 +236,7 @@ namespace BloodBond {
                 BloodSplash.Play();
                 if (hp > 0)
                 {
-                    AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.5f);
                     canHurt = false;
                     animator.SetBool("Hurt", true);
                     ChangeState(hurtState);
@@ -244,7 +244,7 @@ namespace BloodBond {
                 }
                 else
                 {
-                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.22f);
                     animator.SetBool("Hurt", false);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
@@ -274,7 +274,7 @@ namespace BloodBond {
             int curCount = enemyManager.Player.GetAttackComboCount();
             if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
             {
-                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.5f);
                 hp -= 10;
                 lastHurtHash = curCount;
                 targetPos = enemyManager.Player.SelfTransform.position;
@@ -290,7 +290,7 @@ namespace BloodBond {
                 }
                 else
                 {
-                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.22f);
                     animator.SetBool("Hurt", false);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
@@ -319,7 +319,7 @@ namespace BloodBond {
             int curCount = enemyManager.Player.GetAttackComboCount();
             if (cols != null && cols.Length > 0 && lastHurtHash != curCount)
             {
-                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.3f);
+                AudioManager.SingletonInScene.PlaySound2D("Enemy_Hurt", 0.5f);
                 hp -= 10;
                 lastHurtHash = curCount;
                 HurtDir = new Vector3(targetPos.x - transform.position.x, 0, targetPos.z - transform.position.z);
@@ -341,7 +341,7 @@ namespace BloodBond {
                 }
                 else
                 {
-                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.3f);
+                    AudioManager.SingletonInScene.PlaySound2D("Hunter_Death", 0.22f);
                     animator.SetBool("Dead", true);
                     ChangeState(dieState);
                     return true;
