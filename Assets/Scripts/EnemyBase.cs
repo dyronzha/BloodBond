@@ -144,6 +144,7 @@ namespace BloodBond {
             lookDir = head.forward;
             lookPos = selfPos + new Vector3(0, 1.3f, 0);
             curState.Update();
+            Debug.Log(transform.name  + "  " + curState);
         }
 
         public virtual void LateUpdate(float dtTime) { 
@@ -160,10 +161,12 @@ namespace BloodBond {
         public virtual bool FindPlayer()
         {
             //return false;
+            Debug.Log("在grid  " + pathFinding.CheckInGrid(enemyManager.Player.SelfTransform.position) + "  " + pathFinding.name );
             if (PlayerInSight(lookDir, enemyManager.HunterValue.SightDistance, enemyManager.HunterValue.SightAngle) && pathFinding.CheckInGrid(enemyManager.Player.SelfTransform.position)) //Physics.Raycast(lookPos, lookDir, 5.0f, 1 << LayerMask.NameToLayer("Player"))
             {
                 if (curState == lookAroundState && animator.speed > 0.7f) animator.speed = .0f;
                 seeDelayTime += deltaTime*1.5f;
+                Debug.Log("警覺值  " + seeDelayTime);
                 if (seeDelayTime > enemyManager.HunterValue.SeeConfirmTime)
                 {
                     animator.speed = 1.0f;
@@ -362,6 +365,7 @@ namespace BloodBond {
             }
             else
             {
+                Debug.Log("in suspect 馴鹿失敗");
                 animator.SetBool("Patrol", false);
                 ChangeState(giveUpState);  //沒找到路徑放棄
             }
@@ -559,6 +563,7 @@ namespace BloodBond {
                     if (lookARoundNum > patrolRoute.LastLookNum)
                     {  //巡邏點已經提前+1，所以是看上一個點的旋轉次數
                         lookARoundNum = 0;
+                        Debug.Log("suspect look 結束");
                         animator.SetBool("Patrol", false);   //避免尋路過久先回idle動畫
                         animator.SetBool("Look", false);
                         ChangeState(giveUpState);//走回巡邏
@@ -592,6 +597,7 @@ namespace BloodBond {
             {
                 Vector2 pos2D = new Vector2(selfPos.x, selfPos.z);
                 if (playerPath == null) {
+                    Debug.Log("give up 尋路徑為空");
                     animator.SetBool("Patrol", false);
                     stateStep = 0;
                     return;
@@ -642,6 +648,7 @@ namespace BloodBond {
                 
                 //確認玩家有沒有超過grid，超過放棄追逐
                 if (!pathFinding.CheckInGrid(targetPos)) {
+                    Debug.Log("玩家不在grid");
                     animator.SetBool("Chase", false);
                     ChangeState(giveUpState);
                     return;

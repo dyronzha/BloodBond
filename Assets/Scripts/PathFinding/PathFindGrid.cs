@@ -25,7 +25,7 @@ namespace PathFinder
         int penaltyMin = int.MaxValue;
         int penaltyMax = int.MinValue;
 
-        float offsetX, offsetY;
+        float offsetX, offsetZ;
 
         List<Vector2> disappearBarrier = new List<Vector2>();
 
@@ -43,7 +43,7 @@ namespace PathFinder
 
             CreateGrid();
             offsetX = transform.position.x;
-            offsetY = transform.position.y;
+            offsetZ = transform.position.z;
         }
 
         public int MaxSize
@@ -200,7 +200,7 @@ namespace PathFinder
         public Node NodeFromWorldPoint(Vector3 worldPosition)
         {
             float percentX = (worldPosition.x - offsetX + gridWorldSize.x / 2) / gridWorldSize.x;
-            float percentY = (worldPosition.z - offsetY + gridWorldSize.y / 2) / gridWorldSize.y;
+            float percentY = (worldPosition.z - offsetZ + gridWorldSize.y / 2) / gridWorldSize.y;
             percentX = Mathf.Clamp01(percentX);
             percentY = Mathf.Clamp01(percentY);
 
@@ -211,7 +211,7 @@ namespace PathFinder
 
         public bool CheckInGrid(Vector3 worldPosition) {
             float percentX = (worldPosition.x - offsetX + gridWorldSize.x / 2) / gridWorldSize.x;
-            float percentY = (worldPosition.z - offsetY + gridWorldSize.y / 2) / gridWorldSize.y;
+            float percentY = (worldPosition.z - offsetZ + gridWorldSize.y / 2) / gridWorldSize.y;
             //percentX = Mathf.Clamp01(percentX);
             //percentY = Mathf.Clamp01(percentY);
             //Debug.Log(" 中有  " + percentX + "," + percentY + !(percentX < .0f || percentX > 1.0f || percentY < .0f || percentY > 1.0f));
@@ -226,7 +226,7 @@ namespace PathFinder
         public bool CheckWalkable(Vector3 worldPosition)
         {
             float percentX = (worldPosition.x - offsetX + gridWorldSize.x / 2) / gridWorldSize.x;
-            float percentY = (worldPosition.z - offsetY + gridWorldSize.y / 2) / gridWorldSize.y;
+            float percentY = (worldPosition.z - offsetZ + gridWorldSize.y / 2) / gridWorldSize.y;
             //Debug.Log(" 中有  " + percentX + "," + percentY + !(percentX < .0f || percentX > 1.0f || percentY < .0f || percentY > 1.0f));
             if (percentX < .0f || percentX > 1.0f || percentY < .0f || percentY > 1.0f) return false;
             else {
