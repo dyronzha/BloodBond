@@ -21,6 +21,6 @@ EditorBuildSettings:
     path: Assets/TestingObject/HalaTest/Openning.unity
     guid: 9bf30d563eeacec4c88f13ffcc319b4b
   - enabled: 1
-    path: Assets/TestingObject/ZhaTest/ZhaTest.unity
-    guid: 429030ad6ab49854c8c554998549af57
+    path: Assets/TestingObject/ZhaTest/ZhaFormalTestV2.unity
+    guid: 4d83895596722214281de0fdb561c061
   m_configObjects: {}
