@@ -117,7 +117,12 @@ namespace BloodBond {
         // Update is called once per frame
         void Update() {
             if (!canControl) {
-                blankFrame = 1;
+                if (blankFrame == 0) {
+                    blankFrame = 1;
+                    animator.SetBool("Run", false);
+                    ChangeState(idleState);
+                }
+                
                 return;
             }
             if (canControl && blankFrame == 1) {
